@@ -29,6 +29,14 @@
     </div>
   </main>
 
+  <div class="vhs" aria-hidden="true">
+    <canvas id="vhs-noise" class="vhs-noise-canvas"></canvas>
+    <div class="vhs-roll"></div>
+    <div class="vhs-scanlines"></div>
+    <div class="vhs-chroma"></div>
+    <div class="vhs-flicker"></div>
+  </div>
+
   <footer class="site-footer">
     <p class="footer-line">
       <svg class="pentagram" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
@@ -44,6 +52,7 @@
   </footer>
 
   <script src="js/stars.js"></script>
+  <script src="js/vhs.js"></script>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
   </script>
