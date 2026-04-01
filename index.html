@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="bartwo — bartwo.me">
+  <meta name="theme-color" content="#0b060d">
+  <title>bartwo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/bartwo.css">
+</head>
+<body>
+  <div class="bg" aria-hidden="true">
+    <canvas id="stars"></canvas>
+    <div class="bg-fog"></div>
+    <div class="bg-vignette"></div>
+  </div>
+
+  <main class="stage">
+    <div class="orbital" aria-label="bartwo">
+      <div class="orbital-inner">
+        <h1 class="logo-3d" data-text="bartwo">bartwo</h1>
+      </div>
+    </div>
+    <p class="tagline">bartwo.me</p>
+  </main>
+
+  <footer class="site-footer">
+    <p>© <span id="year"></span> bartwo. All rights reserved.</p>
+  </footer>
+
+  <script src="js/stars.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
