@@ -1,11 +1,9 @@
 :root {
   --black: #000000;
-  --ink: #050508;
-  --white: #f2f2f2;
-  --neon-cyan: #3dffec;
-  --neon-magenta: #ff3dce;
-  --neon-cyan-dim: rgba(61, 255, 236, 0.35);
-  --neon-magenta-dim: rgba(255, 61, 206, 0.22);
+  --ink: #030303;
+  --white: #ffffff;
+  --gray-mid: #8c8c8c;
+  --gray-dark: #1a1a1a;
 }
 
 *,
@@ -44,22 +42,21 @@ body {
   width: 116%;
   height: 116%;
   filter: blur(2.2px);
-  opacity: 0.88;
+  opacity: 0.85;
 }
 
 .bg-fog {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 100% 70% at 50% 45%, transparent 0%, var(--ink) 75%),
-    radial-gradient(circle at 15% 25%, var(--neon-cyan-dim) 0%, transparent 42%),
-    radial-gradient(circle at 88% 70%, var(--neon-magenta-dim) 0%, transparent 38%);
+    radial-gradient(ellipse 100% 72% at 50% 42%, transparent 0%, var(--ink) 78%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 0%, transparent 55%);
 }
 
 .bg-vignette {
   position: absolute;
   inset: 0;
-  box-shadow: inset 0 0 100px 36px rgba(0, 0, 0, 0.9);
+  box-shadow: inset 0 0 120px 40px rgba(0, 0, 0, 0.92);
 }
 
 .stage {
@@ -71,9 +68,9 @@ body {
   justify-content: center;
   flex: 1;
   width: 100%;
-  padding: 2rem 1rem 5rem;
-  perspective: 900px;
-  perspective-origin: 50% 45%;
+  padding: 2rem 1rem 5.5rem;
+  perspective: 1400px;
+  perspective-origin: 50% 42%;
 }
 
 .orbital {
@@ -103,26 +100,79 @@ body {
   justify-content: center;
 }
 
+.logo-stack {
+  position: relative;
+  transform-style: preserve-3d;
+  display: inline-block;
+}
+
+.logo-neon-bloom {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 140%;
+  height: 180%;
+  transform: translate(-50%, -50%) translateZ(-80px);
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 55% 45% at 50% 50%,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.18) 35%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  filter: blur(28px);
+  opacity: 0.95;
+}
+
 .logo-3d {
   position: relative;
+  z-index: 1;
   margin: 0;
   font-family: "UnifrakturMaguntia", "Old English Text MT", serif;
   font-weight: 400;
-  font-size: clamp(1.35rem, 4.2vw, 2.1rem);
+  font-size: clamp(4.25rem, 22vw, 15rem);
   line-height: 1;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   text-transform: none;
   transform-style: preserve-3d;
   color: transparent;
   text-shadow:
-    1px 1px 0 #2a2a2a,
-    2px 2px 0 #1a1a1a,
-    3px 3px 0 #111,
-    4px 4px 0 #0a0a0a,
-    5px 5px 12px rgba(0, 0, 0, 0.95),
-    0 0 20px var(--neon-cyan-dim),
-    0 0 36px var(--neon-magenta-dim),
-    0 0 52px rgba(61, 255, 236, 0.12);
+    1px 1px 0 #4a4a4a,
+    2px 2px 0 #3d3d3d,
+    3px 3px 0 #333,
+    4px 4px 0 #2a2a2a,
+    5px 5px 0 #222,
+    6px 6px 0 #1c1c1c,
+    7px 7px 0 #161616,
+    8px 8px 0 #121212,
+    9px 9px 0 #0e0e0e,
+    10px 10px 0 #0a0a0a,
+    11px 11px 0 #070707,
+    12px 12px 0 #050505,
+    13px 13px 0 #030303,
+    14px 14px 0 #020202,
+    15px 15px 22px rgba(0, 0, 0, 1),
+    0 0 28px rgba(255, 255, 255, 0.45),
+    0 0 56px rgba(255, 255, 255, 0.28),
+    0 0 92px rgba(255, 255, 255, 0.16),
+    0 0 140px rgba(255, 255, 255, 0.08);
+}
+
+.logo-3d::before {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  transform: translateZ(-42px) scale(0.98);
+  color: #0d0d0d;
+  text-shadow:
+    1px 1px 0 #000,
+    2px 2px 4px rgba(0, 0, 0, 0.9);
+  pointer-events: none;
 }
 
 .logo-3d::after {
@@ -132,22 +182,25 @@ body {
   top: 0;
   width: 100%;
   height: 100%;
-  z-index: 1;
-  transform: translateZ(28px);
+  z-index: 2;
+  transform: translateZ(56px);
   background: linear-gradient(
-    185deg,
+    168deg,
     #ffffff 0%,
-    #e8e8e8 35%,
-    #b8b8c2 65%,
-    #6e6e78 100%
+    #f5f5f5 28%,
+    #d0d0d0 55%,
+    #8a8a8a 82%,
+    #3a3a3a 100%
   );
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
   filter:
-    drop-shadow(0 0 8px rgba(61, 255, 236, 0.55))
-    drop-shadow(0 0 18px rgba(255, 61, 206, 0.25));
+    drop-shadow(0 0 4px rgba(255, 255, 255, 0.95))
+    drop-shadow(0 0 18px rgba(255, 255, 255, 0.65))
+    drop-shadow(0 0 42px rgba(255, 255, 255, 0.4))
+    drop-shadow(0 0 72px rgba(255, 255, 255, 0.22));
   pointer-events: none;
 }
 
@@ -157,17 +210,40 @@ body {
   left: 0;
   right: 0;
   z-index: 2;
-  padding: 1rem 1.25rem 1.35rem;
+  padding: 1rem 1.25rem 1.4rem;
   text-align: center;
-  font-size: 0.72rem;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.42);
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.97), transparent);
-  text-shadow: 0 0 12px rgba(61, 255, 236, 0.15);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.98), transparent);
 }
 
-.site-footer p {
+.footer-line {
   margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.65rem 1rem;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.footer-text {
+  text-shadow: 0 0 14px rgba(255, 255, 255, 0.12);
+}
+
+.pentagram {
+  width: 0.95rem;
+  height: 0.95rem;
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.55);
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.25));
+}
+
+@media (min-width: 480px) {
+  .pentagram {
+    width: 1.05rem;
+    height: 1.05rem;
+  }
 }

@@ -49,13 +49,10 @@
       if (s.y > cssH + 4) s.y = -4;
 
       const pulse = 0.45 + Math.sin(s.tw) * 0.35;
-      const alpha = (0.12 + s.z * 0.5) * pulse;
-      const neon = s.z > 0.62;
+      const alpha = (0.1 + s.z * 0.48) * pulse;
       ctx.beginPath();
       ctx.arc(s.x, s.y, s.r * (0.7 + s.z * 0.5), 0, Math.PI * 2);
-      ctx.fillStyle = neon
-        ? `rgba(100, 255, 245, ${alpha * 0.95})`
-        : `rgba(255, 255, 255, ${alpha})`;
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
       ctx.fill();
     }
 
