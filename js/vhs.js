@@ -8,10 +8,10 @@
   let h = 0;
   let raf = 0;
   let last = 0;
-  const interval = mq.matches ? 220 : 70;
+  const interval = mq.matches ? 280 : 140;
 
   function resize() {
-    const scale = 0.35;
+    const scale = 0.28;
     const cssW = Math.max(1, Math.floor(window.innerWidth * scale));
     const cssH = Math.max(1, Math.floor(window.innerHeight * scale));
     if (cssW === w && cssH === h) return;
@@ -28,12 +28,13 @@
 
     const id = ctx.createImageData(w, h);
     const data = id.data;
+    const base = mq.matches ? 12 : 16;
     for (let i = 0; i < data.length; i += 4) {
-      const n = (Math.random() * 255) | 0;
+      const n = (Math.random() * 28 + 108) | 0;
       data[i] = n;
-      data[i + 1] = n;
-      data[i + 2] = n;
-      data[i + 3] = mq.matches ? 28 : 38;
+      data[i + 1] = n + 4;
+      data[i + 2] = n + 10;
+      data[i + 3] = base + ((Math.random() * 10) | 0);
     }
     ctx.putImageData(id, 0, 0);
   }

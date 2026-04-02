@@ -35,13 +35,14 @@ function applyWhiteChrome(root) {
     if (!child.isMesh) return;
     disposeMaterial(child.material);
     child.material = new THREE.MeshPhysicalMaterial({
-      color: 0xf6f7fa,
-      emissive: 0x000000,
+      color: 0xf4f6fb,
+      emissive: 0xc8d2e8,
+      emissiveIntensity: 0.06,
       metalness: 1,
-      roughness: 0.12,
+      roughness: 0.11,
       clearcoat: 1,
-      clearcoatRoughness: 0.06,
-      envMapIntensity: 1.55,
+      clearcoatRoughness: 0.05,
+      envMapIntensity: 1.48,
       ior: 1.5,
     });
     child.castShadow = false;
@@ -154,7 +155,14 @@ function main() {
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.32;
-  rootEl.appendChild(renderer.domElement);
+  renderer.setClearColor(SCENE_BG, 1);
+  const canvas = renderer.domElement;
+  canvas.style.display = "block";
+  canvas.style.margin = "0";
+  canvas.style.padding = "0";
+  canvas.style.verticalAlign = "top";
+  canvas.setAttribute("tabindex", "-1");
+  rootEl.appendChild(canvas);
 
   const pmrem = new THREE.PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
@@ -177,6 +185,9 @@ function main() {
   const rim = new THREE.DirectionalLight(0xffffff, 0.58);
   rim.position.set(-2, 5, -8);
   scene.add(rim);
+  const neonRim = new THREE.PointLight(0xd8e2f5, 0.85, 12, 2);
+  neonRim.position.set(0, 0.35, 3.2);
+  scene.add(neonRim);
 
   const clock = new THREE.Clock();
   let loaded = false;
