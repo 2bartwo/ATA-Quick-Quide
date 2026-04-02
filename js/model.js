@@ -6,6 +6,11 @@ import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 const MODEL_URL = new URL("../models/bartwo3d.glb", import.meta.url).href;
 
 const BLACK = 0x000000;
+/** Koyu mor + açık mavi neon — kromda renkli speküler yansımalar için */
+const NEON_PURPLE_DEEP = 0x5b2d8f;
+const NEON_PURPLE_SOFT = 0x7c4cbd;
+const NEON_SKY = 0x8fd4ff;
+const NEON_CYAN = 0x5edbff;
 
 function showLoadError(message) {
   const root = document.getElementById("three-root");
@@ -123,13 +128,13 @@ function applyWhiteChrome(root) {
       emissive: 0x000000,
       emissiveIntensity: 0,
       metalness: 1,
-      roughness: 0.012,
-      envMapIntensity: 5.2,
+      roughness: 0.007,
+      envMapIntensity: 6.35,
       clearcoat: 1,
-      clearcoatRoughness: 0.006,
+      clearcoatRoughness: 0.003,
       specularIntensity: 1,
       specularColor: 0xffffff,
-      ior: 1.6,
+      ior: 1.65,
       sheen: 0,
     });
     child.castShadow = false;
@@ -214,7 +219,7 @@ function main() {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.95;
+  renderer.toneMappingExposure = 2.02;
   renderer.setClearColor(BLACK, 1);
   const canvas = renderer.domElement;
   canvas.style.display = "block";
@@ -234,29 +239,43 @@ function main() {
   const pivot = new THREE.Group();
   scene.add(pivot);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.38));
-  const hemi = new THREE.HemisphereLight(0xffffff, 0x0a0a0a, 0.45);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.34));
+  const hemi = new THREE.HemisphereLight(0xf5f0ff, 0x140a22, 0.48);
   scene.add(hemi);
-  const key = new THREE.DirectionalLight(0xffffff, 2.45);
+  const key = new THREE.DirectionalLight(0xffffff, 2.35);
   key.position.set(6, 7, 8);
   scene.add(key);
-  const fill = new THREE.DirectionalLight(0xffffff, 0.95);
+  const fill = new THREE.DirectionalLight(0xe8f4ff, 0.88);
   fill.position.set(-7, 2, -4);
   scene.add(fill);
-  const rim = new THREE.DirectionalLight(0xffffff, 1.15);
+  const rim = new THREE.DirectionalLight(0xffffff, 1.08);
   rim.position.set(-2, 5, -8);
   scene.add(rim);
 
-  // Sabit yoğunluk: nabız krom yansımalarını sürekli değiştirip "krom değil" hissi verir.
-  const neonFront = new THREE.PointLight(0xffffff, 3.55, 24, 1.35);
+  // Beyaz ana vurgular (sabit — krom stabil kalsın)
+  const neonFront = new THREE.PointLight(0xffffff, 3.35, 26, 1.32);
   neonFront.position.set(0, 0.35, 4.05);
   scene.add(neonFront);
-  const neonL = new THREE.PointLight(0xffffff, 1.95, 20, 1.55);
+  const neonL = new THREE.PointLight(0xffffff, 1.82, 22, 1.52);
   neonL.position.set(-2.8, 0.55, 3.15);
   scene.add(neonL);
-  const neonR = new THREE.PointLight(0xffffff, 1.95, 20, 1.55);
+  const neonR = new THREE.PointLight(0xffffff, 1.82, 22, 1.52);
   neonR.position.set(2.8, 0.55, 3.15);
   scene.add(neonR);
+
+  // Renkli neon — krom yüzeyde mor / açık mavi yansımalar
+  const neonPurpleRim = new THREE.PointLight(NEON_PURPLE_DEEP, 2.45, 28, 1.38);
+  neonPurpleRim.position.set(-3.35, 0.15, 2.4);
+  scene.add(neonPurpleRim);
+  const neonPurpleBack = new THREE.PointLight(NEON_PURPLE_SOFT, 1.75, 24, 1.45);
+  neonPurpleBack.position.set(-3.9, 1.35, -1.2);
+  scene.add(neonPurpleBack);
+  const neonSkyFront = new THREE.PointLight(NEON_SKY, 2.35, 26, 1.36);
+  neonSkyFront.position.set(3.5, 0.45, 3.35);
+  scene.add(neonSkyFront);
+  const neonCyanTop = new THREE.PointLight(NEON_CYAN, 1.68, 22, 1.42);
+  neonCyanTop.position.set(2.2, 2.65, 1.1);
+  scene.add(neonCyanTop);
 
   const clock = new THREE.Clock();
   let loaded = false;

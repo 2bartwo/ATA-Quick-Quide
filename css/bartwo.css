@@ -51,9 +51,11 @@ body {
   position: absolute;
   inset: 0;
   background:
+    radial-gradient(ellipse 72% 58% at 16% 44%, rgba(91, 45, 143, 0.22) 0%, transparent 52%),
+    radial-gradient(ellipse 68% 56% at 86% 36%, rgba(94, 219, 255, 0.14) 0%, transparent 50%),
     radial-gradient(ellipse 90% 60% at 50% 40%, var(--gray-mid) 0%, transparent 50%),
     radial-gradient(ellipse 100% 80% at 50% 100%, rgba(0, 0, 0, 0.6) 0%, transparent 45%),
-    linear-gradient(180deg, #000000 0%, #050505 50%, #000000 100%);
+    linear-gradient(180deg, #000000 0%, #050508 50%, #000000 100%);
 }
 
 .bg-vignette {
@@ -130,13 +132,26 @@ body {
   transform: translate(-50%, -50%);
   z-index: 0;
   pointer-events: none;
-  background: radial-gradient(
-    ellipse 62% 58% at 50% 46%,
-    rgba(255, 255, 255, 0.48) 0%,
-    rgba(255, 255, 255, 0.18) 36%,
-    rgba(255, 255, 255, 0.04) 56%,
-    transparent 76%
-  );
+  background:
+    radial-gradient(
+      ellipse 48% 52% at 34% 48%,
+      rgba(124, 76, 189, 0.42) 0%,
+      rgba(91, 45, 143, 0.12) 42%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 46% 50% at 70% 46%,
+      rgba(142, 212, 255, 0.38) 0%,
+      rgba(94, 219, 255, 0.1) 44%,
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse 62% 58% at 50% 46%,
+      rgba(255, 255, 255, 0.38) 0%,
+      rgba(255, 255, 255, 0.14) 36%,
+      rgba(240, 248, 255, 0.05) 56%,
+      transparent 76%
+    );
   filter: blur(60px);
   opacity: 0.9;
   -webkit-mask-image: radial-gradient(ellipse 72% 68% at 50% 48%, #000 20%, transparent 78%);
