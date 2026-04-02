@@ -147,17 +147,17 @@ function applyWhiteChrome(root) {
     if (!child.isMesh) return;
     disposeMaterial(child.material);
     child.material = new THREE.MeshPhysicalMaterial({
-      color: 0x868b98,
-      emissive: 0x0c0e14,
-      emissiveIntensity: 0.012,
+      color: 0xffffff,
+      emissive: 0x080a12,
+      emissiveIntensity: 0.028,
       metalness: 1,
-      roughness: 0.24,
-      envMapIntensity: 11.5,
-      clearcoat: 0.55,
-      clearcoatRoughness: 0.065,
-      specularIntensity: 1.05,
-      specularColor: 0xc5d2e6,
-      ior: 1.65,
+      roughness: 0.0012,
+      envMapIntensity: 23,
+      clearcoat: 1,
+      clearcoatRoughness: 0.0035,
+      specularIntensity: 1.45,
+      specularColor: 0xffffff,
+      ior: 2.05,
       sheen: 0,
       transparent: false,
       dithering: true,
@@ -192,10 +192,10 @@ function buildChromeStudioEnvMap(renderer) {
     ctx.restore();
   }
 
-  blob(w * 0.22, h * 0.44, w * 0.05, h * 0.26, "rgba(255,255,255,0.68)", "rgba(210,218,235,0.2)", "rgba(0,0,0,0)");
-  blob(w * 0.78, h * 0.52, w * 0.055, h * 0.24, "rgba(220,222,240,0.48)", "rgba(150,160,195,0.12)", "rgba(0,0,0,0)");
-  blob(w * 0.5, h * 0.16, w * 0.08, h * 0.055, "rgba(255,255,255,0.38)", "rgba(170,182,210,0.1)", "rgba(0,0,0,0)");
-  blob(w * 0.5, h * 0.9, w * 0.2, h * 0.07, "rgba(140,150,185,0.18)", "rgba(35,40,58,0.05)", "rgba(0,0,0,0)");
+  blob(w * 0.2, h * 0.46, w * 0.065, h * 0.3, "rgba(255,255,255,0.92)", "rgba(236,242,255,0.34)", "rgba(0,0,0,0)");
+  blob(w * 0.8, h * 0.52, w * 0.07, h * 0.28, "rgba(240,238,255,0.72)", "rgba(190,198,240,0.22)", "rgba(0,0,0,0)");
+  blob(w * 0.5, h * 0.14, w * 0.1, h * 0.065, "rgba(255,255,255,0.52)", "rgba(200,214,255,0.16)", "rgba(0,0,0,0)");
+  blob(w * 0.5, h * 0.9, w * 0.22, h * 0.08, "rgba(200,210,245,0.32)", "rgba(60,68,100,0.08)", "rgba(0,0,0,0)");
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.mapping = THREE.EquirectangularReflectionMapping;
@@ -290,7 +290,7 @@ function main() {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 2.05;
+  renderer.toneMappingExposure = 2.28;
   renderer.setClearColor(BLACK, 0);
   const canvas = renderer.domElement;
   canvas.style.display = "block";
@@ -315,7 +315,7 @@ function main() {
     composer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     composer.setSize(iw0, ih0, false);
     composer.addPass(new RenderPass(scene, camera));
-    bloomPass = new UnrealBloomPass(new THREE.Vector2(iw0, ih0), 0.072, 0.45, 0.945);
+    bloomPass = new UnrealBloomPass(new THREE.Vector2(iw0, ih0), 0.095, 0.52, 0.93);
     composer.addPass(bloomPass);
     composer.addPass(new OutputPass());
   }
@@ -326,35 +326,35 @@ function main() {
   const pivot = new THREE.Group();
   scene.add(pivot);
 
-  scene.add(new THREE.AmbientLight(0xb8c0d4, 0.22));
-  const hemi = new THREE.HemisphereLight(0xd8dce8, 0x030305, 0.42);
+  scene.add(new THREE.AmbientLight(0xe8ecff, 0.32));
+  const hemi = new THREE.HemisphereLight(0xeeeaff, 0x040408, 0.55);
   scene.add(hemi);
-  const key = new THREE.DirectionalLight(0xfff8f2, 2.72);
-  key.position.set(-5.2, 9.2, 5.8);
+  const key = new THREE.DirectionalLight(0xffffff, 2.45);
+  key.position.set(6, 7, 8);
   scene.add(key);
-  const fill = new THREE.DirectionalLight(0xa8b4cc, 0.42);
-  fill.position.set(5.5, 1.5, -3.5);
+  const fill = new THREE.DirectionalLight(0xd8e2ff, 0.88);
+  fill.position.set(-7, 2, -4);
   scene.add(fill);
-  const rim = new THREE.DirectionalLight(0xc8d2e8, 0.85);
-  rim.position.set(-2, 4, -8);
+  const rim = new THREE.DirectionalLight(0xe8eeff, 1.18);
+  rim.position.set(-2, 5, -8);
   scene.add(rim);
-  const sparkle = new THREE.DirectionalLight(0xffffff, 0.48);
-  sparkle.position.set(-3.5, 7.5, 7);
+  const sparkle = new THREE.DirectionalLight(0xffffff, 0.62);
+  sparkle.position.set(2, 8, 10);
   scene.add(sparkle);
-  const backWash = new THREE.DirectionalLight(0xa8b0c8, 0.72);
+  const backWash = new THREE.DirectionalLight(0xeef2ff, 1.38);
   backWash.position.set(0, 0.35, -9);
   scene.add(backWash);
 
-  const neonFront = new THREE.PointLight(0xd8e0f0, 2.15 * ls.point, 0, 2);
+  const neonFront = new THREE.PointLight(0xffffff, 3.35 * ls.point, 0, 2);
   neonFront.position.set(0, 0.28, 3.45);
   scene.add(neonFront);
-  const neonL = new THREE.PointLight(0xc8d0e5, 1.35 * ls.point, 0, 2);
+  const neonL = new THREE.PointLight(0xf2f6ff, 2.15 * ls.point, 0, 2);
   neonL.position.set(-2.35, 0.5, 2.85);
   scene.add(neonL);
-  const neonR = new THREE.PointLight(0xc8d0e5, 1.35 * ls.point, 0, 2);
+  const neonR = new THREE.PointLight(0xf2f6ff, 2.15 * ls.point, 0, 2);
   neonR.position.set(2.35, 0.5, 2.85);
   scene.add(neonR);
-  const neonTop = new THREE.PointLight(0xe8eef8, 0.95 * ls.point, 0, 2);
+  const neonTop = new THREE.PointLight(0xeef4ff, 1.15 * ls.point, 0, 2);
   neonTop.position.set(0, 2.2, 1.5);
   scene.add(neonTop);
 

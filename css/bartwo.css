@@ -31,17 +31,6 @@ body {
   position: relative;
 }
 
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 54;
-  pointer-events: none;
-  background: #000000;
-  opacity: 0;
-  animation: site-black-flicker 11s steps(1, end) infinite;
-}
-
 body::after {
   content: "";
   position: fixed;
@@ -51,7 +40,7 @@ body::after {
   background: #ffffff;
   mix-blend-mode: overlay;
   opacity: 0;
-  animation: site-white-flicker 6.2s steps(1, end) infinite;
+  animation: site-white-flicker 5.4s steps(1, end) infinite;
 }
 
 .bg {
@@ -86,15 +75,15 @@ body::after {
   inset: 0;
   pointer-events: none;
   background: radial-gradient(
-    ellipse 78% 72% at 50% 46%,
+    ellipse 80% 74% at 50% 46%,
     transparent 0%,
-    transparent 42%,
-    rgba(0, 0, 0, 0.38) 78%,
-    rgba(0, 0, 0, 0.88) 100%
+    transparent 48%,
+    rgba(0, 0, 0, 0.22) 82%,
+    rgba(0, 0, 0, 0.62) 100%
   );
   box-shadow:
-    inset 0 0 min(160px, 22vw) min(56px, 8vw) rgba(0, 0, 0, 0.72),
-    inset 0 0 min(48px, 7vw) rgba(0, 0, 0, 0.35);
+    inset 0 0 min(140px, 20vw) min(44px, 7vw) rgba(0, 0, 0, 0.48),
+    inset 0 0 min(40px, 6vw) rgba(0, 0, 0, 0.22);
 }
 
 .stage {
@@ -363,11 +352,6 @@ body.contrast-ritual .stage {
     filter: blur(52px);
   }
 
-  body::before {
-    animation: none !important;
-    opacity: 0 !important;
-  }
-
   body::after {
     animation: none !important;
     opacity: 0 !important;
@@ -395,100 +379,81 @@ body.contrast-ritual .stage {
   }
 }
 
-@keyframes site-black-flicker {
-  0%,
-  100% {
-    opacity: 0;
-  }
-  7.1% {
-    opacity: 0;
-  }
-  7.3% {
-    opacity: 0.055;
-  }
-  7.5% {
-    opacity: 0;
-  }
-  31.2% {
-    opacity: 0;
-  }
-  31.45% {
-    opacity: 0.04;
-  }
-  31.6% {
-    opacity: 0;
-  }
-  52.8% {
-    opacity: 0;
-  }
-  53.05% {
-    opacity: 0.072;
-  }
-  53.25% {
-    opacity: 0;
-  }
-  71% {
-    opacity: 0;
-  }
-  71.15% {
-    opacity: 0.035;
-  }
-  71.3% {
-    opacity: 0;
-  }
-  91.6% {
-    opacity: 0;
-  }
-  91.85% {
-    opacity: 0.048;
-  }
-  92% {
-    opacity: 0;
-  }
-}
-
 @keyframes site-white-flicker {
   0%,
   100% {
     opacity: 0;
   }
-  9% {
+  4.5% {
     opacity: 0;
   }
-  10% {
-    opacity: 0.18;
+  4.8% {
+    opacity: 0.1;
   }
-  10.8% {
+  5.1% {
     opacity: 0;
   }
-  38% {
+  18% {
     opacity: 0;
   }
-  38.6% {
-    opacity: 0.12;
+  18.35% {
+    opacity: 0.2;
   }
-  39.2% {
+  18.7% {
     opacity: 0;
   }
-  61% {
+  33% {
     opacity: 0;
   }
-  61.4% {
-    opacity: 0.22;
+  33.25% {
+    opacity: 0.14;
+  }
+  33.5% {
+    opacity: 0;
+  }
+  48% {
+    opacity: 0;
+  }
+  48.4% {
+    opacity: 0.24;
+  }
+  48.85% {
+    opacity: 0;
   }
   62% {
-    opacity: 0.04;
-  }
-  62.6% {
     opacity: 0;
   }
-  84% {
+  62.3% {
+    opacity: 0.08;
+  }
+  62.55% {
     opacity: 0;
   }
-  84.5% {
-    opacity: 0.15;
+  76% {
+    opacity: 0;
   }
-  85% {
+  76.2% {
+    opacity: 0.17;
+  }
+  76.5% {
+    opacity: 0;
+  }
+  88% {
+    opacity: 0;
+  }
+  88.4% {
+    opacity: 0.11;
+  }
+  88.75% {
+    opacity: 0;
+  }
+  95.5% {
+    opacity: 0;
+  }
+  95.85% {
+    opacity: 0.19;
+  }
+  96.2% {
     opacity: 0;
   }
 }
