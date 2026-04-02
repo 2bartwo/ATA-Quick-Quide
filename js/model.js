@@ -7,10 +7,25 @@ const MODEL_URL = new URL("../models/bartwo3d.glb", import.meta.url).href;
 
 const BLACK = 0x000000;
 /** Koyu mor + açık mavi neon — kromda renkli speküler yansımalar için */
-const NEON_PURPLE_DEEP = 0x5b2d8f;
-const NEON_PURPLE_SOFT = 0x7c4cbd;
-const NEON_SKY = 0x8fd4ff;
-const NEON_CYAN = 0x5edbff;
+const NEON_PURPLE_DEEP = 0x7b3cff;
+const NEON_PURPLE_SOFT = 0xa78bfa;
+const NEON_SKY = 0x7dd3fc;
+const NEON_CYAN = 0x22d3ee;
+
+/**
+ * r155+ fiziksel ışık varsayılanı küçük yoğunlukları bitirir — legacy tercih edilir.
+ * Gelecekte useLegacyLights kaldırılırsa REVISION ile kabaca ölçek.
+ */
+function lightingScale(renderer) {
+  if ("useLegacyLights" in renderer) {
+    renderer.useLegacyLights = true;
+    return { point: 1, wash: 1 };
+  }
+  if (typeof THREE.REVISION === "number" && THREE.REVISION >= 155) {
+    return { point: 140, wash: 55 };
+  }
+  return { point: 1, wash: 1 };
+}
 
 function showLoadError(message) {
   const root = document.getElementById("three-root");
@@ -122,24 +137,54 @@ function applyWhiteChrome(root) {
   root.traverse((child) => {
     if (!child.isMesh) return;
     disposeMaterial(child.material);
-    // Gerçek krom: yansıma (env + ışık), düşük emissive. Yüksek emissive plastik/neon gibi durur.
     child.material = new THREE.MeshPhysicalMaterial({
       color: 0xffffff,
       emissive: 0x000000,
       emissiveIntensity: 0,
       metalness: 1,
-      roughness: 0.007,
-      envMapIntensity: 6.35,
+      roughness: 0.0025,
+      envMapIntensity: 9.25,
       clearcoat: 1,
-      clearcoatRoughness: 0.003,
-      specularIntensity: 1,
+      clearcoatRoughness: 0.0015,
+      specularIntensity: 1.15,
       specularColor: 0xffffff,
-      ior: 1.65,
+      ior: 1.7,
       sheen: 0,
     });
     child.castShadow = false;
     child.receiveShadow = false;
   });
+}
+
+/** Işık konumunda additive sprite — neon kaynağı sahne içinde görünsün */
+function createNeonGlowSprite(colorHex, worldSize) {
+  const c = document.createElement("canvas");
+  c.width = 128;
+  c.height = 128;
+  const ctx = c.getContext("2d");
+  const g = ctx.createRadialGradient(64, 64, 0, 64, 64, 58);
+  g.addColorStop(0, "rgba(255,255,255,1)");
+  g.addColorStop(0.15, "rgba(255,255,255,0.75)");
+  g.addColorStop(0.45, "rgba(255,255,255,0.22)");
+  g.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, 128, 128);
+  const map = new THREE.CanvasTexture(c);
+  map.colorSpace = THREE.SRGBColorSpace;
+  const mat = new THREE.SpriteMaterial({
+    map,
+    color: colorHex,
+    transparent: true,
+    opacity: 1,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    depthTest: true,
+    toneMapped: false,
+  });
+  const sprite = new THREE.Sprite(mat);
+  sprite.scale.setScalar(worldSize);
+  sprite.renderOrder = 1;
+  return sprite;
 }
 
 function visibleRectAtTarget(camera, target) {
@@ -219,7 +264,7 @@ function main() {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 2.02;
+  renderer.toneMappingExposure = 2.08;
   renderer.setClearColor(BLACK, 1);
   const canvas = renderer.domElement;
   canvas.style.display = "block";
@@ -229,8 +274,10 @@ function main() {
   canvas.setAttribute("tabindex", "-1");
   rootEl.appendChild(canvas);
 
+  const ls = lightingScale(renderer);
+
   const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.02).texture;
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.008).texture;
   pmrem.dispose();
 
   const starfield = createStarfield();
@@ -239,43 +286,65 @@ function main() {
   const pivot = new THREE.Group();
   scene.add(pivot);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.34));
-  const hemi = new THREE.HemisphereLight(0xf5f0ff, 0x140a22, 0.48);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.28));
+  const hemi = new THREE.HemisphereLight(0xf0ecff, 0x18082a, 0.52);
   scene.add(hemi);
-  const key = new THREE.DirectionalLight(0xffffff, 2.35);
+  const key = new THREE.DirectionalLight(0xffffff, 1.85);
   key.position.set(6, 7, 8);
   scene.add(key);
-  const fill = new THREE.DirectionalLight(0xe8f4ff, 0.88);
+  const fill = new THREE.DirectionalLight(0xd4e9ff, 0.62);
   fill.position.set(-7, 2, -4);
   scene.add(fill);
-  const rim = new THREE.DirectionalLight(0xffffff, 1.08);
+  const rim = new THREE.DirectionalLight(0xffffff, 0.92);
   rim.position.set(-2, 5, -8);
   scene.add(rim);
 
-  // Beyaz ana vurgular (sabit — krom stabil kalsın)
-  const neonFront = new THREE.PointLight(0xffffff, 3.35, 26, 1.32);
-  neonFront.position.set(0, 0.35, 4.05);
+  // Geniş renkli alan ışığı — metal yüzeyde mor/mavi hatlar (point’tan daha tutarlı)
+  const washPurple = new THREE.DirectionalLight(NEON_PURPLE_SOFT, 1.35 * ls.wash);
+  washPurple.position.set(-8, 2.5, 5);
+  scene.add(washPurple);
+  const washCyan = new THREE.DirectionalLight(NEON_CYAN, 1.25 * ls.wash);
+  washCyan.position.set(8, 3, 4);
+  scene.add(washCyan);
+
+  const neonFront = new THREE.PointLight(0xffffff, 2.65 * ls.point, 0, 2);
+  neonFront.position.set(0, 0.32, 3.55);
   scene.add(neonFront);
-  const neonL = new THREE.PointLight(0xffffff, 1.82, 22, 1.52);
-  neonL.position.set(-2.8, 0.55, 3.15);
+  const neonL = new THREE.PointLight(0xffffff, 1.45 * ls.point, 0, 2);
+  neonL.position.set(-2.4, 0.5, 2.95);
   scene.add(neonL);
-  const neonR = new THREE.PointLight(0xffffff, 1.82, 22, 1.52);
-  neonR.position.set(2.8, 0.55, 3.15);
+  const neonR = new THREE.PointLight(0xffffff, 1.45 * ls.point, 0, 2);
+  neonR.position.set(2.4, 0.5, 2.95);
   scene.add(neonR);
 
-  // Renkli neon — krom yüzeyde mor / açık mavi yansımalar
-  const neonPurpleRim = new THREE.PointLight(NEON_PURPLE_DEEP, 2.45, 28, 1.38);
-  neonPurpleRim.position.set(-3.35, 0.15, 2.4);
+  const neonPurpleRim = new THREE.PointLight(NEON_PURPLE_DEEP, 6.5 * ls.point, 0, 2);
+  neonPurpleRim.position.set(-2.15, 0.2, 2.65);
   scene.add(neonPurpleRim);
-  const neonPurpleBack = new THREE.PointLight(NEON_PURPLE_SOFT, 1.75, 24, 1.45);
-  neonPurpleBack.position.set(-3.9, 1.35, -1.2);
+  const neonPurpleBack = new THREE.PointLight(NEON_PURPLE_SOFT, 4.8 * ls.point, 0, 2);
+  neonPurpleBack.position.set(-2.85, 1.1, 0.35);
   scene.add(neonPurpleBack);
-  const neonSkyFront = new THREE.PointLight(NEON_SKY, 2.35, 26, 1.36);
-  neonSkyFront.position.set(3.5, 0.45, 3.35);
+  const neonSkyFront = new THREE.PointLight(NEON_SKY, 6.2 * ls.point, 0, 2);
+  neonSkyFront.position.set(2.35, 0.35, 2.75);
   scene.add(neonSkyFront);
-  const neonCyanTop = new THREE.PointLight(NEON_CYAN, 1.68, 22, 1.42);
-  neonCyanTop.position.set(2.2, 2.65, 1.1);
+  const neonCyanTop = new THREE.PointLight(NEON_CYAN, 4.5 * ls.point, 0, 2);
+  neonCyanTop.position.set(1.65, 2.15, 1.35);
   scene.add(neonCyanTop);
+
+  const neonSpriteGroup = new THREE.Group();
+  neonSpriteGroup.name = "neon-sprites";
+  scene.add(neonSpriteGroup);
+  const spritePairs = [
+    [neonPurpleRim, NEON_PURPLE_DEEP, 1.35],
+    [neonPurpleBack, NEON_PURPLE_SOFT, 1.05],
+    [neonSkyFront, NEON_SKY, 1.28],
+    [neonCyanTop, NEON_CYAN, 1.0],
+  ];
+  for (const [light, col, size] of spritePairs) {
+    const s = createNeonGlowSprite(col, size);
+    s.position.copy(light.position);
+    s.position.z += 0.55;
+    neonSpriteGroup.add(s);
+  }
 
   const clock = new THREE.Clock();
   let loaded = false;

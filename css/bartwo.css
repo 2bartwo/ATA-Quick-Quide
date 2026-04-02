@@ -135,14 +135,14 @@ body {
   background:
     radial-gradient(
       ellipse 48% 52% at 34% 48%,
-      rgba(124, 76, 189, 0.42) 0%,
-      rgba(91, 45, 143, 0.12) 42%,
+      rgba(167, 139, 250, 0.55) 0%,
+      rgba(91, 45, 143, 0.2) 42%,
       transparent 70%
     ),
     radial-gradient(
       ellipse 46% 50% at 70% 46%,
-      rgba(142, 212, 255, 0.38) 0%,
-      rgba(94, 219, 255, 0.1) 44%,
+      rgba(125, 211, 252, 0.5) 0%,
+      rgba(34, 211, 238, 0.16) 44%,
       transparent 68%
     ),
     radial-gradient(
@@ -152,8 +152,8 @@ body {
       rgba(240, 248, 255, 0.05) 56%,
       transparent 76%
     );
-  filter: blur(60px);
-  opacity: 0.9;
+  filter: blur(56px);
+  opacity: 0.98;
   -webkit-mask-image: radial-gradient(ellipse 72% 68% at 50% 48%, #000 20%, transparent 78%);
   mask-image: radial-gradient(ellipse 72% 68% at 50% 48%, #000 20%, transparent 78%);
 }
