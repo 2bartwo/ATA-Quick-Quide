@@ -31,6 +31,17 @@ body {
   position: relative;
 }
 
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 54;
+  pointer-events: none;
+  background: #000000;
+  opacity: 0;
+  animation: site-black-flicker 11s steps(1, end) infinite;
+}
+
 body::after {
   content: "";
   position: fixed;
@@ -73,7 +84,17 @@ body::after {
 .bg-vignette {
   position: absolute;
   inset: 0;
-  box-shadow: inset 0 0 100px 36px rgba(0, 0, 0, 0.52);
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 78% 72% at 50% 46%,
+    transparent 0%,
+    transparent 42%,
+    rgba(0, 0, 0, 0.38) 78%,
+    rgba(0, 0, 0, 0.88) 100%
+  );
+  box-shadow:
+    inset 0 0 min(160px, 22vw) min(56px, 8vw) rgba(0, 0, 0, 0.72),
+    inset 0 0 min(48px, 7vw) rgba(0, 0, 0, 0.35);
 }
 
 .stage {
@@ -284,14 +305,14 @@ body.contrast-ritual .stage {
   z-index: 0;
   pointer-events: none;
   background: radial-gradient(
-    ellipse 62% 58% at 50% 46%,
-    rgba(255, 255, 255, 0.55) 0%,
-    rgba(255, 255, 255, 0.22) 36%,
-    rgba(255, 255, 255, 0.07) 56%,
-    transparent 76%
+    ellipse 62% 58% at 50% 48%,
+    rgba(230, 236, 255, 0.28) 0%,
+    rgba(200, 210, 240, 0.1) 38%,
+    rgba(120, 130, 170, 0.04) 58%,
+    transparent 78%
   );
   filter: blur(56px);
-  opacity: 0.98;
+  opacity: 0.82;
   -webkit-mask-image: radial-gradient(ellipse 72% 68% at 50% 48%, #000 20%, transparent 78%);
   mask-image: radial-gradient(ellipse 72% 68% at 50% 48%, #000 20%, transparent 78%);
 }
@@ -342,6 +363,11 @@ body.contrast-ritual .stage {
     filter: blur(52px);
   }
 
+  body::before {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+
   body::after {
     animation: none !important;
     opacity: 0 !important;
@@ -366,6 +392,58 @@ body.contrast-ritual .stage {
 
   .load-veil__sigil {
     animation: load-veil-pulse 4s ease-in-out infinite;
+  }
+}
+
+@keyframes site-black-flicker {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  7.1% {
+    opacity: 0;
+  }
+  7.3% {
+    opacity: 0.055;
+  }
+  7.5% {
+    opacity: 0;
+  }
+  31.2% {
+    opacity: 0;
+  }
+  31.45% {
+    opacity: 0.04;
+  }
+  31.6% {
+    opacity: 0;
+  }
+  52.8% {
+    opacity: 0;
+  }
+  53.05% {
+    opacity: 0.072;
+  }
+  53.25% {
+    opacity: 0;
+  }
+  71% {
+    opacity: 0;
+  }
+  71.15% {
+    opacity: 0.035;
+  }
+  71.3% {
+    opacity: 0;
+  }
+  91.6% {
+    opacity: 0;
+  }
+  91.85% {
+    opacity: 0.048;
+  }
+  92% {
+    opacity: 0;
   }
 }
 
