@@ -4,7 +4,7 @@
   --ink: #0a0a0a;
   --white: #e6e6e6;
   --gray-mid: rgba(255, 255, 255, 0.06);
-  --vhs-tint: rgba(0, 0, 0, 0.58);
+  --vhs-tint: rgba(0, 0, 0, 0.34);
 }
 
 *,
@@ -73,7 +73,7 @@ body::after {
 .bg-vignette {
   position: absolute;
   inset: 0;
-  box-shadow: inset 0 0 100px 36px rgba(0, 0, 0, 0.76);
+  box-shadow: inset 0 0 100px 36px rgba(0, 0, 0, 0.52);
 }
 
 .stage {
@@ -191,10 +191,10 @@ body::after {
   background: radial-gradient(
     ellipse 94% 90% at 50% 48%,
     transparent 0%,
-    transparent 38%,
-    rgba(0, 0, 0, 0.36) 100%
+    transparent 42%,
+    rgba(0, 0, 0, 0.22) 100%
   );
-  box-shadow: inset 0 0 min(100px, 16vw) rgba(0, 0, 0, 0.52);
+  box-shadow: inset 0 0 min(100px, 16vw) rgba(0, 0, 0, 0.34);
 }
 
 .crt-shim::before {
@@ -285,13 +285,13 @@ body.contrast-ritual .stage {
   pointer-events: none;
   background: radial-gradient(
     ellipse 62% 58% at 50% 46%,
-    rgba(255, 255, 255, 0.42) 0%,
-    rgba(255, 255, 255, 0.16) 36%,
-    rgba(255, 255, 255, 0.04) 56%,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.22) 36%,
+    rgba(255, 255, 255, 0.07) 56%,
     transparent 76%
   );
   filter: blur(56px);
-  opacity: 0.92;
+  opacity: 0.98;
   -webkit-mask-image: radial-gradient(ellipse 72% 68% at 50% 48%, #000 20%, transparent 78%);
   mask-image: radial-gradient(ellipse 72% 68% at 50% 48%, #000 20%, transparent 78%);
 }
@@ -308,9 +308,9 @@ body.contrast-ritual .stage {
   z-index: 1;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 38% 36% at 50% 50%, rgba(255, 255, 255, 0.2) 0%, transparent 58%),
-    radial-gradient(ellipse 58% 52% at 50% 48%, rgba(238, 242, 255, 0.12) 0%, transparent 65%),
-    radial-gradient(ellipse 88% 78% at 50% 50%, rgba(255, 255, 255, 0.06) 0%, transparent 72%);
+    radial-gradient(ellipse 38% 36% at 50% 50%, rgba(255, 255, 255, 0.32) 0%, transparent 58%),
+    radial-gradient(ellipse 58% 52% at 50% 48%, rgba(238, 242, 255, 0.2) 0%, transparent 65%),
+    radial-gradient(ellipse 88% 78% at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 72%);
   filter: blur(64px);
   opacity: 1;
   mix-blend-mode: screen;
@@ -353,7 +353,7 @@ body.contrast-ritual .stage {
   }
 
   .vhs-noise-canvas {
-    opacity: 0.055 !important;
+    opacity: 0.02 !important;
   }
 
   .footer-line .pentagram {
@@ -420,22 +420,17 @@ body.contrast-ritual .stage {
   inset: -6%;
   width: 112%;
   height: 112%;
-  opacity: 0.14;
+  opacity: 0.07;
   mix-blend-mode: overlay;
-  filter: contrast(1.14) brightness(1.05);
+  filter: contrast(1.06) brightness(1.04);
 }
 
 .vhs-scanlines {
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0) 0 1px,
-    rgba(0, 0, 0, 0) 1px 2px,
-    rgba(0, 0, 0, 0.16) 2px 3px
-  );
-  opacity: 0.48;
-  mix-blend-mode: multiply;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
 }
 
 .vhs-flicker {
@@ -450,37 +445,37 @@ body.contrast-ritual .stage {
 @keyframes vhs-flicker {
   0%,
   100% {
-    opacity: 0.82;
+    opacity: 0.38;
   }
   9% {
-    opacity: 0.94;
+    opacity: 0.48;
   }
   18% {
-    opacity: 0.76;
+    opacity: 0.34;
   }
   27% {
-    opacity: 0.92;
+    opacity: 0.46;
   }
   36% {
-    opacity: 0.72;
+    opacity: 0.32;
   }
   45% {
-    opacity: 0.9;
+    opacity: 0.44;
   }
   54% {
-    opacity: 0.78;
+    opacity: 0.36;
   }
   63% {
-    opacity: 0.96;
+    opacity: 0.5;
   }
   72% {
-    opacity: 0.74;
+    opacity: 0.33;
   }
   81% {
-    opacity: 0.91;
+    opacity: 0.45;
   }
   90% {
-    opacity: 0.68;
+    opacity: 0.3;
   }
 }
 
@@ -506,7 +501,7 @@ body.contrast-ritual .stage {
   font-weight: 500;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(200, 200, 200, 0.45);
+  color: rgba(220, 224, 230, 0.62);
 }
 
 .footer-text {

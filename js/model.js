@@ -55,17 +55,20 @@ function disposeMaterial(m) {
 }
 
 function starTexture() {
+  const n = 128;
   const c = document.createElement("canvas");
-  c.width = 64;
-  c.height = 64;
+  c.width = n;
+  c.height = n;
   const ctx = c.getContext("2d");
-  const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 28);
+  const cx = n / 2;
+  const g = ctx.createRadialGradient(cx, cx, 0, cx, cx, n * 0.48);
   g.addColorStop(0, "rgba(255,255,255,1)");
-  g.addColorStop(0.35, "rgba(255,255,255,0.45)");
-  g.addColorStop(0.65, "rgba(200,200,200,0.12)");
+  g.addColorStop(0.28, "rgba(255,255,255,0.5)");
+  g.addColorStop(0.55, "rgba(220,228,255,0.14)");
+  g.addColorStop(0.82, "rgba(120,130,180,0.04)");
   g.addColorStop(1, "rgba(0,0,0,0)");
   ctx.fillStyle = g;
-  ctx.fillRect(0, 0, 64, 64);
+  ctx.fillRect(0, 0, n, n);
   const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace;
   return t;
@@ -108,7 +111,8 @@ function createStarfield() {
     sizeAttenuation: true,
     transparent: true,
     opacity: 0.92,
-    depthWrite: true,
+    alphaTest: 0.02,
+    depthWrite: false,
     depthTest: true,
     blending: THREE.AdditiveBlending,
   });
@@ -144,14 +148,14 @@ function applyWhiteChrome(root) {
     disposeMaterial(child.material);
     child.material = new THREE.MeshPhysicalMaterial({
       color: 0xffffff,
-      emissive: 0x10141c,
-      emissiveIntensity: 0.065,
+      emissive: 0xc8d2e8,
+      emissiveIntensity: 0.095,
       metalness: 1,
-      roughness: 0.0045,
-      envMapIntensity: 16.25,
+      roughness: 0.0028,
+      envMapIntensity: 24,
       clearcoat: 1,
-      clearcoatRoughness: 0.014,
-      specularIntensity: 1.22,
+      clearcoatRoughness: 0.01,
+      specularIntensity: 1.35,
       specularColor: 0xffffff,
       ior: 1.72,
       sheen: 0,
@@ -188,10 +192,10 @@ function buildChromeStudioEnvMap(renderer) {
     ctx.restore();
   }
 
-  blob(w * 0.2, h * 0.46, w * 0.055, h * 0.28, "rgba(255,255,255,0.75)", "rgba(230,238,255,0.22)", "rgba(0,0,0,0)");
-  blob(w * 0.8, h * 0.52, w * 0.06, h * 0.26, "rgba(228,226,255,0.55)", "rgba(180,186,230,0.14)", "rgba(0,0,0,0)");
-  blob(w * 0.5, h * 0.12, w * 0.14, h * 0.08, "rgba(255,255,255,0.55)", "rgba(210,220,255,0.16)", "rgba(0,0,0,0)");
-  blob(w * 0.5, h * 0.9, w * 0.2, h * 0.07, "rgba(170,185,230,0.22)", "rgba(40,45,70,0.04)", "rgba(0,0,0,0)");
+  blob(w * 0.2, h * 0.46, w * 0.065, h * 0.3, "rgba(255,255,255,0.92)", "rgba(236,242,255,0.34)", "rgba(0,0,0,0)");
+  blob(w * 0.8, h * 0.52, w * 0.07, h * 0.28, "rgba(240,238,255,0.72)", "rgba(190,198,240,0.22)", "rgba(0,0,0,0)");
+  blob(w * 0.5, h * 0.12, w * 0.16, h * 0.09, "rgba(255,255,255,0.72)", "rgba(218,228,255,0.24)", "rgba(0,0,0,0)");
+  blob(w * 0.5, h * 0.9, w * 0.22, h * 0.08, "rgba(200,210,245,0.32)", "rgba(60,68,100,0.08)", "rgba(0,0,0,0)");
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.mapping = THREE.EquirectangularReflectionMapping;
@@ -272,7 +276,7 @@ function main() {
 
   const scene = new THREE.Scene();
   scene.background = null;
-  scene.fog = new THREE.FogExp2(BLACK, 0.0068);
+  scene.fog = new THREE.FogExp2(BLACK, 0.0054);
 
   const camera = new THREE.PerspectiveCamera(34, 1, 0.05, 500);
   camera.position.set(0, 0.14, 4.25);
@@ -286,7 +290,7 @@ function main() {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 2.02;
+  renderer.toneMappingExposure = 2.58;
   renderer.setClearColor(BLACK, 0);
   const canvas = renderer.domElement;
   canvas.style.display = "block";
@@ -311,7 +315,7 @@ function main() {
     composer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     composer.setSize(iw0, ih0, false);
     composer.addPass(new RenderPass(scene, camera));
-    bloomPass = new UnrealBloomPass(new THREE.Vector2(iw0, ih0), 0.26, 0.22, 0.915);
+    bloomPass = new UnrealBloomPass(new THREE.Vector2(iw0, ih0), 0.17, 0.78, 0.84);
     composer.addPass(bloomPass);
     composer.addPass(new OutputPass());
   }
@@ -322,35 +326,35 @@ function main() {
   const pivot = new THREE.Group();
   scene.add(pivot);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.29));
-  const hemi = new THREE.HemisphereLight(0xf2f0ff, 0x06060a, 0.5);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.46));
+  const hemi = new THREE.HemisphereLight(0xf6f4ff, 0x0a0a12, 0.62);
   scene.add(hemi);
-  const key = new THREE.DirectionalLight(0xffffff, 2.05);
+  const key = new THREE.DirectionalLight(0xffffff, 2.65);
   key.position.set(6, 7, 8);
   scene.add(key);
-  const fill = new THREE.DirectionalLight(0xe8ecff, 0.78);
+  const fill = new THREE.DirectionalLight(0xecf0ff, 1.02);
   fill.position.set(-7, 2, -4);
   scene.add(fill);
-  const rim = new THREE.DirectionalLight(0xf0f4ff, 1.05);
+  const rim = new THREE.DirectionalLight(0xf4f6ff, 1.22);
   rim.position.set(-2, 5, -8);
   scene.add(rim);
-  const sparkle = new THREE.DirectionalLight(0xffffff, 0.55);
+  const sparkle = new THREE.DirectionalLight(0xffffff, 0.72);
   sparkle.position.set(2, 8, 10);
   scene.add(sparkle);
-  const backWash = new THREE.DirectionalLight(0xf5f7ff, 1.35);
+  const backWash = new THREE.DirectionalLight(0xf8f9ff, 1.55);
   backWash.position.set(0, 0.35, -9);
   scene.add(backWash);
 
-  const neonFront = new THREE.PointLight(0xffffff, 2.85 * ls.point, 0, 2);
+  const neonFront = new THREE.PointLight(0xffffff, 3.35 * ls.point, 0, 2);
   neonFront.position.set(0, 0.28, 3.45);
   scene.add(neonFront);
-  const neonL = new THREE.PointLight(0xeef2ff, 1.75 * ls.point, 0, 2);
+  const neonL = new THREE.PointLight(0xf2f6ff, 2.15 * ls.point, 0, 2);
   neonL.position.set(-2.35, 0.5, 2.85);
   scene.add(neonL);
-  const neonR = new THREE.PointLight(0xeef2ff, 1.75 * ls.point, 0, 2);
+  const neonR = new THREE.PointLight(0xf2f6ff, 2.15 * ls.point, 0, 2);
   neonR.position.set(2.35, 0.5, 2.85);
   scene.add(neonR);
-  const neonTop = new THREE.PointLight(0xffffff, 1.45 * ls.point, 0, 2);
+  const neonTop = new THREE.PointLight(0xffffff, 1.85 * ls.point, 0, 2);
   neonTop.position.set(0, 2.2, 1.5);
   scene.add(neonTop);
 
