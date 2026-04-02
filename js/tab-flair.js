@@ -1,24 +1,64 @@
 (function () {
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const SIZE = 48;
+  const CURSOR = "|";
 
-  const titleSteps = reduced
-    ? [{ text: "bartwo", ms: 9999999 }]
-    : [
-        { text: "insta: 2bartwo", ms: 2800 },
-        { text: "\u200b", ms: 750 },
-        { text: "bartwo", ms: 2600 },
-        { text: "\u200b", ms: 750 },
-        { text: "\u26e4 \u26e4 \u26e4 \u26e4 \u26e4", ms: 2800 },
-        { text: "\u200b", ms: 750 },
-      ];
+  const phrases = reduced ? ["bartwo"] : ["insta: 2bartwo", "bartwo", "\u26e4 \u26e4 \u26e4 \u26e4 \u26e4"];
 
-  let titleIndex = 0;
-  function runTitleCycle() {
-    const step = titleSteps[titleIndex];
-    document.title = step.text;
-    titleIndex = (titleIndex + 1) % titleSteps.length;
-    setTimeout(runTitleCycle, step.ms);
+  function toChars(s) {
+    return Array.from(s);
+  }
+
+  function sliceUpto(s, count) {
+    return toChars(s)
+      .slice(0, count)
+      .join("");
+  }
+
+  function sleep(ms) {
+    return new Promise((r) => setTimeout(r, ms));
+  }
+
+  async function typeIn(str) {
+    const ch = toChars(str);
+    for (let i = 0; i <= ch.length; i++) {
+      document.title = sliceUpto(str, i) + CURSOR;
+      await sleep(i === ch.length ? 0 : 52 + (Math.random() * 28) | 0);
+    }
+  }
+
+  async function typeOut(str) {
+    const n = toChars(str).length;
+    for (let len = n; len >= 0; len--) {
+      document.title = sliceUpto(str, len) + (len === 0 ? "" : CURSOR);
+      await sleep(len === 0 ? 0 : 38 + ((Math.random() * 22) | 0));
+    }
+  }
+
+  async function holdWithBlink(str, totalMs) {
+    const end = Date.now() + totalMs;
+    let showCursor = true;
+    while (Date.now() < end) {
+      document.title = showCursor ? str + CURSOR : str;
+      showCursor = !showCursor;
+      await sleep(420);
+    }
+    document.title = str + CURSOR;
+  }
+
+  async function runTitleCycle() {
+    if (reduced) {
+      document.title = phrases[0];
+      return;
+    }
+    while (true) {
+      for (const phrase of phrases) {
+        await typeIn(phrase);
+        await holdWithBlink(phrase, 2000);
+        await typeOut(phrase);
+        await sleep(380);
+      }
+    }
   }
 
   function pentagramPath(ctx, cx, cy, r, rotation) {
@@ -38,7 +78,7 @@
   }
 
   function drawFrame(ctx, angle) {
-    ctx.fillStyle = "#030308";
+    ctx.fillStyle = "#050508";
     ctx.fillRect(0, 0, SIZE, SIZE);
     const cx = SIZE / 2;
     const cy = SIZE / 2;
@@ -50,19 +90,21 @@
     ctx.miterLimit = 2;
 
     for (let pass = 0; pass < 3; pass++) {
-      const blur = pass === 0 ? 10 : pass === 1 ? 4 : 0;
-      const alpha = pass === 0 ? 0.35 : pass === 1 ? 0.65 : 1;
+      const blur = pass === 0 ? 11 : pass === 1 ? 5 : 0;
+      const alpha = pass === 0 ? 0.28 : pass === 1 ? 0.55 : 1;
       ctx.strokeStyle =
-        pass === 2 ? "rgba(220, 255, 255, 0.95)" : "rgba(120, 240, 255, " + alpha + ")";
-      ctx.lineWidth = pass === 2 ? 1.6 : 2.2;
-      ctx.shadowColor = "rgba(0, 255, 255, 0.9)";
+        pass === 2
+          ? "rgba(255, 255, 255, 0.98)"
+          : "rgba(255, 255, 255, " + alpha + ")";
+      ctx.lineWidth = pass === 2 ? 1.55 : 2.1;
+      ctx.shadowColor = "rgba(255, 255, 255, 0.95)";
       ctx.shadowBlur = blur;
       pentagramPath(ctx, cx, cy, r, angle);
       ctx.stroke();
     }
     ctx.shadowBlur = 0;
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
-    ctx.lineWidth = 0.85;
+    ctx.strokeStyle = "rgba(255, 255, 255, 1)";
+    ctx.lineWidth = 0.9;
     pentagramPath(ctx, cx, cy, r * 0.92, angle);
     ctx.stroke();
     ctx.restore();
