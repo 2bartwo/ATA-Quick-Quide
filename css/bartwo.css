@@ -67,139 +67,58 @@ body {
   flex: 1;
   width: 100%;
   padding: 2rem 1rem 5.5rem;
-  perspective: 1400px;
-  perspective-origin: 50% 42%;
 }
 
-.orbital {
-  transform-style: preserve-3d;
-  animation: spin-y 18s linear infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .orbital {
-    animation: spin-y 90s linear infinite;
-  }
-}
-
-@keyframes spin-y {
-  from {
-    transform: rotateY(0deg);
-  }
-  to {
-    transform: rotateY(360deg);
-  }
-}
-
-.orbital-inner {
-  transform-style: preserve-3d;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.logo-stack {
+.hero-3d {
   position: relative;
-  transform-style: preserve-3d;
-  display: inline-block;
+  width: min(94vw, 980px);
+  height: min(62vh, 620px);
+  max-height: 72vh;
+}
+
+.three-root {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+}
+
+.three-root canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: none;
 }
 
 .logo-neon-bloom {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 140%;
-  height: 180%;
-  transform: translate(-50%, -50%) translateZ(-80px);
+  width: 75%;
+  height: 70%;
+  transform: translate(-50%, -50%);
   z-index: 0;
   pointer-events: none;
   background: radial-gradient(
-    ellipse 55% 45% at 50% 50%,
-    rgba(255, 255, 255, 0.55) 0%,
-    rgba(255, 255, 255, 0.18) 35%,
-    rgba(255, 255, 255, 0) 70%
+    ellipse 52% 48% at 50% 50%,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.14) 38%,
+    rgba(255, 255, 255, 0) 72%
   );
-  filter: blur(28px);
-  opacity: 0.95;
+  filter: blur(32px);
+  opacity: 0.92;
 }
 
-.logo-3d {
-  position: relative;
-  z-index: 1;
-  margin: 0;
-  font-family: "UnifrakturMaguntia", "Old English Text MT", serif;
-  font-weight: 400;
-  font-size: clamp(4.25rem, 22vw, 15rem);
-  line-height: 1;
-  letter-spacing: 0.03em;
-  text-transform: none;
-  transform-style: preserve-3d;
-  color: transparent;
-  text-shadow:
-    1px 1px 0 #4a4a4a,
-    2px 2px 0 #3d3d3d,
-    3px 3px 0 #333,
-    4px 4px 0 #2a2a2a,
-    5px 5px 0 #222,
-    6px 6px 0 #1c1c1c,
-    7px 7px 0 #161616,
-    8px 8px 0 #121212,
-    9px 9px 0 #0e0e0e,
-    10px 10px 0 #0a0a0a,
-    11px 11px 0 #070707,
-    12px 12px 0 #050505,
-    13px 13px 0 #030303,
-    14px 14px 0 #020202,
-    15px 15px 22px rgba(0, 0, 0, 1),
-    0 0 28px rgba(255, 255, 255, 0.45),
-    0 0 56px rgba(255, 255, 255, 0.28),
-    0 0 92px rgba(255, 255, 255, 0.16),
-    0 0 140px rgba(255, 255, 255, 0.08);
-}
-
-.logo-3d::before {
-  content: attr(data-text);
+.sr-only {
   position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  transform: translateZ(-42px) scale(0.98);
-  color: #0d0d0d;
-  text-shadow:
-    1px 1px 0 #000,
-    2px 2px 4px rgba(0, 0, 0, 0.9);
-  pointer-events: none;
-}
-
-.logo-3d::after {
-  content: attr(data-text);
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
-  transform: translateZ(56px);
-  background: linear-gradient(
-    168deg,
-    #ffffff 0%,
-    #f5f5f5 28%,
-    #d0d0d0 55%,
-    #8a8a8a 82%,
-    #3a3a3a 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  filter:
-    drop-shadow(0 0 4px rgba(255, 255, 255, 0.95))
-    drop-shadow(0 0 18px rgba(255, 255, 255, 0.65))
-    drop-shadow(0 0 42px rgba(255, 255, 255, 0.4))
-    drop-shadow(0 0 72px rgba(255, 255, 255, 0.22));
-  pointer-events: none;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* —— VHS overlay (pointer-events none, B&W + subtle tape artifacts) —— */

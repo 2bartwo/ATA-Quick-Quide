@@ -8,8 +8,16 @@
   <title>bartwo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/bartwo.css">
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/"
+    }
+  }
+  </script>
 </head>
 <body>
   <div class="bg" aria-hidden="true">
@@ -19,13 +27,10 @@
   </div>
 
   <main class="stage">
-    <div class="orbital" aria-label="bartwo">
-      <div class="orbital-inner">
-        <div class="logo-stack">
-          <div class="logo-neon-bloom" aria-hidden="true"></div>
-          <h1 class="logo-3d" data-text="bartwo">bartwo</h1>
-        </div>
-      </div>
+    <div class="hero-3d">
+      <div class="logo-neon-bloom" aria-hidden="true"></div>
+      <div id="three-root" class="three-root" role="img" aria-label="bartwo 3D logo"></div>
+      <h1 class="sr-only">bartwo</h1>
     </div>
   </main>
 
@@ -53,8 +58,9 @@
 
   <script src="js/stars.js"></script>
   <script src="js/vhs.js"></script>
+  <script type="module" src="js/model.js"></script>
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
+    document.getElementById("year").textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
