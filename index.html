@@ -6,6 +6,17 @@
   <meta name="description" content="bartwo — bartwo.me">
   <meta name="theme-color" content="#000000">
   <title>bartwo</title>
+  <link rel="canonical" href="https://bartwo.me/">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://bartwo.me/">
+  <meta property="og:title" content="bartwo">
+  <meta property="og:description" content="bartwo — bartwo.me">
+  <meta property="og:image" content="https://bartwo.me/og-image.png">
+  <meta property="og:image:alt" content="bartwo">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="bartwo">
+  <meta name="twitter:description" content="bartwo — bartwo.me">
+  <meta name="twitter:image" content="https://bartwo.me/og-image.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
@@ -29,16 +40,34 @@
   <main class="stage">
     <div class="hero-3d">
       <div class="logo-neon-bloom" aria-hidden="true"></div>
+      <div
+        id="load-veil"
+        class="load-veil"
+        aria-hidden="true"
+        aria-busy="true"
+        aria-label="Yükleniyor"
+      >
+        <div class="load-veil__spin">
+          <svg class="load-veil__sigil" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <path fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="miter"
+              d="M50 6 L76 86 L8 36 L92 36 L24 86 Z"/>
+          </svg>
+        </div>
+      </div>
       <div id="three-root" class="three-root" role="img" aria-label="bartwo 3D logo"></div>
       <h1 class="sr-only">bartwo</h1>
     </div>
   </main>
+
+  <div class="crt-shim" aria-hidden="true"></div>
 
   <div class="vhs" aria-hidden="true">
     <canvas id="vhs-noise" class="vhs-noise-canvas"></canvas>
     <div class="vhs-scanlines"></div>
     <div class="vhs-flicker"></div>
   </div>
+
+  <div id="easter-toast" class="easter-toast" role="status" aria-live="polite"></div>
 
   <footer class="site-footer">
     <p class="footer-line">
@@ -47,6 +76,7 @@
           d="M50 6 L76 86 L8 36 L92 36 L24 86 Z"/>
       </svg>
       <span class="footer-text">© <span id="year"></span> bartwo. All rights reserved.</span>
+      <button type="button" class="ambient-toggle" id="ambient-toggle" aria-label="Şerit gürültüsü aç veya kapat" aria-pressed="false" title="Tape hiss">⟡</button>
       <svg class="pentagram" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
         <path fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="miter"
           d="M50 6 L76 86 L8 36 L92 36 L24 86 Z"/>
@@ -56,6 +86,7 @@
 
   <script src="js/stars.js"></script>
   <script src="js/vhs.js"></script>
+  <script src="js/extras.js"></script>
   <script type="module" src="js/model.js"></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();

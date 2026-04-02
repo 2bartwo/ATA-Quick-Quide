@@ -101,6 +101,7 @@ body::after {
 .three-root {
   position: absolute;
   inset: 0;
+  z-index: 2;
   width: 100%;
   height: 100%;
   background: transparent;
@@ -132,6 +133,143 @@ body::after {
   color: rgba(200, 200, 200, 0.55);
   z-index: 2;
   pointer-events: none;
+}
+
+.load-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: opacity 0.85s ease, visibility 0.85s ease;
+}
+
+.load-veil--hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.load-veil__spin {
+  animation: load-veil-spin 20s linear infinite;
+}
+
+.load-veil__sigil {
+  display: block;
+  width: min(20vw, 128px);
+  height: min(20vw, 128px);
+  color: rgba(255, 255, 255, 0.42);
+  filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.28));
+  animation: load-veil-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes load-veil-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes load-veil-pulse {
+  0%,
+  100% {
+    opacity: 0.32;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.15));
+  }
+  50% {
+    opacity: 0.92;
+    filter: drop-shadow(0 0 22px rgba(255, 255, 255, 0.45));
+  }
+}
+
+.crt-shim {
+  position: fixed;
+  inset: 0;
+  z-index: 47;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 94% 90% at 50% 48%,
+    transparent 0%,
+    transparent 38%,
+    rgba(0, 0, 0, 0.36) 100%
+  );
+  box-shadow: inset 0 0 min(100px, 16vw) rgba(0, 0, 0, 0.52);
+}
+
+.crt-shim::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 50, 50, 0.05) 0%,
+    transparent 10%,
+    transparent 90%,
+    rgba(50, 90, 255, 0.055) 100%
+  );
+  mix-blend-mode: screen;
+  opacity: 0.9;
+}
+
+.easter-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 4.75rem;
+  z-index: 58;
+  max-width: 90vw;
+  margin: 0;
+  padding: 0;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(210, 210, 210, 0.5);
+  text-align: center;
+  opacity: 0;
+  transform: translateX(-50%) translateY(10px);
+  pointer-events: none;
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+
+.easter-toast--visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+body.contrast-ritual .stage {
+  filter: contrast(1.22) saturate(1.1);
+}
+
+.ambient-toggle {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0.2rem 0.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 2px;
+  background: rgba(0, 0, 0, 0.35);
+  color: rgba(200, 200, 200, 0.55);
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+  letter-spacing: 0;
+  text-transform: none;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.ambient-toggle:hover:not(:disabled) {
+  color: rgba(235, 235, 235, 0.85);
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.ambient-toggle[aria-pressed="true"] {
+  color: rgba(255, 255, 255, 0.95);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.ambient-toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
 }
 
 .logo-neon-bloom {
@@ -194,6 +332,14 @@ body::after {
 
   .footer-line .pentagram {
     animation: none !important;
+  }
+
+  .load-veil__spin {
+    animation: none !important;
+  }
+
+  .load-veil__sigil {
+    animation: load-veil-pulse 4s ease-in-out infinite;
   }
 }
 

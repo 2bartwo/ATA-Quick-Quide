@@ -31,6 +31,13 @@ function showLoadError(message) {
   root.appendChild(p);
 }
 
+function hideLoadVeil() {
+  const el = document.getElementById("load-veil");
+  if (!el) return;
+  el.classList.add("load-veil--hidden");
+  el.setAttribute("aria-busy", "false");
+}
+
 function disposeMaterial(m) {
   if (!m) return;
   if (Array.isArray(m)) {
@@ -305,6 +312,7 @@ function main() {
       modelRef = model;
       loaded = true;
       resize();
+      hideLoadVeil();
     },
     undefined,
     (err) => {
@@ -315,6 +323,7 @@ function main() {
           ? "Model bulunamadı (404). models/bartwo3d.glb repoda ve doğru isimle mi?"
           : "Model yüklenemedi. Konsolu kontrol et (Draco/ağ hatası)."
       );
+      hideLoadVeil();
     }
   );
 
