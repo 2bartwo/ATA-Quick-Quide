@@ -119,13 +119,13 @@ function applyWhiteChrome(root) {
     disposeMaterial(child.material);
     child.material = new THREE.MeshPhysicalMaterial({
       color: 0xffffff,
-      emissive: 0x8a8a8a,
-      emissiveIntensity: 0.28,
+      emissive: 0xffffff,
+      emissiveIntensity: 0.62,
       metalness: 1,
-      roughness: 0.06,
+      roughness: 0.035,
       clearcoat: 1,
-      clearcoatRoughness: 0.03,
-      envMapIntensity: 2.05,
+      clearcoatRoughness: 0.02,
+      envMapIntensity: 2.85,
       ior: 1.5,
     });
     child.castShadow = false;
@@ -156,7 +156,7 @@ function restoreTransform(object) {
   object.scale.copy(object.userData._fitInitialScale);
 }
 
-function fitModelToView(object, camera, margin = 0.78) {
+function fitModelToView(object, camera, margin = 0.64) {
   object.updateMatrixWorld(true);
   const box0 = new THREE.Box3().setFromObject(object);
   if (box0.isEmpty()) {
@@ -174,15 +174,18 @@ function fitModelToView(object, camera, margin = 0.78) {
 
   const target = new THREE.Vector3(0, 0, 0);
   const { viewW, viewH } = visibleRectAtTarget(camera, target);
+  const vHeadroom = 0.76;
   const scaleX = (viewW * margin) / Math.max(size.x, 0.0001);
-  const scaleY = (viewH * margin) / Math.max(size.y, 0.0001);
-  const s = Math.min(scaleX, scaleY);
+  const scaleY = (viewH * margin * vHeadroom) / Math.max(size.y, 0.0001);
+  const rotationSafe = 0.86;
+  const s = Math.min(scaleX, scaleY) * rotationSafe;
   object.scale.setScalar(s);
 
   object.updateMatrixWorld(true);
   const box2 = new THREE.Box3().setFromObject(object);
   const c2 = box2.getCenter(new THREE.Vector3());
   object.position.sub(c2);
+  object.position.y += 0.09;
 }
 
 function main() {
@@ -197,7 +200,7 @@ function main() {
   scene.fog = new THREE.FogExp2(BLACK, 0.012);
 
   const camera = new THREE.PerspectiveCamera(34, 1, 0.05, 500);
-  camera.position.set(0, 0.08, 4.25);
+  camera.position.set(0, 0.14, 4.25);
 
   const renderer = new THREE.WebGLRenderer({
     antialias: true,
@@ -207,7 +210,7 @@ function main() {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.42;
+  renderer.toneMappingExposure = 1.78;
   renderer.setClearColor(BLACK, 1);
   const canvas = renderer.domElement;
   canvas.style.display = "block";
@@ -227,27 +230,27 @@ function main() {
   const pivot = new THREE.Group();
   scene.add(pivot);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.34));
-  const hemi = new THREE.HemisphereLight(0xf0f0f0, 0x080808, 0.52);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.52));
+  const hemi = new THREE.HemisphereLight(0xffffff, 0x060606, 0.58);
   scene.add(hemi);
-  const key = new THREE.DirectionalLight(0xffffff, 1.65);
+  const key = new THREE.DirectionalLight(0xffffff, 2.05);
   key.position.set(6, 7, 8);
   scene.add(key);
-  const fill = new THREE.DirectionalLight(0xffffff, 0.48);
+  const fill = new THREE.DirectionalLight(0xffffff, 0.62);
   fill.position.set(-7, 2, -4);
   scene.add(fill);
-  const rim = new THREE.DirectionalLight(0xffffff, 0.68);
+  const rim = new THREE.DirectionalLight(0xffffff, 0.88);
   rim.position.set(-2, 5, -8);
   scene.add(rim);
 
-  const neonFront = new THREE.PointLight(0xffffff, 2.65, 18, 1.65);
-  neonFront.position.set(0, 0.2, 4.1);
+  const neonFront = new THREE.PointLight(0xffffff, 3.6, 22, 1.45);
+  neonFront.position.set(0, 0.35, 4.05);
   scene.add(neonFront);
-  const neonL = new THREE.PointLight(0xffffff, 1.25, 16, 1.9);
-  neonL.position.set(-2.8, 0.5, 3.2);
+  const neonL = new THREE.PointLight(0xffffff, 1.85, 18, 1.7);
+  neonL.position.set(-2.8, 0.55, 3.15);
   scene.add(neonL);
-  const neonR = new THREE.PointLight(0xffffff, 1.25, 16, 1.9);
-  neonR.position.set(2.8, 0.5, 3.2);
+  const neonR = new THREE.PointLight(0xffffff, 1.85, 18, 1.7);
+  neonR.position.set(2.8, 0.55, 3.15);
   scene.add(neonR);
 
   const clock = new THREE.Clock();
@@ -262,7 +265,7 @@ function main() {
   function applyCameraAndFit() {
     if (!modelRef) return;
     restoreTransform(modelRef);
-    fitModelToView(modelRef, camera, 0.78);
+    fitModelToView(modelRef, camera, 0.64);
   }
 
   loader.load(
@@ -271,7 +274,7 @@ function main() {
       const model = gltf.scene;
       applyWhiteChrome(model);
       snapshotTransform(model);
-      fitModelToView(model, camera, 0.78);
+      fitModelToView(model, camera, 0.64);
       pivot.add(model);
       modelRef = model;
       loaded = true;
@@ -309,9 +312,9 @@ function main() {
     if (!reducedMotion) {
       starfield.rotation.y += 0.0001 * (dt * 60);
       twinkleStarfield(starfield, t);
-      neonFront.intensity = 2.35 + Math.sin(t * 2.2) * 0.4;
-      neonL.intensity = 1.05 + Math.sin(t * 1.7 + 1) * 0.22;
-      neonR.intensity = 1.05 + Math.sin(t * 1.7 + 2.2) * 0.22;
+      neonFront.intensity = 3.25 + Math.sin(t * 2.2) * 0.45;
+      neonL.intensity = 1.65 + Math.sin(t * 1.7 + 1) * 0.28;
+      neonR.intensity = 1.65 + Math.sin(t * 1.7 + 2.2) * 0.28;
     } else {
       twinkleStarfield(starfield, t * 0.25);
     }
@@ -319,14 +322,14 @@ function main() {
     if (loaded && !reducedMotion) {
       const breathe = 0.78 + 0.22 * (0.5 + 0.5 * Math.sin(t * 0.62));
       pivot.rotation.y += ((Math.PI * 2) / basePeriodSec) * breathe * dt;
-      pivot.position.y = Math.sin(t * 0.48) * 0.038;
-      pivot.rotation.x = Math.sin(t * 0.37) * 0.03;
-      pivot.rotation.z = Math.sin(t * 0.29) * 0.018;
+      pivot.position.y = 0.04 + Math.sin(t * 0.48) * 0.014;
+      pivot.rotation.x = Math.sin(t * 0.37) * 0.022;
+      pivot.rotation.z = Math.sin(t * 0.29) * 0.012;
     } else if (loaded) {
       pivot.rotation.y += ((Math.PI * 2) / basePeriodSec) * dt;
     }
 
-    const lookY = loaded && !reducedMotion ? pivot.position.y : 0;
+    const lookY = loaded ? (reducedMotion ? 0.04 : pivot.position.y) : 0;
     camera.lookAt(0, lookY, 0);
 
     renderer.render(scene, camera);

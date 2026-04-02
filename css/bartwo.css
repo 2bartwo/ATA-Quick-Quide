@@ -131,14 +131,14 @@ body {
   z-index: 0;
   pointer-events: none;
   background: radial-gradient(
-    ellipse 62% 58% at 50% 48%,
-    rgba(255, 255, 255, 0.32) 0%,
-    rgba(255, 255, 255, 0.12) 38%,
-    rgba(255, 255, 255, 0.03) 58%,
-    transparent 78%
+    ellipse 62% 58% at 50% 46%,
+    rgba(255, 255, 255, 0.48) 0%,
+    rgba(255, 255, 255, 0.18) 36%,
+    rgba(255, 255, 255, 0.04) 56%,
+    transparent 76%
   );
-  filter: blur(56px);
-  opacity: 0.82;
+  filter: blur(60px);
+  opacity: 0.9;
   -webkit-mask-image: radial-gradient(ellipse 72% 68% at 50% 48%, #000 20%, transparent 78%);
   mask-image: radial-gradient(ellipse 72% 68% at 50% 48%, #000 20%, transparent 78%);
 }
