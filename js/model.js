@@ -6,11 +6,6 @@ import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 const MODEL_URL = new URL("../models/bartwo3d.glb", import.meta.url).href;
 
 const BLACK = 0x000000;
-/** Koyu mor + açık mavi neon — kromda renkli speküler yansımalar için */
-const NEON_PURPLE_DEEP = 0x7b3cff;
-const NEON_PURPLE_SOFT = 0xa78bfa;
-const NEON_SKY = 0x7dd3fc;
-const NEON_CYAN = 0x22d3ee;
 
 /**
  * r155+ fiziksel ışık varsayılanı küçük yoğunlukları bitirir — legacy tercih edilir.
@@ -142,13 +137,13 @@ function applyWhiteChrome(root) {
       emissive: 0x000000,
       emissiveIntensity: 0,
       metalness: 1,
-      roughness: 0.002,
-      envMapIntensity: 10.5,
+      roughness: 0.0012,
+      envMapIntensity: 15.5,
       clearcoat: 1,
-      clearcoatRoughness: 0.0012,
-      specularIntensity: 1.2,
+      clearcoatRoughness: 0.0006,
+      specularIntensity: 1.45,
       specularColor: 0xffffff,
-      ior: 1.7,
+      ior: 1.75,
       sheen: 0,
       transparent: false,
       dithering: true,
@@ -156,37 +151,6 @@ function applyWhiteChrome(root) {
     child.castShadow = false;
     child.receiveShadow = false;
   });
-}
-
-/** Işık konumunda additive sprite — neon kaynağı sahne içinde görünsün */
-function createNeonGlowSprite(colorHex, worldSize) {
-  const c = document.createElement("canvas");
-  c.width = 128;
-  c.height = 128;
-  const ctx = c.getContext("2d");
-  const g = ctx.createRadialGradient(64, 64, 0, 64, 64, 58);
-  g.addColorStop(0, "rgba(255,255,255,1)");
-  g.addColorStop(0.15, "rgba(255,255,255,0.75)");
-  g.addColorStop(0.45, "rgba(255,255,255,0.22)");
-  g.addColorStop(1, "rgba(255,255,255,0)");
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, 128, 128);
-  const map = new THREE.CanvasTexture(c);
-  map.colorSpace = THREE.SRGBColorSpace;
-  const mat = new THREE.SpriteMaterial({
-    map,
-    color: colorHex,
-    transparent: true,
-    opacity: 1,
-    blending: THREE.AdditiveBlending,
-    depthWrite: false,
-    depthTest: true,
-    toneMapped: false,
-  });
-  const sprite = new THREE.Sprite(mat);
-  sprite.scale.setScalar(worldSize);
-  sprite.renderOrder = 1;
-  return sprite;
 }
 
 function visibleRectAtTarget(camera, target) {
@@ -267,7 +231,7 @@ function main() {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 2.12;
+  renderer.toneMappingExposure = 2.48;
   renderer.setClearColor(BLACK, 0);
   const canvas = renderer.domElement;
   canvas.style.display = "block";
@@ -280,7 +244,7 @@ function main() {
   const ls = lightingScale(renderer);
 
   const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.008).texture;
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.006).texture;
   pmrem.dispose();
 
   const starfield = createStarfield();
@@ -289,65 +253,31 @@ function main() {
   const pivot = new THREE.Group();
   scene.add(pivot);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.22));
-  const hemi = new THREE.HemisphereLight(0xf0ecff, 0x18082a, 0.52);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.2));
+  const hemi = new THREE.HemisphereLight(0xffffff, 0x080808, 0.48);
   scene.add(hemi);
-  const key = new THREE.DirectionalLight(0xffffff, 1.85);
+  const key = new THREE.DirectionalLight(0xffffff, 2.35);
   key.position.set(6, 7, 8);
   scene.add(key);
-  const fill = new THREE.DirectionalLight(0xd4e9ff, 0.62);
+  const fill = new THREE.DirectionalLight(0xffffff, 0.95);
   fill.position.set(-7, 2, -4);
   scene.add(fill);
-  const rim = new THREE.DirectionalLight(0xffffff, 0.92);
+  const rim = new THREE.DirectionalLight(0xffffff, 1.25);
   rim.position.set(-2, 5, -8);
   scene.add(rim);
 
-  // Geniş renkli alan ışığı — metal yüzeyde mor/mavi hatlar (point’tan daha tutarlı)
-  const washPurple = new THREE.DirectionalLight(NEON_PURPLE_SOFT, 1.35 * ls.wash);
-  washPurple.position.set(-8, 2.5, 5);
-  scene.add(washPurple);
-  const washCyan = new THREE.DirectionalLight(NEON_CYAN, 1.25 * ls.wash);
-  washCyan.position.set(8, 3, 4);
-  scene.add(washCyan);
-
-  const neonFront = new THREE.PointLight(0xffffff, 2.65 * ls.point, 0, 2);
+  const neonFront = new THREE.PointLight(0xffffff, 3.35 * ls.point, 0, 2);
   neonFront.position.set(0, 0.32, 3.55);
   scene.add(neonFront);
-  const neonL = new THREE.PointLight(0xffffff, 1.45 * ls.point, 0, 2);
-  neonL.position.set(-2.4, 0.5, 2.95);
+  const neonL = new THREE.PointLight(0xffffff, 2.05 * ls.point, 0, 2);
+  neonL.position.set(-2.35, 0.5, 2.85);
   scene.add(neonL);
-  const neonR = new THREE.PointLight(0xffffff, 1.45 * ls.point, 0, 2);
-  neonR.position.set(2.4, 0.5, 2.95);
+  const neonR = new THREE.PointLight(0xffffff, 2.05 * ls.point, 0, 2);
+  neonR.position.set(2.35, 0.5, 2.85);
   scene.add(neonR);
-
-  const neonPurpleRim = new THREE.PointLight(NEON_PURPLE_DEEP, 6.5 * ls.point, 0, 2);
-  neonPurpleRim.position.set(-2.15, 0.2, 2.65);
-  scene.add(neonPurpleRim);
-  const neonPurpleBack = new THREE.PointLight(NEON_PURPLE_SOFT, 4.8 * ls.point, 0, 2);
-  neonPurpleBack.position.set(-2.85, 1.1, 0.35);
-  scene.add(neonPurpleBack);
-  const neonSkyFront = new THREE.PointLight(NEON_SKY, 6.2 * ls.point, 0, 2);
-  neonSkyFront.position.set(2.35, 0.35, 2.75);
-  scene.add(neonSkyFront);
-  const neonCyanTop = new THREE.PointLight(NEON_CYAN, 4.5 * ls.point, 0, 2);
-  neonCyanTop.position.set(1.65, 2.15, 1.35);
-  scene.add(neonCyanTop);
-
-  const neonSpriteGroup = new THREE.Group();
-  neonSpriteGroup.name = "neon-sprites";
-  scene.add(neonSpriteGroup);
-  const spritePairs = [
-    [neonPurpleRim, NEON_PURPLE_DEEP, 1.35],
-    [neonPurpleBack, NEON_PURPLE_SOFT, 1.05],
-    [neonSkyFront, NEON_SKY, 1.28],
-    [neonCyanTop, NEON_CYAN, 1.0],
-  ];
-  for (const [light, col, size] of spritePairs) {
-    const s = createNeonGlowSprite(col, size);
-    s.position.copy(light.position);
-    s.position.z += 0.55;
-    neonSpriteGroup.add(s);
-  }
+  const neonTop = new THREE.PointLight(0xffffff, 1.65 * ls.point, 0, 2);
+  neonTop.position.set(0, 2.2, 1.5);
+  scene.add(neonTop);
 
   const clock = new THREE.Clock();
   let loaded = false;

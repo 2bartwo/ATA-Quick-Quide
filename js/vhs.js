@@ -8,7 +8,7 @@
   let h = 0;
   let raf = 0;
   let last = 0;
-  const interval = mq.matches ? 240 : 95;
+  const interval = mq.matches ? 240 : 72;
 
   function resize() {
     const scale = 0.28;
@@ -28,13 +28,13 @@
 
     const id = ctx.createImageData(w, h);
     const data = id.data;
-    const base = mq.matches ? 18 : 26;
+    const base = mq.matches ? 20 : 36;
     for (let i = 0; i < data.length; i += 4) {
-      const n = (Math.random() * 32 + 100) | 0;
+      const n = (Math.random() * 38 + 92) | 0;
       data[i] = n;
       data[i + 1] = n;
       data[i + 2] = n;
-      data[i + 3] = base + ((Math.random() * 10) | 0);
+      data[i + 3] = base + ((Math.random() * 14) | 0);
     }
     ctx.putImageData(id, 0, 0);
   }
