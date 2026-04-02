@@ -139,18 +139,19 @@ function applyWhiteChrome(root) {
   root.traverse((child) => {
     if (!child.isMesh) return;
     disposeMaterial(child.material);
+    // Sıvı krom / poster referansı: derin gölgeler, soğuk gümüş speküler, keskin yansımalar
     child.material = new THREE.MeshPhysicalMaterial({
-      color: 0xffffff,
+      color: 0xf3f4f8,
       emissive: 0x000000,
       emissiveIntensity: 0,
       metalness: 1,
-      roughness: 0.0012,
-      envMapIntensity: 15.5,
+      roughness: 0.00045,
+      envMapIntensity: 18.5,
       clearcoat: 1,
-      clearcoatRoughness: 0.0006,
-      specularIntensity: 1.45,
-      specularColor: 0xffffff,
-      ior: 1.75,
+      clearcoatRoughness: 0.00028,
+      specularIntensity: 1.62,
+      specularColor: 0xd8e2ff,
+      ior: 1.78,
       sheen: 0,
       transparent: false,
       dithering: true,
@@ -238,7 +239,7 @@ function main() {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 2.48;
+  renderer.toneMappingExposure = 2.58;
   renderer.setClearColor(BLACK, 0);
   const canvas = renderer.domElement;
   canvas.style.display = "block";
@@ -251,7 +252,7 @@ function main() {
   const ls = lightingScale(renderer);
 
   const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.006).texture;
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.0035).texture;
   pmrem.dispose();
 
   const starfield = createStarfield();
@@ -260,29 +261,32 @@ function main() {
   const pivot = new THREE.Group();
   scene.add(pivot);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.2));
-  const hemi = new THREE.HemisphereLight(0xffffff, 0x080808, 0.48);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.14));
+  const hemi = new THREE.HemisphereLight(0xeeecf8, 0x030305, 0.52);
   scene.add(hemi);
-  const key = new THREE.DirectionalLight(0xffffff, 2.35);
+  const key = new THREE.DirectionalLight(0xffffff, 2.85);
   key.position.set(6, 7, 8);
   scene.add(key);
-  const fill = new THREE.DirectionalLight(0xffffff, 0.95);
+  const fill = new THREE.DirectionalLight(0xe8ecff, 1.05);
   fill.position.set(-7, 2, -4);
   scene.add(fill);
-  const rim = new THREE.DirectionalLight(0xffffff, 1.25);
+  const rim = new THREE.DirectionalLight(0xf0f4ff, 1.45);
   rim.position.set(-2, 5, -8);
   scene.add(rim);
+  const sparkle = new THREE.DirectionalLight(0xffffff, 1.15);
+  sparkle.position.set(2, 8, 10);
+  scene.add(sparkle);
 
-  const neonFront = new THREE.PointLight(0xffffff, 3.35 * ls.point, 0, 2);
-  neonFront.position.set(0, 0.32, 3.55);
+  const neonFront = new THREE.PointLight(0xffffff, 3.85 * ls.point, 0, 2);
+  neonFront.position.set(0, 0.28, 3.45);
   scene.add(neonFront);
-  const neonL = new THREE.PointLight(0xffffff, 2.05 * ls.point, 0, 2);
+  const neonL = new THREE.PointLight(0xeef2ff, 2.35 * ls.point, 0, 2);
   neonL.position.set(-2.35, 0.5, 2.85);
   scene.add(neonL);
-  const neonR = new THREE.PointLight(0xffffff, 2.05 * ls.point, 0, 2);
+  const neonR = new THREE.PointLight(0xeef2ff, 2.35 * ls.point, 0, 2);
   neonR.position.set(2.35, 0.5, 2.85);
   scene.add(neonR);
-  const neonTop = new THREE.PointLight(0xffffff, 1.65 * ls.point, 0, 2);
+  const neonTop = new THREE.PointLight(0xffffff, 2.05 * ls.point, 0, 2);
   neonTop.position.set(0, 2.2, 1.5);
   scene.add(neonTop);
 
