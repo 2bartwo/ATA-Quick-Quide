@@ -1,6 +1,10 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 
 const MODEL_URL = new URL("../models/bartwo3d.glb", import.meta.url).href;
 
@@ -140,19 +144,19 @@ function applyWhiteChrome(root) {
     disposeMaterial(child.material);
     child.material = new THREE.MeshPhysicalMaterial({
       color: 0xffffff,
-      emissive: 0x000000,
-      emissiveIntensity: 0,
+      emissive: 0x10141c,
+      emissiveIntensity: 0.065,
       metalness: 1,
-      roughness: 0.007,
-      envMapIntensity: 17.5,
+      roughness: 0.0045,
+      envMapIntensity: 16.25,
       clearcoat: 1,
-      clearcoatRoughness: 0.024,
-      specularIntensity: 1.08,
+      clearcoatRoughness: 0.014,
+      specularIntensity: 1.22,
       specularColor: 0xffffff,
-      ior: 1.68,
+      ior: 1.72,
       sheen: 0,
       transparent: false,
-      dithering: false,
+      dithering: true,
     });
     child.castShadow = false;
     child.receiveShadow = false;
@@ -282,7 +286,7 @@ function main() {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 2.05;
+  renderer.toneMappingExposure = 2.02;
   renderer.setClearColor(BLACK, 0);
   const canvas = renderer.domElement;
   canvas.style.display = "block";
@@ -300,16 +304,28 @@ function main() {
 
   scene.environment = buildChromeStudioEnvMap(renderer);
 
+  let composer = null;
+  let bloomPass = null;
+  if (!reducedMotion) {
+    composer = new EffectComposer(renderer);
+    composer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    composer.setSize(iw0, ih0, false);
+    composer.addPass(new RenderPass(scene, camera));
+    bloomPass = new UnrealBloomPass(new THREE.Vector2(iw0, ih0), 0.26, 0.22, 0.915);
+    composer.addPass(bloomPass);
+    composer.addPass(new OutputPass());
+  }
+
   const starfield = createStarfield();
   scene.add(starfield);
 
   const pivot = new THREE.Group();
   scene.add(pivot);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.24));
+  scene.add(new THREE.AmbientLight(0xffffff, 0.29));
   const hemi = new THREE.HemisphereLight(0xf2f0ff, 0x06060a, 0.5);
   scene.add(hemi);
-  const key = new THREE.DirectionalLight(0xffffff, 2.35);
+  const key = new THREE.DirectionalLight(0xffffff, 2.05);
   key.position.set(6, 7, 8);
   scene.add(key);
   const fill = new THREE.DirectionalLight(0xe8ecff, 0.78);
@@ -325,9 +341,18 @@ function main() {
   backWash.position.set(0, 0.35, -9);
   scene.add(backWash);
 
-  const fillPoint = new THREE.PointLight(0xffffff, 1.25 * ls.point, 0, 2);
-  fillPoint.position.set(0, 0.35, 3.65);
-  scene.add(fillPoint);
+  const neonFront = new THREE.PointLight(0xffffff, 2.85 * ls.point, 0, 2);
+  neonFront.position.set(0, 0.28, 3.45);
+  scene.add(neonFront);
+  const neonL = new THREE.PointLight(0xeef2ff, 1.75 * ls.point, 0, 2);
+  neonL.position.set(-2.35, 0.5, 2.85);
+  scene.add(neonL);
+  const neonR = new THREE.PointLight(0xeef2ff, 1.75 * ls.point, 0, 2);
+  neonR.position.set(2.35, 0.5, 2.85);
+  scene.add(neonR);
+  const neonTop = new THREE.PointLight(0xffffff, 1.45 * ls.point, 0, 2);
+  neonTop.position.set(0, 2.2, 1.5);
+  scene.add(neonTop);
 
   const clock = new THREE.Clock();
   let loaded = false;
@@ -376,6 +401,10 @@ function main() {
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h, false);
+    if (composer) {
+      composer.setSize(w, h, false);
+      if (bloomPass) bloomPass.resolution.set(w, h);
+    }
     applyCameraAndFit();
   }
 
@@ -407,7 +436,8 @@ function main() {
     const lookY = loaded ? (reducedMotion ? 0.04 : pivot.position.y) : 0;
     camera.lookAt(0, lookY, 0);
 
-    renderer.render(scene, camera);
+    if (composer) composer.render();
+    else renderer.render(scene, camera);
     requestAnimationFrame(tick);
   }
 
