@@ -117,16 +117,20 @@ function applyWhiteChrome(root) {
   root.traverse((child) => {
     if (!child.isMesh) return;
     disposeMaterial(child.material);
+    // Gerçek krom: yansıma (env + ışık), düşük emissive. Yüksek emissive plastik/neon gibi durur.
     child.material = new THREE.MeshPhysicalMaterial({
       color: 0xffffff,
-      emissive: 0xffffff,
-      emissiveIntensity: 0.62,
+      emissive: 0x000000,
+      emissiveIntensity: 0,
       metalness: 1,
-      roughness: 0.035,
+      roughness: 0.012,
+      envMapIntensity: 5.2,
       clearcoat: 1,
-      clearcoatRoughness: 0.02,
-      envMapIntensity: 2.85,
-      ior: 1.5,
+      clearcoatRoughness: 0.006,
+      specularIntensity: 1,
+      specularColor: 0xffffff,
+      ior: 1.6,
+      sheen: 0,
     });
     child.castShadow = false;
     child.receiveShadow = false;
@@ -210,7 +214,7 @@ function main() {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.78;
+  renderer.toneMappingExposure = 1.95;
   renderer.setClearColor(BLACK, 1);
   const canvas = renderer.domElement;
   canvas.style.display = "block";
@@ -221,7 +225,7 @@ function main() {
   rootEl.appendChild(canvas);
 
   const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.02).texture;
   pmrem.dispose();
 
   const starfield = createStarfield();
@@ -230,26 +234,27 @@ function main() {
   const pivot = new THREE.Group();
   scene.add(pivot);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.52));
-  const hemi = new THREE.HemisphereLight(0xffffff, 0x060606, 0.58);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.38));
+  const hemi = new THREE.HemisphereLight(0xffffff, 0x0a0a0a, 0.45);
   scene.add(hemi);
-  const key = new THREE.DirectionalLight(0xffffff, 2.05);
+  const key = new THREE.DirectionalLight(0xffffff, 2.45);
   key.position.set(6, 7, 8);
   scene.add(key);
-  const fill = new THREE.DirectionalLight(0xffffff, 0.62);
+  const fill = new THREE.DirectionalLight(0xffffff, 0.95);
   fill.position.set(-7, 2, -4);
   scene.add(fill);
-  const rim = new THREE.DirectionalLight(0xffffff, 0.88);
+  const rim = new THREE.DirectionalLight(0xffffff, 1.15);
   rim.position.set(-2, 5, -8);
   scene.add(rim);
 
-  const neonFront = new THREE.PointLight(0xffffff, 3.6, 22, 1.45);
+  // Sabit yoğunluk: nabız krom yansımalarını sürekli değiştirip "krom değil" hissi verir.
+  const neonFront = new THREE.PointLight(0xffffff, 3.55, 24, 1.35);
   neonFront.position.set(0, 0.35, 4.05);
   scene.add(neonFront);
-  const neonL = new THREE.PointLight(0xffffff, 1.85, 18, 1.7);
+  const neonL = new THREE.PointLight(0xffffff, 1.95, 20, 1.55);
   neonL.position.set(-2.8, 0.55, 3.15);
   scene.add(neonL);
-  const neonR = new THREE.PointLight(0xffffff, 1.85, 18, 1.7);
+  const neonR = new THREE.PointLight(0xffffff, 1.95, 20, 1.55);
   neonR.position.set(2.8, 0.55, 3.15);
   scene.add(neonR);
 
@@ -312,9 +317,6 @@ function main() {
     if (!reducedMotion) {
       starfield.rotation.y += 0.0001 * (dt * 60);
       twinkleStarfield(starfield, t);
-      neonFront.intensity = 3.25 + Math.sin(t * 2.2) * 0.45;
-      neonL.intensity = 1.65 + Math.sin(t * 1.7 + 1) * 0.28;
-      neonR.intensity = 1.65 + Math.sin(t * 1.7 + 2.2) * 0.28;
     } else {
       twinkleStarfield(starfield, t * 0.25);
     }
