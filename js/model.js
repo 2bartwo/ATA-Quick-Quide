@@ -143,16 +143,16 @@ function applyWhiteChrome(root) {
     if (!child.isMesh) return;
     disposeMaterial(child.material);
     child.material = new THREE.MeshPhysicalMaterial({
-      color: 0xf0f1f5,
-      emissive: 0x000000,
-      emissiveIntensity: 0,
+      color: 0xfafbfd,
+      emissive: 0x08090c,
+      emissiveIntensity: 0.04,
       metalness: 1,
-      roughness: 0.0045,
-      envMapIntensity: 11.5,
+      roughness: 0.004,
+      envMapIntensity: 13.5,
       clearcoat: 1,
-      clearcoatRoughness: 0.018,
-      specularIntensity: 1.2,
-      specularColor: 0xd8e0f5,
+      clearcoatRoughness: 0.014,
+      specularIntensity: 1.28,
+      specularColor: 0xe8eeff,
       ior: 1.72,
       sheen: 0,
       transparent: false,
@@ -269,7 +269,7 @@ function main() {
 
   const scene = new THREE.Scene();
   scene.background = null;
-  scene.fog = new THREE.FogExp2(BLACK, 0.009);
+  scene.fog = new THREE.FogExp2(BLACK, 0.0068);
 
   const camera = new THREE.PerspectiveCamera(34, 1, 0.05, 500);
   camera.position.set(0, 0.14, 4.25);
@@ -283,7 +283,7 @@ function main() {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.82;
+  renderer.toneMappingExposure = 1.92;
   renderer.setClearColor(BLACK, 0);
   const canvas = renderer.domElement;
   canvas.style.display = "block";
@@ -319,8 +319,8 @@ function main() {
   const pivot = new THREE.Group();
   scene.add(pivot);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.16));
-  const hemi = new THREE.HemisphereLight(0xeeecf8, 0x030305, 0.45);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.24));
+  const hemi = new THREE.HemisphereLight(0xf2f0ff, 0x06060a, 0.5);
   scene.add(hemi);
   const key = new THREE.DirectionalLight(0xffffff, 2.05);
   key.position.set(6, 7, 8);
@@ -334,6 +334,9 @@ function main() {
   const sparkle = new THREE.DirectionalLight(0xffffff, 0.55);
   sparkle.position.set(2, 8, 10);
   scene.add(sparkle);
+  const backWash = new THREE.DirectionalLight(0xf5f7ff, 1.35);
+  backWash.position.set(0, 0.35, -9);
+  scene.add(backWash);
 
   const neonFront = new THREE.PointLight(0xffffff, 2.85 * ls.point, 0, 2);
   neonFront.position.set(0, 0.28, 3.45);
