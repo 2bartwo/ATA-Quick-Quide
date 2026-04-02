@@ -1,12 +1,10 @@
 :root {
-  --scene: #020204;
-  --black: #020204;
-  --ink: #05060c;
-  --white: #e8ecf4;
-  --chrome-glow: rgba(198, 208, 228, 0.1);
-  --neon-mist: rgba(200, 214, 240, 0.14);
-  --neon-edge: rgba(180, 198, 230, 0.22);
-  --vhs-tint: rgba(10, 12, 20, 0.55);
+  --scene: #000000;
+  --black: #000000;
+  --ink: #0a0a0a;
+  --white: #e6e6e6;
+  --gray-mid: rgba(255, 255, 255, 0.06);
+  --vhs-tint: rgba(0, 0, 0, 0.5);
 }
 
 *,
@@ -17,19 +15,19 @@
 
 html {
   height: 100%;
+  background: var(--black);
 }
 
 body {
   margin: 0;
   min-height: 100%;
   font-family: "IBM Plex Sans", system-ui, sans-serif;
-  background: var(--scene);
+  background: var(--black);
   color: var(--white);
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
 }
 
 .bg {
@@ -37,6 +35,7 @@ body {
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  background: var(--black);
 }
 
 #stars {
@@ -44,57 +43,53 @@ body {
   inset: -8%;
   width: 116%;
   height: 116%;
-  filter: blur(2.2px);
-  opacity: 0.78;
+  filter: blur(2px);
+  opacity: 0.85;
 }
 
 .bg-fog {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 95% 65% at 50% 38%, var(--chrome-glow) 0%, transparent 42%),
-    radial-gradient(ellipse 120% 85% at 50% 100%, rgba(8, 10, 18, 0.85) 0%, transparent 48%),
-    radial-gradient(ellipse 100% 72% at 50% 44%, transparent 0%, var(--ink) 82%),
-    linear-gradient(180deg, #020204 0%, #05060c 45%, #03040a 100%);
+    radial-gradient(ellipse 90% 60% at 50% 40%, var(--gray-mid) 0%, transparent 50%),
+    radial-gradient(ellipse 100% 80% at 50% 100%, rgba(0, 0, 0, 0.6) 0%, transparent 45%),
+    linear-gradient(180deg, #000000 0%, #050505 50%, #000000 100%);
 }
 
 .bg-vignette {
   position: absolute;
   inset: 0;
-  box-shadow: inset 0 0 120px 40px rgba(0, 0, 0, 0.92);
+  box-shadow: inset 0 0 100px 36px rgba(0, 0, 0, 0.88);
 }
 
 .stage {
   position: relative;
   z-index: 1;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
+  align-items: stretch;
+  justify-content: stretch;
   width: 100%;
-  padding: 2rem 1rem 5.5rem;
+  min-height: 0;
+  padding: 0 0 4.75rem;
 }
 
 .hero-3d {
   position: relative;
-  width: min(96vw, 1100px);
-  height: min(74vh, 780px);
-  max-height: 78vh;
-  margin-left: auto;
-  margin-right: auto;
-  overflow: hidden;
-  background: var(--scene);
+  flex: 1;
+  width: 100%;
+  min-height: min(72vh, 100%);
+  margin: 0;
+  background: var(--black);
 }
 
 .three-root {
-  position: relative;
-  z-index: 1;
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden;
-  background: var(--scene);
-  isolation: isolate;
+  background: var(--black);
 }
 
 .three-root canvas {
@@ -106,7 +101,7 @@ body {
   border: 0;
   outline: none;
   vertical-align: top;
-  background: var(--scene);
+  background: var(--black);
 }
 
 .model-error {
@@ -120,7 +115,7 @@ body {
   text-align: center;
   font-size: 0.8rem;
   line-height: 1.45;
-  color: rgba(195, 206, 228, 0.55);
+  color: rgba(200, 200, 200, 0.55);
   z-index: 2;
   pointer-events: none;
 }
@@ -129,36 +124,23 @@ body {
   position: absolute;
   left: 50%;
   top: 46%;
-  width: 78%;
-  height: 68%;
+  width: min(90vw, 920px);
+  height: min(58vh, 560px);
+  max-width: 96%;
   transform: translate(-50%, -50%);
   z-index: 0;
   pointer-events: none;
   background: radial-gradient(
-    ellipse 58% 52% at 50% 48%,
-    rgba(240, 248, 255, 0.45) 0%,
-    rgba(200, 220, 255, 0.28) 32%,
-    rgba(150, 180, 235, 0.12) 55%,
+    ellipse 62% 58% at 50% 48%,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.08) 38%,
+    rgba(255, 255, 255, 0.02) 58%,
     transparent 78%
   );
-  filter: blur(48px);
-  opacity: 0.88;
-}
-
-.neon-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  opacity: 0.62;
-  background: radial-gradient(
-    ellipse 56% 50% at 50% 45%,
-    rgba(200, 225, 255, 0.5) 0%,
-    rgba(160, 190, 240, 0.18) 45%,
-    transparent 72%
-  );
-  filter: blur(20px);
+  filter: blur(56px);
+  opacity: 0.75;
+  -webkit-mask-image: radial-gradient(ellipse 72% 68% at 50% 48%, #000 20%, transparent 78%);
+  mask-image: radial-gradient(ellipse 72% 68% at 50% 48%, #000 20%, transparent 78%);
 }
 
 .sr-only {
@@ -173,7 +155,6 @@ body {
   border: 0;
 }
 
-/* —— Hafif film greni / eski bant hissi (abartısız, soğuk ton) —— */
 .vhs {
   position: fixed;
   inset: 0;
@@ -199,9 +180,9 @@ body {
   inset: -6%;
   width: 112%;
   height: 112%;
-  opacity: 0.095;
+  opacity: 0.085;
   mix-blend-mode: overlay;
-  filter: contrast(1.12) brightness(1.03);
+  filter: contrast(1.08) brightness(1.02);
 }
 
 .vhs-roll {
@@ -213,19 +194,19 @@ body {
   background: linear-gradient(
     180deg,
     transparent 0%,
-    rgba(28, 32, 48, 0.18) 40%,
-    rgba(6, 8, 14, 0.28) 50%,
-    rgba(32, 36, 52, 0.14) 60%,
+    rgba(40, 40, 40, 0.15) 40%,
+    rgba(0, 0, 0, 0.22) 50%,
+    rgba(35, 35, 35, 0.12) 60%,
     transparent 100%
   );
   animation: vhs-roll 32s linear infinite;
-  opacity: 0.52;
+  opacity: 0.48;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .vhs-roll {
     top: 35%;
-    opacity: 0.2;
+    opacity: 0.22;
   }
 }
 
@@ -244,9 +225,9 @@ body {
   background: repeating-linear-gradient(
     0deg,
     rgba(0, 0, 0, 0) 0 2px,
-    rgba(0, 0, 0, 0.11) 2px 3px
+    rgba(0, 0, 0, 0.1) 2px 3px
   );
-  opacity: 0.38;
+  opacity: 0.34;
   mix-blend-mode: multiply;
 }
 
@@ -261,28 +242,28 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .vhs-flicker {
-    opacity: 0.5;
+    opacity: 0.45;
   }
 }
 
 @keyframes vhs-flicker {
   0% {
-    opacity: 0.92;
+    opacity: 0.9;
   }
   20% {
     opacity: 0.98;
   }
   40% {
-    opacity: 0.88;
+    opacity: 0.86;
   }
   55% {
     opacity: 0.96;
   }
   70% {
-    opacity: 0.9;
+    opacity: 0.88;
   }
   100% {
-    opacity: 0.94;
+    opacity: 0.92;
   }
 }
 
@@ -294,7 +275,7 @@ body {
   z-index: 60;
   padding: 1rem 1.25rem 1.4rem;
   text-align: center;
-  background: linear-gradient(to top, rgba(2, 2, 6, 0.97), transparent);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.98), transparent);
 }
 
 .footer-line {
@@ -308,19 +289,19 @@ body {
   font-weight: 500;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(200, 210, 228, 0.48);
+  color: rgba(200, 200, 200, 0.45);
 }
 
 .footer-text {
-  text-shadow: 0 0 16px rgba(180, 198, 230, 0.15);
+  text-shadow: 0 0 14px rgba(255, 255, 255, 0.1);
 }
 
 .pentagram {
   width: 0.95rem;
   height: 0.95rem;
   flex-shrink: 0;
-  color: rgba(190, 205, 230, 0.5);
-  filter: drop-shadow(0 0 8px rgba(170, 190, 220, 0.2));
+  color: rgba(210, 210, 210, 0.48);
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.12));
 }
 
 @media (min-width: 480px) {

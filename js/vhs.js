@@ -30,10 +30,10 @@
     const data = id.data;
     const base = mq.matches ? 18 : 26;
     for (let i = 0; i < data.length; i += 4) {
-      const n = (Math.random() * 28 + 108) | 0;
+      const n = (Math.random() * 32 + 100) | 0;
       data[i] = n;
-      data[i + 1] = n + 4;
-      data[i + 2] = n + 10;
+      data[i + 1] = n;
+      data[i + 2] = n;
       data[i + 3] = base + ((Math.random() * 10) | 0);
     }
     ctx.putImageData(id, 0, 0);

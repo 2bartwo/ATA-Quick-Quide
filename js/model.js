@@ -5,7 +5,7 @@ import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 
 const MODEL_URL = new URL("../models/bartwo3d.glb", import.meta.url).href;
 
-const SCENE_BG = 0x020204;
+const BLACK = 0x000000;
 
 function showLoadError(message) {
   const root = document.getElementById("three-root");
@@ -36,8 +36,8 @@ function starTexture() {
   const ctx = c.getContext("2d");
   const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 28);
   g.addColorStop(0, "rgba(255,255,255,1)");
-  g.addColorStop(0.25, "rgba(230,236,255,0.65)");
-  g.addColorStop(0.55, "rgba(180,200,240,0.2)");
+  g.addColorStop(0.35, "rgba(255,255,255,0.45)");
+  g.addColorStop(0.65, "rgba(200,200,200,0.12)");
   g.addColorStop(1, "rgba(0,0,0,0)");
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, 64, 64);
@@ -47,8 +47,12 @@ function starTexture() {
 }
 
 function createStarfield() {
-  const count = 4200;
+  const count = 4500;
   const positions = new Float32Array(count * 3);
+  const colors = new Float32Array(count * 3);
+  const phases = new Float32Array(count);
+  const speeds = new Float32Array(count);
+
   for (let i = 0; i < count; i++) {
     const r = 18 + Math.random() * 42;
     const u = Math.random();
@@ -59,25 +63,54 @@ function createStarfield() {
     positions[i * 3] = r * sinP * Math.cos(theta);
     positions[i * 3 + 1] = r * sinP * Math.sin(theta) * 0.75 + (Math.random() - 0.5) * 3;
     positions[i * 3 + 2] = r * Math.cos(phi);
+    colors[i * 3] = 1;
+    colors[i * 3 + 1] = 1;
+    colors[i * 3 + 2] = 1;
+    phases[i] = Math.random() * Math.PI * 2;
+    speeds[i] = 1.1 + Math.random() * 2.8;
   }
+
   const geo = new THREE.BufferGeometry();
   geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  geo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+
   const tex = starTexture();
   const mat = new THREE.PointsMaterial({
-    color: 0xd8e4fc,
+    vertexColors: true,
+    color: 0xffffff,
     map: tex,
-    size: 0.11,
+    size: 0.1,
     sizeAttenuation: true,
     transparent: true,
-    opacity: 0.78,
+    opacity: 0.92,
     depthWrite: true,
     depthTest: true,
     blending: THREE.AdditiveBlending,
   });
+
   const pts = new THREE.Points(geo, mat);
   pts.frustumCulled = false;
   pts.name = "starfield";
+  pts.userData.twPhases = phases;
+  pts.userData.twSpeeds = speeds;
+  pts.userData.starCount = count;
   return pts;
+}
+
+function twinkleStarfield(starfield, t) {
+  const col = starfield.geometry.attributes.color;
+  if (!col) return;
+  const phases = starfield.userData.twPhases;
+  const speeds = starfield.userData.twSpeeds;
+  const n = starfield.userData.starCount;
+  const arr = col.array;
+  for (let i = 0; i < n; i++) {
+    const b = 0.2 + 0.8 * (0.5 + 0.5 * Math.sin(t * speeds[i] + phases[i]));
+    arr[i * 3] = b;
+    arr[i * 3 + 1] = b;
+    arr[i * 3 + 2] = b;
+  }
+  col.needsUpdate = true;
 }
 
 function applyWhiteChrome(root) {
@@ -85,14 +118,14 @@ function applyWhiteChrome(root) {
     if (!child.isMesh) return;
     disposeMaterial(child.material);
     child.material = new THREE.MeshPhysicalMaterial({
-      color: 0xf8f9ff,
-      emissive: 0xa8c0f5,
-      emissiveIntensity: 0.22,
+      color: 0xf2f2f2,
+      emissive: 0x404040,
+      emissiveIntensity: 0.14,
       metalness: 1,
-      roughness: 0.09,
+      roughness: 0.1,
       clearcoat: 1,
-      clearcoatRoughness: 0.04,
-      envMapIntensity: 1.65,
+      clearcoatRoughness: 0.05,
+      envMapIntensity: 1.55,
       ior: 1.5,
     });
     child.castShadow = false;
@@ -160,8 +193,8 @@ function main() {
   const basePeriodSec = reducedMotion ? 96 : 28;
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(SCENE_BG);
-  scene.fog = new THREE.FogExp2(SCENE_BG, 0.014);
+  scene.background = new THREE.Color(BLACK);
+  scene.fog = new THREE.FogExp2(BLACK, 0.012);
 
   const camera = new THREE.PerspectiveCamera(34, 1, 0.05, 500);
   camera.position.set(0, 0.08, 4.25);
@@ -174,8 +207,8 @@ function main() {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.38;
-  renderer.setClearColor(SCENE_BG, 1);
+  renderer.toneMappingExposure = 1.28;
+  renderer.setClearColor(BLACK, 1);
   const canvas = renderer.domElement;
   canvas.style.display = "block";
   canvas.style.margin = "0";
@@ -194,26 +227,26 @@ function main() {
   const pivot = new THREE.Group();
   scene.add(pivot);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.28));
-  const hemi = new THREE.HemisphereLight(0xeef2ff, 0x06070c, 0.48);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.26));
+  const hemi = new THREE.HemisphereLight(0xd8d8d8, 0x0a0a0a, 0.46);
   scene.add(hemi);
-  const key = new THREE.DirectionalLight(0xffffff, 1.4);
+  const key = new THREE.DirectionalLight(0xffffff, 1.35);
   key.position.set(6, 7, 8);
   scene.add(key);
-  const fill = new THREE.DirectionalLight(0xffffff, 0.38);
+  const fill = new THREE.DirectionalLight(0xffffff, 0.36);
   fill.position.set(-7, 2, -4);
   scene.add(fill);
-  const rim = new THREE.DirectionalLight(0xffffff, 0.55);
+  const rim = new THREE.DirectionalLight(0xffffff, 0.52);
   rim.position.set(-2, 5, -8);
   scene.add(rim);
 
-  const neonFront = new THREE.PointLight(0xe8f0ff, 2.4, 16, 1.8);
+  const neonFront = new THREE.PointLight(0xffffff, 2.1, 16, 1.85);
   neonFront.position.set(0, 0.2, 4.1);
   scene.add(neonFront);
-  const neonL = new THREE.PointLight(0xb8c8f8, 1.15, 14, 2);
+  const neonL = new THREE.PointLight(0xffffff, 0.95, 14, 2);
   neonL.position.set(-2.8, 0.5, 3.2);
   scene.add(neonL);
-  const neonR = new THREE.PointLight(0xb8c8f8, 1.15, 14, 2);
+  const neonR = new THREE.PointLight(0xffffff, 0.95, 14, 2);
   neonR.position.set(2.8, 0.5, 3.2);
   scene.add(neonR);
 
@@ -274,10 +307,13 @@ function main() {
     const t = clock.elapsedTime;
 
     if (!reducedMotion) {
-      starfield.rotation.y += 0.00012 * (dt * 60);
-      neonFront.intensity = 2.15 + Math.sin(t * 2.4) * 0.35;
-      neonL.intensity = 1.0 + Math.sin(t * 1.9 + 1) * 0.22;
-      neonR.intensity = 1.0 + Math.sin(t * 1.9 + 2.2) * 0.22;
+      starfield.rotation.y += 0.0001 * (dt * 60);
+      twinkleStarfield(starfield, t);
+      neonFront.intensity = 1.85 + Math.sin(t * 2.2) * 0.35;
+      neonL.intensity = 0.82 + Math.sin(t * 1.7 + 1) * 0.2;
+      neonR.intensity = 0.82 + Math.sin(t * 1.7 + 2.2) * 0.2;
+    } else {
+      twinkleStarfield(starfield, t * 0.25);
     }
 
     if (loaded && !reducedMotion) {

@@ -17,7 +17,7 @@
     canvas.width = w;
     canvas.height = h;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const count = Math.min(420, Math.floor((cssW * cssH) / 6500));
+    const count = Math.min(520, Math.floor((cssW * cssH) / 5200));
     stars = [];
     for (let i = 0; i < count; i++) {
       stars.push({
@@ -25,10 +25,10 @@
         y: Math.random() * cssH,
         z: Math.random(),
         r: Math.random() * 1.4 + 0.2,
-        vx: (Math.random() - 0.5) * 0.12,
-        vy: (Math.random() - 0.5) * 0.12,
+        vx: (Math.random() - 0.5) * 0.1,
+        vy: (Math.random() - 0.5) * 0.1,
         tw: Math.random() * Math.PI * 2,
-        ts: 0.015 + Math.random() * 0.04,
+        ts: 0.02 + Math.random() * 0.06,
       });
     }
   }
@@ -36,7 +36,7 @@
   function tick() {
     const cssW = window.innerWidth;
     const cssH = window.innerHeight;
-    ctx.fillStyle = "rgba(2, 2, 8, 0.2)";
+    ctx.fillStyle = "rgba(0, 0, 0, 0.22)";
     ctx.fillRect(0, 0, cssW, cssH);
 
     for (const s of stars) {
@@ -48,11 +48,11 @@
       if (s.y < -4) s.y = cssH + 4;
       if (s.y > cssH + 4) s.y = -4;
 
-      const pulse = 0.45 + Math.sin(s.tw) * 0.35;
-      const alpha = (0.1 + s.z * 0.48) * pulse;
+      const pulse = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(s.tw));
+      const alpha = (0.08 + s.z * 0.55) * pulse;
       ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r * (0.7 + s.z * 0.5), 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(218, 224, 238, ${alpha})`;
+      ctx.arc(s.x, s.y, s.r * (0.65 + s.z * 0.55), 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
       ctx.fill();
     }
 
