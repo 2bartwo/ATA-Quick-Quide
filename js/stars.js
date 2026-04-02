@@ -36,7 +36,7 @@
   function tick() {
     const cssW = window.innerWidth;
     const cssH = window.innerHeight;
-    ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+    ctx.fillStyle = "rgba(2, 2, 8, 0.2)";
     ctx.fillRect(0, 0, cssW, cssH);
 
     for (const s of stars) {
@@ -52,7 +52,7 @@
       const alpha = (0.1 + s.z * 0.48) * pulse;
       ctx.beginPath();
       ctx.arc(s.x, s.y, s.r * (0.7 + s.z * 0.5), 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+      ctx.fillStyle = `rgba(218, 224, 238, ${alpha})`;
       ctx.fill();
     }
 
