@@ -6,7 +6,7 @@
   --chrome-glow: rgba(198, 208, 228, 0.1);
   --neon-mist: rgba(200, 214, 240, 0.14);
   --neon-edge: rgba(180, 198, 230, 0.22);
-  --vhs-tint: rgba(12, 14, 22, 0.4);
+  --vhs-tint: rgba(10, 12, 20, 0.55);
 }
 
 *,
@@ -45,7 +45,7 @@ body {
   width: 116%;
   height: 116%;
   filter: blur(2.2px);
-  opacity: 0.62;
+  opacity: 0.78;
 }
 
 .bg-fog {
@@ -85,22 +85,6 @@ body {
   margin-right: auto;
   overflow: hidden;
   background: var(--scene);
-}
-
-.hero-3d::before {
-  content: "";
-  position: absolute;
-  inset: -4%;
-  z-index: 0;
-  pointer-events: none;
-  background: radial-gradient(
-    ellipse 50% 46% at 50% 46%,
-    transparent 22%,
-    var(--neon-mist) 55%,
-    transparent 78%
-  );
-  filter: blur(36px);
-  opacity: 0.9;
 }
 
 .three-root {
@@ -144,21 +128,37 @@ body {
 .logo-neon-bloom {
   position: absolute;
   left: 50%;
-  top: 47%;
-  width: 72%;
-  height: 62%;
+  top: 46%;
+  width: 78%;
+  height: 68%;
   transform: translate(-50%, -50%);
   z-index: 0;
   pointer-events: none;
   background: radial-gradient(
-    ellipse 55% 48% at 50% 48%,
-    rgba(220, 232, 252, 0.28) 0%,
-    var(--neon-edge) 38%,
-    rgba(140, 160, 200, 0.05) 58%,
-    transparent 76%
+    ellipse 58% 52% at 50% 48%,
+    rgba(240, 248, 255, 0.45) 0%,
+    rgba(200, 220, 255, 0.28) 32%,
+    rgba(150, 180, 235, 0.12) 55%,
+    transparent 78%
   );
-  filter: blur(44px);
-  opacity: 0.68;
+  filter: blur(48px);
+  opacity: 0.88;
+}
+
+.neon-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.62;
+  background: radial-gradient(
+    ellipse 56% 50% at 50% 45%,
+    rgba(200, 225, 255, 0.5) 0%,
+    rgba(160, 190, 240, 0.18) 45%,
+    transparent 72%
+  );
+  filter: blur(20px);
 }
 
 .sr-only {
@@ -190,7 +190,7 @@ body {
   }
 
   .vhs-noise-canvas {
-    opacity: 0.035 !important;
+    opacity: 0.055 !important;
   }
 }
 
@@ -199,9 +199,9 @@ body {
   inset: -6%;
   width: 112%;
   height: 112%;
-  opacity: 0.048;
-  mix-blend-mode: soft-light;
-  filter: contrast(1.05) brightness(1.02);
+  opacity: 0.095;
+  mix-blend-mode: overlay;
+  filter: contrast(1.12) brightness(1.03);
 }
 
 .vhs-roll {
@@ -213,13 +213,13 @@ body {
   background: linear-gradient(
     180deg,
     transparent 0%,
-    rgba(24, 28, 40, 0.12) 42%,
-    rgba(8, 10, 16, 0.2) 50%,
-    rgba(30, 34, 48, 0.1) 58%,
+    rgba(28, 32, 48, 0.18) 40%,
+    rgba(6, 8, 14, 0.28) 50%,
+    rgba(32, 36, 52, 0.14) 60%,
     transparent 100%
   );
-  animation: vhs-roll 48s linear infinite;
-  opacity: 0.35;
+  animation: vhs-roll 32s linear infinite;
+  opacity: 0.52;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -243,19 +243,19 @@ body {
   inset: 0;
   background: repeating-linear-gradient(
     0deg,
-    rgba(0, 0, 0, 0) 0 3px,
-    rgba(0, 0, 0, 0.045) 3px 4px
+    rgba(0, 0, 0, 0) 0 2px,
+    rgba(0, 0, 0, 0.11) 2px 3px
   );
-  opacity: 0.22;
-  mix-blend-mode: soft-light;
+  opacity: 0.38;
+  mix-blend-mode: multiply;
 }
 
 .vhs-flicker {
   position: absolute;
   inset: 0;
   background: var(--vhs-tint);
-  animation: vhs-flicker 5.5s ease-in-out infinite;
-  mix-blend-mode: soft-light;
+  animation: vhs-flicker 3.2s steps(6) infinite;
+  mix-blend-mode: overlay;
   opacity: 1;
 }
 
@@ -266,12 +266,23 @@ body {
 }
 
 @keyframes vhs-flicker {
-  0%,
-  100% {
-    opacity: 0.97;
+  0% {
+    opacity: 0.92;
   }
-  50% {
-    opacity: 0.93;
+  20% {
+    opacity: 0.98;
+  }
+  40% {
+    opacity: 0.88;
+  }
+  55% {
+    opacity: 0.96;
+  }
+  70% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0.94;
   }
 }
 

@@ -8,7 +8,7 @@
   let h = 0;
   let raf = 0;
   let last = 0;
-  const interval = mq.matches ? 280 : 140;
+  const interval = mq.matches ? 240 : 95;
 
   function resize() {
     const scale = 0.28;
@@ -28,7 +28,7 @@
 
     const id = ctx.createImageData(w, h);
     const data = id.data;
-    const base = mq.matches ? 12 : 16;
+    const base = mq.matches ? 18 : 26;
     for (let i = 0; i < data.length; i += 4) {
       const n = (Math.random() * 28 + 108) | 0;
       data[i] = n;

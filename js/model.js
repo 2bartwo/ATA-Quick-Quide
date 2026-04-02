@@ -6,7 +6,6 @@ import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 const MODEL_URL = new URL("../models/bartwo3d.glb", import.meta.url).href;
 
 const SCENE_BG = 0x020204;
-const FOG_COLOR = 0x05060a;
 
 function showLoadError(message) {
   const root = document.getElementById("three-root");
@@ -30,19 +29,70 @@ function disposeMaterial(m) {
   m.dispose?.();
 }
 
+function starTexture() {
+  const c = document.createElement("canvas");
+  c.width = 64;
+  c.height = 64;
+  const ctx = c.getContext("2d");
+  const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 28);
+  g.addColorStop(0, "rgba(255,255,255,1)");
+  g.addColorStop(0.25, "rgba(230,236,255,0.65)");
+  g.addColorStop(0.55, "rgba(180,200,240,0.2)");
+  g.addColorStop(1, "rgba(0,0,0,0)");
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, 64, 64);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
+function createStarfield() {
+  const count = 4200;
+  const positions = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    const r = 18 + Math.random() * 42;
+    const u = Math.random();
+    const v = Math.random();
+    const theta = u * Math.PI * 2;
+    const phi = Math.acos(2 * v - 1);
+    const sinP = Math.sin(phi);
+    positions[i * 3] = r * sinP * Math.cos(theta);
+    positions[i * 3 + 1] = r * sinP * Math.sin(theta) * 0.75 + (Math.random() - 0.5) * 3;
+    positions[i * 3 + 2] = r * Math.cos(phi);
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  const tex = starTexture();
+  const mat = new THREE.PointsMaterial({
+    color: 0xd8e4fc,
+    map: tex,
+    size: 0.11,
+    sizeAttenuation: true,
+    transparent: true,
+    opacity: 0.78,
+    depthWrite: true,
+    depthTest: true,
+    blending: THREE.AdditiveBlending,
+  });
+  const pts = new THREE.Points(geo, mat);
+  pts.frustumCulled = false;
+  pts.name = "starfield";
+  return pts;
+}
+
 function applyWhiteChrome(root) {
   root.traverse((child) => {
     if (!child.isMesh) return;
     disposeMaterial(child.material);
     child.material = new THREE.MeshPhysicalMaterial({
-      color: 0xf4f6fb,
-      emissive: 0xc8d2e8,
-      emissiveIntensity: 0.06,
+      color: 0xf8f9ff,
+      emissive: 0xa8c0f5,
+      emissiveIntensity: 0.22,
       metalness: 1,
-      roughness: 0.11,
+      roughness: 0.09,
       clearcoat: 1,
-      clearcoatRoughness: 0.05,
-      envMapIntensity: 1.48,
+      clearcoatRoughness: 0.04,
+      envMapIntensity: 1.65,
       ior: 1.5,
     });
     child.castShadow = false;
@@ -102,36 +152,6 @@ function fitModelToView(object, camera, margin = 0.86) {
   object.position.sub(c2);
 }
 
-function buildStageSet(scene) {
-  const floorMat = new THREE.MeshPhysicalMaterial({
-    color: 0x06070c,
-    metalness: 0.22,
-    roughness: 0.94,
-    envMapIntensity: 0.42,
-    clearcoat: 0.15,
-    clearcoatRoughness: 0.85,
-  });
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(48, 48), floorMat);
-  floor.rotation.x = -Math.PI / 2;
-  floor.position.y = -1.35;
-  floor.receiveShadow = false;
-
-  const wallMat = new THREE.MeshPhysicalMaterial({
-    color: 0x040508,
-    metalness: 0.08,
-    roughness: 0.98,
-    envMapIntensity: 0.28,
-  });
-  const wall = new THREE.Mesh(new THREE.PlaneGeometry(32, 18), wallMat);
-  wall.position.set(0, 0.35, -5.2);
-
-  const ramp = new THREE.Mesh(new THREE.PlaneGeometry(40, 14), wallMat);
-  ramp.position.set(0, -0.85, -3.6);
-  ramp.rotation.x = 0.12;
-
-  scene.add(floor, wall, ramp);
-}
-
 function main() {
   const rootEl = document.getElementById("three-root");
   if (!rootEl) return;
@@ -141,7 +161,7 @@ function main() {
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(SCENE_BG);
-  scene.fog = new THREE.FogExp2(FOG_COLOR, 0.052);
+  scene.fog = new THREE.FogExp2(SCENE_BG, 0.014);
 
   const camera = new THREE.PerspectiveCamera(34, 1, 0.05, 500);
   camera.position.set(0, 0.08, 4.25);
@@ -154,7 +174,7 @@ function main() {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.32;
+  renderer.toneMappingExposure = 1.38;
   renderer.setClearColor(SCENE_BG, 1);
   const canvas = renderer.domElement;
   canvas.style.display = "block";
@@ -168,26 +188,34 @@ function main() {
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
   pmrem.dispose();
 
-  buildStageSet(scene);
+  const starfield = createStarfield();
+  scene.add(starfield);
 
   const pivot = new THREE.Group();
   scene.add(pivot);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.32));
-  const hemi = new THREE.HemisphereLight(0xe8eaef, 0x0a0b10, 0.52);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.28));
+  const hemi = new THREE.HemisphereLight(0xeef2ff, 0x06070c, 0.48);
   scene.add(hemi);
-  const key = new THREE.DirectionalLight(0xffffff, 1.35);
+  const key = new THREE.DirectionalLight(0xffffff, 1.4);
   key.position.set(6, 7, 8);
   scene.add(key);
-  const fill = new THREE.DirectionalLight(0xffffff, 0.42);
+  const fill = new THREE.DirectionalLight(0xffffff, 0.38);
   fill.position.set(-7, 2, -4);
   scene.add(fill);
-  const rim = new THREE.DirectionalLight(0xffffff, 0.58);
+  const rim = new THREE.DirectionalLight(0xffffff, 0.55);
   rim.position.set(-2, 5, -8);
   scene.add(rim);
-  const neonRim = new THREE.PointLight(0xd8e2f5, 0.85, 12, 2);
-  neonRim.position.set(0, 0.35, 3.2);
-  scene.add(neonRim);
+
+  const neonFront = new THREE.PointLight(0xe8f0ff, 2.4, 16, 1.8);
+  neonFront.position.set(0, 0.2, 4.1);
+  scene.add(neonFront);
+  const neonL = new THREE.PointLight(0xb8c8f8, 1.15, 14, 2);
+  neonL.position.set(-2.8, 0.5, 3.2);
+  scene.add(neonL);
+  const neonR = new THREE.PointLight(0xb8c8f8, 1.15, 14, 2);
+  neonR.position.set(2.8, 0.5, 3.2);
+  scene.add(neonR);
 
   const clock = new THREE.Clock();
   let loaded = false;
@@ -244,6 +272,13 @@ function main() {
   function tick() {
     const dt = clock.getDelta();
     const t = clock.elapsedTime;
+
+    if (!reducedMotion) {
+      starfield.rotation.y += 0.00012 * (dt * 60);
+      neonFront.intensity = 2.15 + Math.sin(t * 2.4) * 0.35;
+      neonL.intensity = 1.0 + Math.sin(t * 1.9 + 1) * 0.22;
+      neonR.intensity = 1.0 + Math.sin(t * 1.9 + 2.2) * 0.22;
+    }
 
     if (loaded && !reducedMotion) {
       const breathe = 0.78 + 0.22 * (0.5 + 0.5 * Math.sin(t * 0.62));
