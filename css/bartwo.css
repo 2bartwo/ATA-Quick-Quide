@@ -28,6 +28,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  animation: site-dim-flicker 9s steps(7, end) infinite;
 }
 
 .bg {
@@ -179,6 +180,10 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  body {
+    animation: none !important;
+  }
+
   .vhs-roll,
   .vhs-flicker {
     animation: none !important;
@@ -187,6 +192,38 @@ body {
 
   .vhs-noise-canvas {
     opacity: 0.055 !important;
+  }
+
+  .footer-line .pentagram {
+    animation: none !important;
+  }
+}
+
+@keyframes site-dim-flicker {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  12% {
+    filter: brightness(0.985);
+  }
+  13% {
+    filter: brightness(1.012);
+  }
+  41% {
+    filter: brightness(0.978);
+  }
+  42% {
+    filter: brightness(1.006);
+  }
+  67% {
+    filter: brightness(0.992);
+  }
+  88% {
+    filter: brightness(0.97);
+  }
+  89% {
+    filter: brightness(1.008);
   }
 }
 
@@ -250,7 +287,7 @@ body {
   position: absolute;
   inset: 0;
   background: var(--vhs-tint);
-  animation: vhs-flicker 3.2s steps(6) infinite;
+  animation: vhs-flicker 2.6s steps(9, end) infinite;
   mix-blend-mode: overlay;
   opacity: 1;
 }
@@ -262,23 +299,33 @@ body {
 }
 
 @keyframes vhs-flicker {
-  0% {
-    opacity: 0.9;
-  }
-  20% {
-    opacity: 0.98;
-  }
-  40% {
-    opacity: 0.86;
-  }
-  55% {
-    opacity: 0.96;
-  }
-  70% {
+  0%,
+  100% {
     opacity: 0.88;
   }
-  100% {
-    opacity: 0.92;
+  11% {
+    opacity: 0.97;
+  }
+  22% {
+    opacity: 0.84;
+  }
+  33% {
+    opacity: 0.95;
+  }
+  44% {
+    opacity: 0.81;
+  }
+  55% {
+    opacity: 0.94;
+  }
+  66% {
+    opacity: 0.87;
+  }
+  77% {
+    opacity: 0.98;
+  }
+  88% {
+    opacity: 0.83;
   }
 }
 
@@ -317,6 +364,33 @@ body {
   flex-shrink: 0;
   color: rgba(210, 210, 210, 0.48);
   filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.12));
+  transform-origin: 50% 50%;
+}
+
+.footer-line .pentagram:first-of-type {
+  animation: pentagram-spin-cw 26s linear infinite;
+}
+
+.footer-line .pentagram:last-of-type {
+  animation: pentagram-spin-ccw 32s linear infinite;
+}
+
+@keyframes pentagram-spin-cw {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pentagram-spin-ccw {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
 }
 
 @media (min-width: 480px) {
