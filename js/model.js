@@ -1,7 +1,10 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
-import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 
 const MODEL_URL = new URL("../models/bartwo3d.glb", import.meta.url).href;
 
@@ -139,19 +142,18 @@ function applyWhiteChrome(root) {
   root.traverse((child) => {
     if (!child.isMesh) return;
     disposeMaterial(child.material);
-    // Sıvı krom / poster referansı: derin gölgeler, soğuk gümüş speküler, keskin yansımalar
     child.material = new THREE.MeshPhysicalMaterial({
-      color: 0xf3f4f8,
+      color: 0xf6f7fb,
       emissive: 0x000000,
       emissiveIntensity: 0,
       metalness: 1,
-      roughness: 0.00045,
-      envMapIntensity: 18.5,
+      roughness: 0.00018,
+      envMapIntensity: 22,
       clearcoat: 1,
-      clearcoatRoughness: 0.00028,
-      specularIntensity: 1.62,
-      specularColor: 0xd8e2ff,
-      ior: 1.78,
+      clearcoatRoughness: 0.00012,
+      specularIntensity: 1.75,
+      specularColor: 0xd0dcff,
+      ior: 1.82,
       sheen: 0,
       transparent: false,
       dithering: true,
@@ -159,6 +161,49 @@ function applyWhiteChrome(root) {
     child.castShadow = false;
     child.receiveShadow = false;
   });
+}
+
+/** Poster kromu: siyah stüdyo + geniş parlak şeritler → metalde keskin ayna şeritleri */
+function buildChromeStudioEnvMap(renderer) {
+  const w = 2048;
+  const h = 1024;
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#010102";
+  ctx.fillRect(0, 0, w, h);
+
+  function blob(cx, cy, rx, ry, core, mid, edge) {
+    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(rx, ry) * 1.05);
+    g.addColorStop(0, core);
+    g.addColorStop(0.12, mid);
+    g.addColorStop(1, edge);
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  blob(w * 0.18, h * 0.45, w * 0.11, h * 0.52, "rgba(255,255,255,1)", "rgba(240,248,255,0.55)", "rgba(0,0,0,0)");
+  blob(w * 0.82, h * 0.5, w * 0.13, h * 0.48, "rgba(230,228,255,0.95)", "rgba(200,198,255,0.4)", "rgba(0,0,0,0)");
+  blob(w * 0.5, h * 0.1, w * 0.32, h * 0.16, "rgba(255,255,255,0.98)", "rgba(220,230,255,0.45)", "rgba(0,0,0,0)");
+  blob(w * 0.48, h * 0.92, w * 0.38, h * 0.14, "rgba(190,200,255,0.5)", "rgba(80,90,120,0.08)", "rgba(0,0,0,0)");
+  blob(w * 0.5, h * 0.5, w * 0.06, h * 0.06, "rgba(255,255,255,0.35)", "rgba(0,0,0,0)", "rgba(0,0,0,0)");
+
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.mapping = THREE.EquirectangularReflectionMapping;
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.needsUpdate = true;
+  const gen = new THREE.PMREMGenerator(renderer);
+  const rt = gen.fromEquirectangular(tex);
+  const env = rt.texture;
+  tex.dispose();
+  gen.dispose();
+  return env;
 }
 
 function visibleRectAtTarget(camera, target) {
@@ -239,7 +284,7 @@ function main() {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 2.58;
+  renderer.toneMappingExposure = 2.35;
   renderer.setClearColor(BLACK, 0);
   const canvas = renderer.domElement;
   canvas.style.display = "block";
@@ -249,11 +294,25 @@ function main() {
   canvas.setAttribute("tabindex", "-1");
   rootEl.appendChild(canvas);
 
+  const iw0 = Math.max(1, rootEl.clientWidth);
+  const ih0 = Math.max(1, rootEl.clientHeight);
+  renderer.setSize(iw0, ih0, false);
+
   const ls = lightingScale(renderer);
 
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.0035).texture;
-  pmrem.dispose();
+  scene.environment = buildChromeStudioEnvMap(renderer);
+
+  let composer = null;
+  let bloomPass = null;
+  if (!reducedMotion) {
+    composer = new EffectComposer(renderer);
+    composer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    composer.setSize(iw0, ih0, false);
+    composer.addPass(new RenderPass(scene, camera));
+    bloomPass = new UnrealBloomPass(new THREE.Vector2(iw0, ih0), 0.72, 0.38, 0.78);
+    composer.addPass(bloomPass);
+    composer.addPass(new OutputPass());
+  }
 
   const starfield = createStarfield();
   scene.add(starfield);
@@ -337,6 +396,10 @@ function main() {
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h, false);
+    if (composer) {
+      composer.setSize(w, h, false);
+      if (bloomPass) bloomPass.resolution.set(w, h);
+    }
     applyCameraAndFit();
   }
 
@@ -368,7 +431,8 @@ function main() {
     const lookY = loaded ? (reducedMotion ? 0.04 : pivot.position.y) : 0;
     camera.lookAt(0, lookY, 0);
 
-    renderer.render(scene, camera);
+    if (composer) composer.render();
+    else renderer.render(scene, camera);
     requestAnimationFrame(tick);
   }
 
