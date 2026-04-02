@@ -142,14 +142,16 @@ function applyWhiteChrome(root) {
       emissive: 0x000000,
       emissiveIntensity: 0,
       metalness: 1,
-      roughness: 0.0025,
-      envMapIntensity: 9.25,
+      roughness: 0.002,
+      envMapIntensity: 10.5,
       clearcoat: 1,
-      clearcoatRoughness: 0.0015,
-      specularIntensity: 1.15,
+      clearcoatRoughness: 0.0012,
+      specularIntensity: 1.2,
       specularColor: 0xffffff,
       ior: 1.7,
       sheen: 0,
+      transparent: false,
+      dithering: true,
     });
     child.castShadow = false;
     child.receiveShadow = false;
@@ -250,22 +252,23 @@ function main() {
   const basePeriodSec = reducedMotion ? 96 : 28;
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(BLACK);
-  scene.fog = new THREE.FogExp2(BLACK, 0.012);
+  scene.background = null;
+  scene.fog = new THREE.FogExp2(BLACK, 0.009);
 
   const camera = new THREE.PerspectiveCamera(34, 1, 0.05, 500);
   camera.position.set(0, 0.14, 4.25);
 
   const renderer = new THREE.WebGLRenderer({
     antialias: true,
-    alpha: false,
+    alpha: true,
+    premultipliedAlpha: false,
     powerPreference: "high-performance",
   });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 2.08;
-  renderer.setClearColor(BLACK, 1);
+  renderer.toneMappingExposure = 2.12;
+  renderer.setClearColor(BLACK, 0);
   const canvas = renderer.domElement;
   canvas.style.display = "block";
   canvas.style.margin = "0";
@@ -286,7 +289,7 @@ function main() {
   const pivot = new THREE.Group();
   scene.add(pivot);
 
-  scene.add(new THREE.AmbientLight(0xffffff, 0.28));
+  scene.add(new THREE.AmbientLight(0xffffff, 0.22));
   const hemi = new THREE.HemisphereLight(0xf0ecff, 0x18082a, 0.52);
   scene.add(hemi);
   const key = new THREE.DirectionalLight(0xffffff, 1.85);
