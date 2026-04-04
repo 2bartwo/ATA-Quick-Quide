@@ -61,9 +61,13 @@
           Havacılıkta kullanılan <strong>ATA chapter</strong> yapısına telefondan <strong>hızlı ve doğru</strong> şekilde bakmanı sağlar.
           Uçağı açıp ihtiyacın olan bölümü aramak yerine, chapter numarası ve başlıklar elinin altında olur.
         </p>
-        <div class="btn-row">
-          <a class="btn btn--primary" href="indir.html" data-i18n="btn.apk">APK indir</a>
-          <a class="btn btn--ghost" href="#nedir" data-i18n="btn.details">Detaylar</a>
+
+        <div class="hero-cta-hub">
+          <div class="hero-cta-hub__main">
+            <a class="btn btn--primary btn--hero-xl" href="indir.html" data-i18n="btn.apk">APK indir</a>
+            <a class="btn btn--hero-xl btn--hero-secondary" href="nasil-yuklenir.html" data-i18n="btn.install">Nasıl kurulur</a>
+          </div>
+          <a class="btn btn--ghost btn--hero-link" href="#nedir" data-i18n="btn.details">Uygulama hakkında</a>
         </div>
 
         <div class="store-panel store-panel--compact" aria-labelledby="store-heading">
@@ -99,27 +103,42 @@
         </div>
       </section>
 
-      <section class="section reveal" aria-labelledby="nedir">
+      <section id="nedir" class="section reveal" aria-labelledby="nedir-h">
         <div class="section__head">
-          <h2 id="nedir" data-i18n="nedir.h">Ne işe yarar?</h2>
+          <h2 id="nedir-h" data-i18n="nedir.h">Ne işe yarar?</h2>
           <p data-i18n-html="nedir.p"></p>
-          <h3 id="ozellikler" class="subsection-title" data-i18n="features.h">Öne çıkanlar</h3>
-          <p class="subsection-lead" data-i18n="features.lead">Saha veya ofiste, referansa ihtiyaç duyduğunda tek bakışta chapter mantığına odaklan.</p>
         </div>
-        <div class="feature-grid">
-          <article class="feature-card reveal reveal-stagger-1">
-            <h3 data-i18n="features.f1h">Hızlı erişim</h3>
-            <p data-i18n="features.f1p">Chapter yapısına telefondan kısa yoldan ulaş; uzun doküman karıştırmadan kontrol et.</p>
-          </article>
-          <article class="feature-card reveal reveal-stagger-2">
-            <h3 data-i18n="features.f2h">Doğru referans</h3>
-            <p data-i18n="features.f2p">Standart ATA numaralandırmasıyla uyumlu düzen; yanlış başlığa takılmadan bakım ve çalışma akışını destekler.</p>
-          </article>
-          <article class="feature-card reveal reveal-stagger-3">
-            <h3 data-i18n="features.f3h">Mobil kullanım</h3>
-            <p data-i18n="features.f3p">Android APK olarak yükle; bağlantı veya tarayıcı sekmesi derdi olmadan uygulamadan kullan.</p>
-          </article>
+      </section>
+
+      <section id="hizli-erisim" class="section section--mid-cta reveal" aria-labelledby="mid-cta-h">
+        <div class="mid-cta-rail" aria-hidden="true">
+          <span class="mid-cta-rail__cap">⟨</span>
+          <span class="mid-cta-rail__line"></span>
+          <span class="mid-cta-rail__cap">⟩</span>
         </div>
+        <h2 id="mid-cta-h" class="mid-cta-title" data-i18n="midCta.h">İndir ve kur</h2>
+        <p class="mid-cta-lead" data-i18n="midCta.lead">Aşağıdan doğrudan APK sayfasına veya kurulum rehberine geç.</p>
+        <div class="mid-cta-grid">
+          <a class="mid-cta-card" href="indir.html">
+            <span class="mid-cta-card__arrow" aria-hidden="true">↓</span>
+            <span class="mid-cta-card__label" data-i18n="midCta.cardDl">APK &amp; sürümler</span>
+            <span class="mid-cta-card__hint" data-i18n="midCta.cardDlP">Güncel paket ve yama notları</span>
+          </a>
+          <a class="mid-cta-card" href="nasil-yuklenir.html">
+            <span class="mid-cta-card__arrow" aria-hidden="true">&gt;</span>
+            <span class="mid-cta-card__label" data-i18n="midCta.cardHow">Nasıl kurulur?</span>
+            <span class="mid-cta-card__hint" data-i18n="midCta.cardHowP">Android’e adım adım kurulum</span>
+          </a>
+        </div>
+      </section>
+
+      <section id="geri-bildirim" class="section reveal" aria-labelledby="fb-h">
+        <div class="section__head">
+          <h2 id="fb-h" data-i18n="feedback.h">Geri bildirim</h2>
+          <p data-i18n="feedback.p">Herkes yorumları okuyabilir; yazmak için GitHub ile giriş gerekir.</p>
+        </div>
+        <p class="comments-note" data-i18n-html="feedback.note">Yorumlar Utterances ile GitHub Issues üzerinde tutulur.</p>
+        <div id="utterances-host" class="comments-wrap" data-issue-term="pathname"></div>
       </section>
 
       <section id="credits" class="credits-block reveal" aria-labelledby="credits-h">
@@ -137,28 +156,13 @@
           </dl>
         </div>
       </section>
-
-      <section id="geri-bildirim" class="section reveal" aria-labelledby="fb-h">
-        <div class="section__head">
-          <h2 id="fb-h" data-i18n="feedback.h">Geri bildirim</h2>
-          <p data-i18n="feedback.p">Eksik chapter, hata veya öneri için ismini yazıp yorumunu bırak; liste bu sayfada görünür.</p>
-        </div>
-        <p class="comments-note" data-i18n-html="feedback.privacy">Yorumlar yalnızca bu tarayıcıda saklanır; başka cihazda görünmez.</p>
-        <form id="local-comment-form" class="local-comment-form" novalidate>
-          <label class="local-comment-form__field">
-            <span data-i18n="feedback.nameLabel">İsim</span>
-            <input type="text" name="comment-name" maxlength="80" required autocomplete="name" data-i18n-placeholder="feedback.placeholderName" placeholder="Adın veya takma adın">
-          </label>
-          <label class="local-comment-form__field">
-            <span data-i18n="feedback.commentLabel">Yorum</span>
-            <textarea name="comment-body" rows="4" maxlength="2000" required data-i18n-placeholder="feedback.placeholderComment" placeholder="Mesajın…"></textarea>
-          </label>
-          <button type="submit" class="btn btn--primary" data-i18n="feedback.submit">Yorumu gönder</button>
-        </form>
-        <p id="local-comments-empty" class="local-comments__empty" data-i18n="feedback.noComments">Henüz yorum yok — ilk sen yaz.</p>
-        <div id="local-comments-list" class="local-comments-list" role="feed" aria-label="Yorumlar" tabindex="-1"></div>
-      </section>
     </main>
+
+    <nav class="scroll-dock" data-scroll-dock aria-label="Hızlı bağlantılar" aria-hidden="true">
+      <a class="scroll-dock__link" href="indir.html" data-i18n="dock.download">İndir</a>
+      <span class="scroll-dock__chev" aria-hidden="true">‹</span>
+      <a class="scroll-dock__link" href="nasil-yuklenir.html" data-i18n="dock.install">Nasıl kurulur</a>
+    </nav>
 
     <footer class="app-footer">
       <div class="container">
@@ -168,7 +172,6 @@
   </div>
 
   <script src="js/site-ui.js" defer></script>
-  <script src="js/local-comments.js" defer></script>
   <script src="js/app-motion.js" defer></script>
 </body>
 </html>
