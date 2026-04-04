@@ -5,8 +5,7 @@
   function getStoredTheme() {
     const s = localStorage.getItem(THEME_KEY);
     if (s === "light" || s === "dark") return s;
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches) return "dark";
-    return "light";
+    return "dark";
   }
 
   function getStoredLang() {
@@ -23,7 +22,7 @@
     localStorage.setItem(THEME_KEY, theme);
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) {
-      meta.setAttribute("content", theme === "dark" ? "#0c1118" : "#e4eef8");
+      meta.setAttribute("content", theme === "dark" ? "#0a0a0a" : "#e4eef8");
     }
     const lang = document.documentElement.getAttribute("data-lang") || "tr";
     const tgl = document.querySelector("[data-theme-toggle]");
@@ -49,6 +48,29 @@
     const t = document.querySelector(".theme-toggle");
     if (!t) return;
     t.textContent = document.documentElement.getAttribute("data-theme") === "dark" ? "☀" : "☾";
+  }
+
+  function utteranceTheme() {
+    return document.documentElement.getAttribute("data-theme") === "dark" ? "github-dark" : "github-light";
+  }
+
+  function mountUtterances() {
+    const host = document.getElementById("utterances-host");
+    if (!host) return;
+    host.innerHTML = "";
+    const term = host.getAttribute("data-issue-term") || "pathname";
+    const s = document.createElement("script");
+    s.src = "https://utteranc.es/client.js";
+    s.setAttribute("repo", "2bartwo/ATA-Quick-Quide");
+    s.setAttribute("issue-term", term);
+    s.setAttribute("theme", utteranceTheme());
+    s.setAttribute("crossorigin", "anonymous");
+    s.async = true;
+    host.appendChild(s);
+  }
+
+  function remountUtterances() {
+    if (document.getElementById("utterances-host")) mountUtterances();
   }
 
   function replaceYear(html) {
@@ -134,6 +156,7 @@
       window.__ATA_I18N_DICT__ = window.__ATA_I18N_DICT__ || {};
     }
     window.dispatchEvent(new CustomEvent("ata-ready", { detail: { lang } }));
+    remountUtterances();
   }
 
   applyTheme(getStoredTheme());
@@ -146,6 +169,8 @@
       const cur = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
       applyTheme(cur === "dark" ? "light" : "dark");
     });
+
+    window.addEventListener("ata-theme", remountUtterances);
 
     document.querySelectorAll("[data-lang-btn]").forEach((btn) => {
       btn.addEventListener("click", () => {

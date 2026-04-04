@@ -4,8 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="ATA chapter’lara telefondan hızlı erişim. Erken erişim, APK indir; mağazalar yakında.">
-  <meta name="theme-color" content="#e4eef8">
+  <meta name="theme-color" content="#0a0a0a">
   <title>ATA Quick Guide — İndir</title>
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("ata-theme");
+        document.documentElement.setAttribute("data-theme", t === "light" ? "light" : "dark");
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    })();
+  </script>
   <link rel="icon" type="image/png" href="images/app-icon.png">
   <link rel="apple-touch-icon" href="images/app-icon.png">
   <link rel="canonical" href="https://ata-quick-guide.bartwo.me/">
@@ -13,11 +23,11 @@
   <meta property="og:url" content="https://ata-quick-guide.bartwo.me/">
   <meta property="og:title" content="ATA Quick Guide">
   <meta property="og:description" content="ATA chapter’lara telefondan hızlı erişim. Erken erişim.">
-  <meta property="og:image" content="https://ata-quick-guide.bartwo.me/images/app-icon.png">
+  <meta property="og:image" content="https://ata-quick-guide.bartwo.me/images/app-screenshot-1.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="ATA Quick Guide">
   <meta name="twitter:description" content="ATA chapter’lara telefondan hızlı erişim.">
-  <meta name="twitter:image" content="https://ata-quick-guide.bartwo.me/images/app-icon.png">
+  <meta name="twitter:image" content="https://ata-quick-guide.bartwo.me/images/app-screenshot-1.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -34,6 +44,7 @@
           ATA Quick Guide
         </a>
         <nav class="app-menu" aria-label="Site">
+          <a href="#ozellikler" data-i18n="nav.features">Özellikler</a>
           <a href="#nedir" data-i18n="nav.what">Uygulama</a>
           <a href="indir.html" data-i18n="nav.download">İndir</a>
           <a href="nasil-yuklenir.html" data-i18n="nav.how">Kurulum</a>
@@ -51,51 +62,111 @@
     </header>
 
     <main id="icerik" class="app-content container">
-      <section class="app-hero" aria-labelledby="hero-title">
-        <p class="beta-pill"><span data-i18n="beta.pill">Erken erişim</span></p>
-        <div class="app-hero__icon" aria-hidden="true">
-          <img src="images/app-icon.png" width="160" height="160" alt="">
-        </div>
-        <h1 id="hero-title">ATA Quick Guide</h1>
-        <p class="lead" data-i18n-html="hero.lead">
-          Havacılıkta kullanılan <strong>ATA chapter</strong> yapısına telefondan <strong>hızlı ve doğru</strong> şekilde bakmanı sağlar.
-          Uçağı açıp ihtiyacın olan bölümü aramak yerine, chapter numarası ve başlıklar elinin altında olur.
-        </p>
-        <div class="btn-row">
-          <a class="btn btn--primary" href="indir.html" data-i18n="btn.apk">APK indir</a>
-          <a class="btn btn--ghost" href="#nedir" data-i18n="btn.details">Detaylar</a>
-        </div>
-
-        <div class="store-panel store-panel--compact" aria-labelledby="store-heading">
-          <h2 id="store-heading" class="visually-hidden" data-i18n="store.hiddenTitle">Mağaza yayını</h2>
-          <p class="store-panel__copy" data-i18n-html="store.copy">
-            <strong>Google Play</strong> ve <strong>App Store</strong> sürümleri <strong>yakında</strong> yayında olacak.
-            Şu an uygulama <strong>erken erişim</strong> aşamasında; en güncel yapıyı doğrudan bu siteden <strong>APK</strong> ile indirip kurabilirsin.
-          </p>
-          <div class="store-badges">
-            <div class="store-badge-wrap">
-              <img
-                class="store-badge"
-                src="https://play.google.com/intl/en_us/badges/static/images/badges/tr_badge_web_generic.png"
-                height="48"
-                data-i18n-alt="store.gpAlt"
-                alt="Yakında Google Play’de"
-                loading="lazy"
-                decoding="async">
-              <span class="store-badge-label" data-i18n="store.soon">Yakında</span>
+      <section class="app-hero landing-hero" aria-labelledby="hero-title">
+        <div class="landing-hero__grid">
+          <div class="landing-hero__copy">
+            <p class="beta-pill"><span data-i18n="beta.pill">Erken erişim</span></p>
+            <h1 id="hero-title" data-i18n="hero.title">ATA chapter referansı, cepte</h1>
+            <p class="landing-hero__subtitle" data-i18n="hero.subtitle">Uygulama giriş sayfası tarzında net anlatım; arayüz uygulama içi koyu temayla uyumlu.</p>
+            <p class="lead" data-i18n-html="hero.lead">
+              Havacılıkta kullanılan <strong>ATA chapter</strong> yapısına telefondan <strong>hızlı ve doğru</strong> şekilde bakmanı sağlar.
+              Uçağı açıp ihtiyacın olan bölümü aramak yerine, chapter numarası ve başlıklar elinin altında olur.
+            </p>
+            <div class="btn-row">
+              <a class="btn btn--primary" href="indir.html" data-i18n="btn.apk">APK indir</a>
+              <a class="btn btn--ghost" href="#ozellikler" data-i18n="nav.features">Özellikler</a>
+              <a class="btn btn--ghost" href="#nedir" data-i18n="btn.details">Detaylar</a>
             </div>
-            <div class="store-badge-wrap">
-              <img
-                class="store-badge store-badge--apple"
-                src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
-                height="40"
-                data-i18n-alt="store.asAlt"
-                alt="Yakında App Store’da"
-                loading="lazy"
-                decoding="async">
-              <span class="store-badge-label" data-i18n="store.soon">Yakında</span>
+
+            <div class="store-panel store-panel--compact" aria-labelledby="store-heading">
+              <h2 id="store-heading" class="visually-hidden" data-i18n="store.hiddenTitle">Mağaza yayını</h2>
+              <p class="store-panel__copy" data-i18n-html="store.copy">
+                <strong>Google Play</strong> ve <strong>App Store</strong> sürümleri <strong>yakında</strong> yayında olacak.
+                Şu an uygulama <strong>erken erişim</strong> aşamasında; en güncel yapıyı doğrudan bu siteden <strong>APK</strong> ile indirip kurabilirsin.
+              </p>
+              <div class="store-badges">
+                <div class="store-badge-wrap">
+                  <img
+                    class="store-badge"
+                    src="https://play.google.com/intl/en_us/badges/static/images/badges/tr_badge_web_generic.png"
+                    height="48"
+                    data-i18n-alt="store.gpAlt"
+                    alt="Yakında Google Play’de"
+                    loading="lazy"
+                    decoding="async">
+                  <span class="store-badge-label" data-i18n="store.soon">Yakında</span>
+                </div>
+                <div class="store-badge-wrap">
+                  <img
+                    class="store-badge store-badge--apple"
+                    src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
+                    height="40"
+                    data-i18n-alt="store.asAlt"
+                    alt="Yakında App Store’da"
+                    loading="lazy"
+                    decoding="async">
+                  <span class="store-badge-label" data-i18n="store.soon">Yakında</span>
+                </div>
+              </div>
             </div>
           </div>
+
+          <div class="landing-hero__visual" aria-hidden="true">
+            <div class="landing-phones">
+              <div class="phone-frame phone-frame--back">
+                <div class="phone-frame__screen">
+                  <img src="images/app-screenshot-2.png" width="390" height="844" alt="">
+                </div>
+              </div>
+              <div class="phone-frame phone-frame--front">
+                <div class="phone-frame__screen">
+                  <img src="images/app-screenshot-1.png" width="390" height="844" alt="">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="showcase-section reveal" aria-labelledby="showcase-h">
+        <div class="section__head">
+          <h2 id="showcase-h" data-i18n="showcase.h">Uygulama içi görünüm</h2>
+          <p data-i18n="showcase.p">Arama çubuğu, chapter kartları ve genişletilebilir bölümler; telefonda okunaklı koyu arayüz.</p>
+        </div>
+        <div class="showcase-strip">
+          <figure class="showcase-card">
+            <img src="images/app-screenshot-1.png" width="780" height="1688" loading="lazy" decoding="async" data-i18n-alt="showcase.alt1" alt="">
+            <figcaption class="visually-hidden" data-i18n="showcase.alt1">ATA Reference: chapter listesi ve arama</figcaption>
+          </figure>
+          <figure class="showcase-card">
+            <img src="images/app-screenshot-2.png" width="780" height="1688" loading="lazy" decoding="async" data-i18n-alt="showcase.alt2" alt="">
+            <figcaption class="visually-hidden" data-i18n="showcase.alt2">ATA Reference: genişletilmiş bölüm ve alt başlıklar</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section id="ozellikler" class="section reveal" aria-labelledby="feat-h">
+        <div class="section__head">
+          <h2 id="feat-h" data-i18n="features.h">Öne çıkanlar</h2>
+          <p data-i18n="features.lead">Saha veya ofiste, referansa ihtiyaç duyduğunda tek bakışta chapter mantığına odaklan.</p>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card reveal reveal-stagger-1">
+            <h3 data-i18n="features.f1h">Hızlı erişim</h3>
+            <p data-i18n="features.f1p">Chapter yapısına telefondan kısa yoldan ulaş; uzun doküman karıştırmadan kontrol et.</p>
+          </article>
+          <article class="feature-card reveal reveal-stagger-2">
+            <h3 data-i18n="features.f2h">Doğru referans</h3>
+            <p data-i18n="features.f2p">Standart ATA numaralandırmasıyla uyumlu düzen; yanlış başlığa takılmadan bakım ve çalışma akışını destekler.</p>
+          </article>
+          <article class="feature-card reveal reveal-stagger-3">
+            <h3 data-i18n="features.f3h">Mobil kullanım</h3>
+            <p data-i18n="features.f3p">Android APK olarak yükle; bağlantı veya tarayıcı sekmesi derdi olmadan uygulamadan kullan.</p>
+          </article>
+        </div>
+        <div class="cta-strip reveal">
+          <p data-i18n-html="download.cta">Android için APK — bilinen kaynak (bu site) üzerinden indir.</p>
+          <a class="btn btn--primary" href="indir.html" data-i18n="btn.gotoDownload">İndir sayfasına git</a>
         </div>
       </section>
 
@@ -105,6 +176,14 @@
           <p data-i18n-html="nedir.p"></p>
         </div>
       </section>
+
+      <aside class="landing-quote reveal" aria-labelledby="quote-h">
+        <h2 id="quote-h" class="visually-hidden" data-i18n="quote.h">Öne çıkan ifade</h2>
+        <blockquote class="landing-quote__inner" cite="https://ata-quick-guide.bartwo.me/">
+          <p data-i18n="quote.text">Sahada veya ofiste chapter’a hızlıca bakmak için cepte duran bir referans.</p>
+          <footer><cite data-i18n="quote.cite">Erken erişim</cite></footer>
+        </blockquote>
+      </aside>
 
       <section id="credits" class="credits-block reveal" aria-labelledby="credits-h">
         <div class="credits-card">
@@ -125,27 +204,10 @@
       <section id="geri-bildirim" class="section reveal" aria-labelledby="fb-h">
         <div class="section__head">
           <h2 id="fb-h" data-i18n="feedback.h">Geri bildirim</h2>
-          <p data-i18n="feedback.p">Yorumları herkes görebilir ve yazabilir; GitHub gerekmez.</p>
+          <p data-i18n-html="feedback.p"></p>
         </div>
-        <p class="comments-note" data-i18n-html="feedback.noteFirebase"></p>
-        <div id="public-comments-root" class="comments-wrap comments-wrap--stack">
-          <p id="firebase-setup-hint" class="alert-soft" data-i18n-html="feedback.firebaseSetup"></p>
-          <div id="firebase-comments-ui" hidden>
-            <p id="public-comment-status" class="comments-status" hidden role="status"></p>
-            <form id="public-comment-form" class="public-comment-form" novalidate>
-              <label class="public-comment-form__field">
-                <span data-i18n="feedback.nameLabel">İsim</span>
-                <input type="text" name="comment-name" maxlength="80" required autocomplete="name" data-i18n-placeholder="feedback.placeholderName" placeholder="">
-              </label>
-              <label class="public-comment-form__field">
-                <span data-i18n="feedback.commentLabel">Yorum</span>
-                <textarea name="comment-body" rows="4" maxlength="2000" required data-i18n-placeholder="feedback.placeholderComment" placeholder=""></textarea>
-              </label>
-              <button type="submit" class="btn btn--primary" data-i18n="feedback.submit">Gönder</button>
-            </form>
-            <div id="public-comments-list" class="public-comments-list"></div>
-          </div>
-        </div>
+        <p class="comments-note" data-i18n-html="feedback.note"></p>
+        <div id="utterances-host" class="comments-wrap" data-issue-term="pathname"></div>
       </section>
     </main>
 
@@ -156,9 +218,7 @@
     </footer>
   </div>
 
-  <script src="js/firebase-config.js"></script>
   <script src="js/site-ui.js" defer></script>
-  <script src="js/public-comments.js" defer></script>
   <script src="js/app-motion.js" defer></script>
 </body>
 </html>

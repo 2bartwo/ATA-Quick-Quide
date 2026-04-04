@@ -4,8 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="ATA Quick Guide — Android’e APK ile nasıl yüklenir.">
-  <meta name="theme-color" content="#e4eef8">
+  <meta name="theme-color" content="#0a0a0a">
   <title>Nasıl yüklenir — ATA Quick Guide</title>
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("ata-theme");
+        document.documentElement.setAttribute("data-theme", t === "light" ? "light" : "dark");
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    })();
+  </script>
   <link rel="icon" type="image/png" href="images/app-icon.png">
   <link rel="canonical" href="https://ata-quick-guide.bartwo.me/nasil-yuklenir.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
