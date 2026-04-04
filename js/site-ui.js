@@ -18,6 +18,14 @@
   }
 
   function applyTheme(theme) {
+    if (document.body && document.body.classList.contains("wix-template")) {
+      document.documentElement.setAttribute("data-theme", "light");
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) meta.setAttribute("content", "#ffffff");
+      syncThemeIcon();
+      window.dispatchEvent(new CustomEvent("ata-theme", { detail: { theme: "light" } }));
+      return;
+    }
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem(THEME_KEY, theme);
     const meta = document.querySelector('meta[name="theme-color"]');
@@ -166,6 +174,7 @@
     await applyLang(lang);
 
     document.querySelector("[data-theme-toggle]")?.addEventListener("click", () => {
+      if (document.body.classList.contains("wix-template")) return;
       const cur = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
       applyTheme(cur === "dark" ? "light" : "dark");
     });
