@@ -3,28 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="ATA Quick Guide — ATA chapter’lara telefondan hızlı erişim. Erken erişim (beta), APK indir; mağazalar yakında.">
+  <meta name="description" content="ATA chapter’lara telefondan hızlı erişim. Erken erişim, APK indir; mağazalar yakında.">
   <meta name="theme-color" content="#e4eef8">
   <title>ATA Quick Guide — İndir</title>
   <link rel="icon" type="image/png" href="images/app-icon.png">
   <link rel="apple-touch-icon" href="images/app-icon.png">
-  <link rel="canonical" href="https://ata-quick-guide.bartwo.me/">
+  <link rel="canonical" href="https://bartwo.me/ATA-Quick-Quide/">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://ata-quick-guide.bartwo.me/">
+  <meta property="og:url" content="https://bartwo.me/ATA-Quick-Quide/">
   <meta property="og:title" content="ATA Quick Guide">
-  <meta property="og:description" content="ATA chapter’lara telefondan hızlı erişim. Erken erişim (beta).">
-  <meta property="og:image" content="https://ata-quick-guide.bartwo.me/images/app-icon.png">
+  <meta property="og:description" content="ATA chapter’lara telefondan hızlı erişim. Erken erişim.">
+  <meta property="og:image" content="https://bartwo.me/ATA-Quick-Quide/images/app-icon.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="ATA Quick Guide">
-  <meta name="twitter:description" content="ATA chapter’lara telefondan hızlı erişim. Erken erişim (beta).">
-  <meta name="twitter:image" content="https://ata-quick-guide.bartwo.me/images/app-icon.png">
+  <meta name="twitter:description" content="ATA chapter’lara telefondan hızlı erişim.">
+  <meta name="twitter:image" content="https://bartwo.me/ATA-Quick-Quide/images/app-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/app-site.css">
 </head>
-<body>
-  <a class="visually-hidden" href="#icerik">İçeriğe geç</a>
+<body data-page="index">
+  <a class="visually-hidden" href="#icerik" data-i18n="skip">İçeriğe geç</a>
 
   <div class="app-shell">
     <header class="app-top">
@@ -34,37 +34,44 @@
           ATA Quick Guide
         </a>
         <nav class="app-menu" aria-label="Site">
-          <a href="#nedir">Ne işe yarar?</a>
-          <a href="#ozellikler">Özellikler</a>
-          <a href="indir.html">İndir</a>
-          <a href="nasil-yuklenir.html">Nasıl yüklenir</a>
-          <a href="#credits">Ekip</a>
-          <a href="#geri-bildirim">Geri bildirim</a>
+          <a href="#nedir" data-i18n="nav.what">Ne işe yarar?</a>
+          <a href="#ozellikler" data-i18n="nav.features">Özellikler</a>
+          <a href="indir.html" data-i18n="nav.download">İndir</a>
+          <a href="nasil-yuklenir.html" data-i18n="nav.how">Nasıl yüklenir</a>
+          <a href="#credits" data-i18n="nav.team">Ekip</a>
+          <a href="#geri-bildirim" data-i18n="nav.feedback">Geri bildirim</a>
         </nav>
+        <div class="app-controls" role="toolbar" aria-label="Dil ve tema">
+          <div class="lang-seg" role="group" aria-label="Dil">
+            <button type="button" data-lang-btn="tr" aria-pressed="true">TR</button>
+            <button type="button" data-lang-btn="en" aria-pressed="false">EN</button>
+          </div>
+          <button type="button" class="theme-toggle" data-theme-toggle aria-label="Tema">☾</button>
+        </div>
       </div>
     </header>
 
     <main id="icerik" class="app-content container">
       <section class="app-hero" aria-labelledby="hero-title">
-        <p class="beta-pill"><span>Erken erişim · Beta</span></p>
+        <p class="beta-pill"><span data-i18n="beta.pill">Erken erişim</span></p>
         <div class="app-hero__icon">
-          <img src="images/app-icon.png" width="88" height="88" alt="ATA Quick Guide uygulama simgesi">
+          <img src="images/app-icon.png" width="88" height="88" alt="">
         </div>
         <h1 id="hero-title">ATA Quick Guide</h1>
-        <p class="lead">
+        <p class="lead" data-i18n-html="hero.lead">
           Havacılıkta kullanılan <strong>ATA chapter</strong> yapısına telefondan <strong>hızlı ve doğru</strong> şekilde bakmanı sağlar.
           Uçağı açıp ihtiyacın olan bölümü aramak yerine, chapter numarası ve başlıklar elinin altında olur.
         </p>
         <div class="btn-row">
-          <a class="btn btn--primary" href="indir.html">APK indir</a>
-          <a class="btn btn--ghost" href="#nedir">Detaylar</a>
+          <a class="btn btn--primary" href="indir.html" data-i18n="btn.apk">APK indir</a>
+          <a class="btn btn--ghost" href="#nedir" data-i18n="btn.details">Detaylar</a>
         </div>
 
         <div class="store-panel" aria-labelledby="store-heading">
-          <h2 id="store-heading" class="visually-hidden">Mağaza yayını</h2>
-          <p class="store-panel__copy">
+          <h2 id="store-heading" class="visually-hidden" data-i18n="store.hiddenTitle">Mağaza yayını</h2>
+          <p class="store-panel__copy" data-i18n-html="store.copy">
             <strong>Google Play</strong> ve <strong>App Store</strong> sürümleri <strong>yakında</strong> yayında olacak.
-            Şu an uygulama <strong>erken erişim / beta</strong> aşamasında; en güncel yapıyı doğrudan bu siteden <strong>APK</strong> ile indirip kurabilirsin.
+            Şu an uygulama <strong>erken erişim</strong> aşamasında; en güncel yapıyı doğrudan bu siteden <strong>APK</strong> ile indirip kurabilirsin.
           </p>
           <div class="store-badges">
             <div class="store-badge-wrap">
@@ -72,20 +79,22 @@
                 class="store-badge"
                 src="https://play.google.com/intl/en_us/badges/static/images/badges/tr_badge_web_generic.png"
                 height="48"
+                data-i18n-alt="store.gpAlt"
                 alt="Yakında Google Play’de"
                 loading="lazy"
                 decoding="async">
-              <span class="store-badge-label">Yakında</span>
+              <span class="store-badge-label" data-i18n="store.soon">Yakında</span>
             </div>
             <div class="store-badge-wrap">
               <img
                 class="store-badge store-badge--apple"
                 src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
                 height="40"
+                data-i18n-alt="store.asAlt"
                 alt="Yakında App Store’da"
                 loading="lazy"
                 decoding="async">
-              <span class="store-badge-label">Yakında</span>
+              <span class="store-badge-label" data-i18n="store.soon">Yakında</span>
             </div>
           </div>
         </div>
@@ -93,58 +102,54 @@
 
       <section id="nedir" class="section reveal" aria-labelledby="nedir-h">
         <div class="section__head">
-          <h2 id="nedir-h">Ne işe yarar?</h2>
-          <p>
-            ATA (Air Transport Association) chapter’ları, uçak sistemlerinin ve dokümantasyonun standart numaralandırmasıdır
-            (ör. belirli sistemler için sabit chapter kodları). Bakım, planlama veya teknik bakarken doğru chapter’a hızlıca
-            ulaşmak önemlidir; bu uygulama da tam bunun için: <strong>telefonu açıp ilgili chapter bilgisine pratik şekilde erişmeni</strong> kolaylaştırır.
-          </p>
+          <h2 id="nedir-h" data-i18n="nedir.h">Ne işe yarar?</h2>
+          <p data-i18n-html="nedir.p"></p>
         </div>
       </section>
 
       <section id="ozellikler" class="section" aria-labelledby="ozellikler-h">
         <div class="section__head">
-          <h2 id="ozellikler-h">Öne çıkanlar</h2>
-          <p>Saha veya ofiste, referansa ihtiyaç duyduğunda tek bakışta chapter mantığına odaklan.</p>
+          <h2 id="ozellikler-h" data-i18n="features.h">Öne çıkanlar</h2>
+          <p data-i18n="features.lead">Saha veya ofiste, referansa ihtiyaç duyduğunda tek bakışta chapter mantığına odaklan.</p>
         </div>
         <div class="feature-grid">
           <article class="feature-card reveal reveal-stagger-1">
-            <h3>Hızlı erişim</h3>
-            <p>Chapter yapısına telefondan kısa yoldan ulaş; uzun doküman karıştırmadan kontrol et.</p>
+            <h3 data-i18n="features.f1h">Hızlı erişim</h3>
+            <p data-i18n="features.f1p">Chapter yapısına telefondan kısa yoldan ulaş; uzun doküman karıştırmadan kontrol et.</p>
           </article>
           <article class="feature-card reveal reveal-stagger-2">
-            <h3>Doğru referans</h3>
-            <p>Standart ATA numaralandırmasıyla uyumlu düzen; yanlış başlığa takılmadan bakım ve çalışma akışını destekler.</p>
+            <h3 data-i18n="features.f2h">Doğru referans</h3>
+            <p data-i18n="features.f2p">Standart ATA numaralandırmasıyla uyumlu düzen; yanlış başlığa takılmadan bakım ve çalışma akışını destekler.</p>
           </article>
           <article class="feature-card reveal reveal-stagger-3">
-            <h3>Mobil kullanım</h3>
-            <p>Android APK olarak yükle; bağlantı veya tarayıcı sekmesi derdi olmadan uygulamadan kullan.</p>
+            <h3 data-i18n="features.f3h">Mobil kullanım</h3>
+            <p data-i18n="features.f3p">Android APK olarak yükle; bağlantı veya tarayıcı sekmesi derdi olmadan uygulamadan kullan.</p>
           </article>
         </div>
       </section>
 
       <section class="section reveal" aria-labelledby="dl-h">
         <div class="section__head">
-          <h2 id="dl-h">Güvenli indirme</h2>
-          <p>Güncel paket, sürüm notları ve eski sürümler indir sayfasında. Beta sürecinde geri bildirimlerin bizim için değerli.</p>
+          <h2 id="dl-h" data-i18n="download.h">Güvenli indirme</h2>
+          <p data-i18n="download.lead">Güncel paket, sürüm notları ve eski sürümler indir sayfasında.</p>
         </div>
         <div class="cta-strip">
-          <p>Android için APK — bilinen kaynak (bu site) üzerinden indir.</p>
-          <a class="btn btn--primary" href="indir.html">İndir sayfasına git</a>
+          <p data-i18n="download.cta">Android için APK — bilinen kaynak (bu site) üzerinden indir.</p>
+          <a class="btn btn--primary" href="indir.html" data-i18n="btn.gotoDownload">İndir sayfasına git</a>
         </div>
       </section>
 
       <section id="credits" class="credits-block reveal" aria-labelledby="credits-h">
         <div class="credits-card">
-          <h2 id="credits-h">Credits</h2>
+          <h2 id="credits-h" data-i18n="credits.h">Credits</h2>
           <dl class="credits-list">
-            <dt>Geliştirici</dt>
+            <dt data-i18n="credits.dev">Geliştirici</dt>
             <dd>Yusuf Mirza Sökmen</dd>
-            <dt>Site geliştiricisi</dt>
+            <dt data-i18n="credits.devSite">Site geliştiricisi</dt>
             <dd>Bartu Yıldız</dd>
-            <dt>Mentor</dt>
+            <dt data-i18n="credits.mentor">Mentor</dt>
             <dd>Mahmut Abdurrahman Cığşar</dd>
-            <dt>Test ekibi</dt>
+            <dt data-i18n="credits.test">Test ekibi</dt>
             <dd>Mustafa Değirmencioğlu, Murat Yılmaz, Sena Yılmaz</dd>
           </dl>
         </div>
@@ -152,40 +157,22 @@
 
       <section id="geri-bildirim" class="section reveal" aria-labelledby="fb-h">
         <div class="section__head">
-          <h2 id="fb-h">Geri bildirim</h2>
-          <p>Eksik chapter, hata, öneri veya geliştirme fikri için aşağıya yazabilirsin. İndir sayfasında da ayrı bir yorum alanı var.</p>
+          <h2 id="fb-h" data-i18n="feedback.h">Geri bildirim</h2>
+          <p data-i18n="feedback.p">Eksik chapter, hata, öneri veya geliştirme fikri için aşağıya yorum yazabilirsin. GitHub hesabınla giriş yaptıktan sonra yorum kutusu açılır.</p>
         </div>
-        <p class="comments-note">
-          Yorumlar GitHub üzerinden (Utterances) kaydolur. Repoda <strong>Issues</strong> açık olmalıdır.
-        </p>
-        <div class="comments-wrap">
-          <script src="https://utteranc.es/client.js"
-            repo="2bartwo/ATA-Quick-Quide"
-            issue-term="ATA Quick Guide — ana sayfa geri bildirim"
-            theme="github-light"
-            crossorigin="anonymous"
-            async>
-          </script>
-        </div>
+        <p class="comments-note" data-i18n-html="feedback.note">Yorumlar <strong>Utterances</strong> ile GitHub Issues’a yazılır.</p>
+        <div id="utterances-host" class="comments-wrap" data-issue-term="pathname"></div>
       </section>
     </main>
 
     <footer class="app-footer">
       <div class="container">
-        <p>
-          © <span id="year"></span> ATA Quick Guide ·
-          <a href="nasil-yuklenir.html">Kurulum</a> ·
-          <a href="indir.html">Sürümler</a> ·
-          <a href="#credits">Ekip</a> ·
-          <a href="#geri-bildirim">Geri bildirim</a>
-        </p>
+        <p class="app-footer__line" data-i18n-html="footer.html"></p>
       </div>
     </footer>
   </div>
 
+  <script src="js/site-ui.js" defer></script>
   <script src="js/app-motion.js" defer></script>
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
 </body>
 </html>

@@ -1,0 +1,120 @@
+{
+  "meta": {
+    "title": "ATA Quick Guide — Download",
+    "description": "Fast ATA chapter lookup on your phone. Early access APK; stores coming soon."
+  },
+  "skip": "Skip to content",
+  "nav": {
+    "what": "What is it?",
+    "features": "Features",
+    "download": "Download",
+    "how": "How to install",
+    "team": "Team",
+    "feedback": "Feedback",
+    "home": "Home"
+  },
+  "beta": {
+    "pill": "Early access"
+  },
+  "hero": {
+    "lead": "Helps you look up the aviation <strong>ATA chapter</strong> structure on your phone <strong>quickly and accurately</strong>. Chapter numbers and titles stay at your fingertips—without digging through manuals."
+  },
+  "btn": {
+    "apk": "Download APK",
+    "details": "Details",
+    "gotoDownload": "Go to download page"
+  },
+  "store": {
+    "hiddenTitle": "Store availability",
+    "copy": "<strong>Google Play</strong> and <strong>App Store</strong> builds are <strong>coming soon</strong>. The app is in <strong>early access</strong> right now; get the latest build as an <strong>APK</strong> from this site.",
+    "gpAlt": "Coming soon on Google Play",
+    "asAlt": "Coming soon on the App Store",
+    "soon": "Soon"
+  },
+  "nedir": {
+    "h": "What does it do?",
+    "p": "ATA (Air Transport Association) chapters are the standard numbering for aircraft systems and documentation. This app makes it easier to <strong>open your phone and reach the right chapter information</strong> for maintenance, planning, or technical work."
+  },
+  "features": {
+    "h": "Highlights",
+    "lead": "Whether on the ramp or at a desk, focus on chapter logic in one glance.",
+    "f1h": "Quick access",
+    "f1p": "Jump to the chapter layout on your phone without flipping through long PDFs.",
+    "f2h": "Reliable reference",
+    "f2p": "Aligned with standard ATA numbering to support your workflow.",
+    "f3h": "Mobile-first",
+    "f3p": "Install the Android APK—no browser tab juggling."
+  },
+  "download": {
+    "h": "Safe download",
+    "lead": "Latest package, release notes, and older builds are on the download page. Your feedback matters during early access.",
+    "cta": "Android APK from this official site."
+  },
+  "credits": {
+    "h": "Credits",
+    "dev": "Developer",
+    "devSite": "Site developer",
+    "mentor": "Mentor",
+    "test": "Test team"
+  },
+  "feedback": {
+    "h": "Feedback",
+    "p": "Comment below for missing chapters, bugs, or ideas. After signing in with GitHub, the comment box appears. There is also a thread on the Download page.",
+    "note": "Comments use <strong>Utterances</strong> on GitHub Issues. <strong>Issues</strong> must be enabled and the <a href=\"https://github.com/apps/utterances\" target=\"_blank\" rel=\"noopener\">Utterances</a> app installed on the repo."
+  },
+  "footer": {
+    "html": "© __YEAR__ ATA Quick Guide · <a href=\"nasil-yuklenir.html\">Install</a> · <a href=\"indir.html\">Releases</a> · <a href=\"#credits\">Team</a> · <a href=\"#geri-bildirim\">Feedback</a>"
+  },
+  "page": {
+    "downloadTitle": "Download — ATA Quick Guide",
+    "downloadDesc": "ATA Quick Guide — download APK, releases, changelog",
+    "downloadH1": "Download & releases",
+    "downloadLead": "The app is in <strong>early access</strong>; download the latest APK from this page. Google Play and App Store are coming soon—see badges on the home page. Changelog and older builds are below; leave feedback at the bottom.",
+    "installTitle": "How to install — ATA Quick Guide",
+    "installDesc": "How to install the ATA Quick Guide APK on Android.",
+    "installH1": "How to install",
+    "installLead": "Because this app is distributed <strong>outside Google Play</strong>, installation works like any other <strong>side-loaded APK</strong>. Steps below are typical; menu names vary by manufacturer.",
+    "footerDownload": "© __YEAR__ ATA Quick Guide · <a href=\"index.html\">Home</a> · <a href=\"index.html#credits\">Team</a>",
+    "footerInstall": "© __YEAR__ ATA Quick Guide · <a href=\"indir.html\">Download</a> · <a href=\"index.html#credits\">Team</a>"
+  },
+  "releases": {
+    "badgeLatest": "Latest release",
+    "versionWord": "Version",
+    "downloadApk": "Download APK",
+    "notesTitle": "Release notes",
+    "download": "Download",
+    "errLoad": "Could not load releases. Refresh or try again later.",
+    "sectionLatest": "Current app version",
+    "sectionOlder": "Older versions",
+    "sectionHistory": "Changelog (archived)",
+    "historyMuted": "Archived versions only; current notes are in the card above.",
+    "sectionFeedback": "Feedback",
+    "feedbackNote": "Sign in with GitHub to comment. Uses Utterances; Issues must be enabled on the repo."
+  },
+  "install": {
+    "s1h": "1. Requirements",
+    "s1a": "Android phone or tablet (preferably a recent OS version).",
+    "s1b": "Enough free storage (a bit more than the APK size).",
+    "s1c": "You downloaded the APK from our download page.",
+    "s2h": "2. Allow unknown sources",
+    "s2p": "By default Android only allows installs from stores. If you install via browser or Files, allow that app once.",
+    "s2l1": "Open Settings.",
+    "s2l2": "Go to Apps or Notifications & apps.",
+    "s2l3": "Pick the app that opens the APK (often Chrome, Downloads, or Files).",
+    "s2l4": "Enable Install unknown apps / Allow from this source.",
+    "s2note": "Some devices also prompt during the first install; you can allow there too.",
+    "s3h": "3. Download and open the APK",
+    "s3l1": "<a href=\"indir.html\">Download</a> the latest <code>.apk</code> from the download page.",
+    "s3l2": "Tap the file from the notification shade or find it under Files / Downloads.",
+    "s3l3": "Tap the file to open the package installer.",
+    "s4h": "4. Confirm install",
+    "s4l1": "Review requested permissions.",
+    "s4l2": "Tap Install.",
+    "s4l3": "When done, tap Open or use the home screen icon.",
+    "s5h": "5. Play Protect & warnings",
+    "s5p": "Play Protect may warn on non-Play APKs. If you got the file from this official page, risk is lower—still only install from sources you trust.",
+    "s5note": "If you see “Install anyway”, only continue if you trust the download source.",
+    "s6h": "6. Updating",
+    "s6p": "When a new build ships, download the latest APK from the <a href=\"indir.html\">download page</a> and install over the old one. Data is usually kept; back up anything critical."
+  }
+}

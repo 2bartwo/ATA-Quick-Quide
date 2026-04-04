@@ -1,0 +1,121 @@
+{
+  "meta": {
+    "title": "ATA Quick Guide — İndir",
+    "description": "ATA chapter’lara telefondan hızlı erişim. Erken erişim, APK indir; mağazalar yakında."
+  },
+  "skip": "İçeriğe geç",
+  "nav": {
+    "what": "Ne işe yarar?",
+    "features": "Özellikler",
+    "download": "İndir",
+    "how": "Nasıl yüklenir",
+    "team": "Ekip",
+    "feedback": "Geri bildirim",
+    "home": "Ana sayfa"
+  },
+  "beta": {
+    "pill": "Erken erişim"
+  },
+  "hero": {
+    "lead": "Havacılıkta kullanılan <strong>ATA chapter</strong> yapısına telefondan <strong>hızlı ve doğru</strong> şekilde bakmanı sağlar. Uçağı açıp ihtiyacın olan bölümü aramak yerine, chapter numarası ve başlıklar elinin altında olur."
+  },
+  "btn": {
+    "apk": "APK indir",
+    "details": "Detaylar",
+    "gotoDownload": "İndir sayfasına git"
+  },
+  "store": {
+    "hiddenTitle": "Mağaza yayını",
+    "copy": "<strong>Google Play</strong> ve <strong>App Store</strong> sürümleri <strong>yakında</strong> yayında olacak. Şu an uygulama <strong>erken erişim</strong> aşamasında; en güncel yapıyı doğrudan bu siteden <strong>APK</strong> ile indirip kurabilirsin.",
+    "gpAlt": "Yakında Google Play’de",
+    "asAlt": "Yakında App Store’da",
+    "soon": "Yakında"
+  },
+  "nedir": {
+    "h": "Ne işe yarar?",
+    "p": "ATA (Air Transport Association) chapter’ları, uçak sistemlerinin ve dokümantasyonun standart numaralandırmasıdır (ör. belirli sistemler için sabit chapter kodları). Bakım, planlama veya teknik bakarken doğru chapter’a hızlıca ulaşmak önemlidir; bu uygulama da tam bunun için: <strong>telefonu açıp ilgili chapter bilgisine pratik şekilde erişmeni</strong> kolaylaştırır."
+  },
+  "features": {
+    "h": "Öne çıkanlar",
+    "lead": "Saha veya ofiste, referansa ihtiyaç duyduğunda tek bakışta chapter mantığına odaklan.",
+    "f1h": "Hızlı erişim",
+    "f1p": "Chapter yapısına telefondan kısa yoldan ulaş; uzun doküman karıştırmadan kontrol et.",
+    "f2h": "Doğru referans",
+    "f2p": "Standart ATA numaralandırmasıyla uyumlu düzen; yanlış başlığa takılmadan bakım ve çalışma akışını destekler.",
+    "f3h": "Mobil kullanım",
+    "f3p": "Android APK olarak yükle; bağlantı veya tarayıcı sekmesi derdi olmadan uygulamadan kullan."
+  },
+  "download": {
+    "h": "Güvenli indirme",
+    "lead": "Güncel paket, sürüm notları ve eski sürümler indir sayfasında. Erken erişim sürecinde geri bildirimlerin bizim için değerli.",
+    "cta": "Android için APK — bilinen kaynak (bu site) üzerinden indir."
+  },
+  "credits": {
+    "h": "Credits",
+    "dev": "Geliştirici",
+    "devSite": "Site geliştiricisi",
+    "mentor": "Mentor",
+    "test": "Test ekibi"
+  },
+  "feedback": {
+    "h": "Geri bildirim",
+    "p": "Eksik chapter, hata, öneri veya geliştirme fikri için aşağıya yorum yazabilirsin. GitHub hesabınla giriş yaptıktan sonra yorum kutusu açılır. İndir sayfasında da ayrı bir konu var.",
+    "note": "Yorumlar <strong>Utterances</strong> ile GitHub Issues’a yazılır. Repoda <strong>Issues</strong> açık ve <a href=\"https://github.com/apps/utterances\" target=\"_blank\" rel=\"noopener\">Utterances uygulaması</a> kurulu olmalıdır."
+  },
+  "footer": {
+    "html": "© __YEAR__ ATA Quick Guide · <a href=\"nasil-yuklenir.html\">Kurulum</a> · <a href=\"indir.html\">Sürümler</a> · <a href=\"#credits\">Ekip</a> · <a href=\"#geri-bildirim\">Geri bildirim</a>"
+  },
+  "page": {
+    "downloadTitle": "İndir — ATA Quick Guide",
+    "downloadDesc": "ATA Quick Guide — APK indir, sürümler ve yama notları",
+    "downloadH1": "İndir & sürümler",
+    "downloadLead": "Uygulama şu an <strong>erken erişim</strong>; güncel paket bu sayfadan APK olarak indirilir. Google Play ve App Store sürümleri yakında — mağaza rozetleri ana sayfada. Yama notları ve (varsa) eski sürümler aşağıda; geri bildirim için sayfa sonundaki yorum alanını kullan.",
+    "installTitle": "Nasıl yüklenir — ATA Quick Guide",
+    "installDesc": "ATA Quick Guide — Android’e APK ile nasıl yüklenir.",
+    "installH1": "Nasıl yüklenir",
+    "installLead": "Bu uygulama <strong>Google Play dışından</strong> dağıtıldığı için kurulum, herhangi bir Android uygulamasına <strong>APK dosyası ile</strong> yaptığın standart adımlarla aynıdır. Aşağıda tipik bir akış var; üretici arayüzüne göre menü isimleri biraz değişebilir.",
+    "footerDownload": "© __YEAR__ ATA Quick Guide · <a href=\"index.html\">Ana sayfa</a> · <a href=\"index.html#credits\">Ekip</a>",
+    "footerInstall": "© __YEAR__ ATA Quick Guide · <a href=\"indir.html\">İndir</a> · <a href=\"index.html#credits\">Ekip</a>"
+  },
+  "releases": {
+    "badgeLatest": "Güncel sürüm",
+    "versionWord": "Sürüm",
+    "downloadApk": "APK indir",
+    "notesTitle": "Yama notları (bu sürüm)",
+    "download": "İndir",
+    "errLoad": "Sürüm listesi yüklenemedi. Sayfayı yenileyin veya daha sonra tekrar deneyin.",
+    "sectionLatest": "Güncel uygulama sürümü",
+    "sectionOlder": "Eski sürümler",
+    "sectionHistory": "Önceki güncellemelerin yama notları",
+    "historyMuted": "Sadece arşivlenmiş sürümler; güncelin notları yukarıdaki kartta.",
+    "sectionFeedback": "Geri bildirim",
+    "feedbackNote": "Aşağıdan yorum yazmak için GitHub ile oturum aç. Utterances kullanılır; repoda Issues açık olmalıdır."
+  },
+  "install": {
+    "s1h": "1. Ön koşullar",
+    "s1a": "Android telefon veya tablet (mümkünse güncel bir sürüm).",
+    "s1b": "Yeterli boş depolama alanı (APK boyutundan biraz fazlası yeterli).",
+    "s1c": "APK’yı indir sayfasından indirmiş olman.",
+    "s2h": "2. “Bilinmeyen uygulamalara” izin",
+    "s2p": "Android, varsayılan olarak yalnızca Play Store benzeri mağazalardan gelen kurulumlara izin verir. Tarayıcı veya Dosyalar uygulaması üzerinden yükleyeceksen, o uygulamaya tek seferlik izin vermen gerekir.",
+    "s2l1": "Ayarlar uygulamasını aç.",
+    "s2l2": "Uygulamalar veya Bildirimler ve uygulamalar bölümüne gir.",
+    "s2l3": "APK’yı açacağın uygulamayı seç (çoğu zaman Chrome, İndirilenler veya Dosyalar).",
+    "s2l4": "Bilinmeyen uygulamaları yükle / Bu kaynaktan yüklemeye izin ver seçeneğini aç.",
+    "s2note": "Bazı cihazlarda bu ayar, ilk kurulum sırasında indirme tamamlanınca çıkan pencerede de sorulur; orada da aynı şekilde izin verebilirsin.",
+    "s3h": "3. APK’yı indir ve aç",
+    "s3l1a": "İndir",
+    "s3l1b": " sayfasından güncel .apk dosyasını indir.",
+    "s3l2": "Bildirim çubuğundan indirilen dosyaya dokun veya Dosyalar / İndirilenler içinden APK’yı bul.",
+    "s3l3": "Dosyaya dokun; paket yükleyici açılır.",
+    "s4h": "4. Kurulumu onayla",
+    "s4l1": "İstenen izinleri oku (depolama, ağ vb.).",
+    "s4l2": "Yükle veya Kur düğmesine bas.",
+    "s4l3": "Bitince Aç ile uygulamayı başlatabilir veya ana ekrandan simgeye dokunabilirsin.",
+    "s5h": "5. Play Protect ve güvenlik uyarıları",
+    "s5p": "Google Play Protect, Play dışı APK’larda uyarı gösterebilir. Uygulamayı bu resmi indirme sayfasından aldıysan risk düşüktür; yine de sadece güvendiğin kaynaklardan kur.",
+    "s5note": "“Yine de yükle” gibi bir seçenek çıkarsa, yalnızca dosyanın doğru kaynaktan indirildiğinden eminsen ilerle.",
+    "s6h": "6. Güncelleme (yeni APK)",
+    "s6p": "Yeni sürüm çıktığında yine <a href=\"indir.html\">indir sayfasından</a> son APK’yı indirip üzerine kurman yeterli; veriler çoğu uygulamada korunur, ancak kritik veri varsa yedek almak iyi olur."
+  }
+}

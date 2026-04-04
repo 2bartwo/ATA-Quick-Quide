@@ -11,11 +11,20 @@
     return `${v < 10 && i > 0 ? v.toFixed(1) : Math.round(v)} ${u[i]}`;
   }
 
-  function formatDateTR(iso) {
+  function lang() {
+    return document.documentElement.getAttribute("data-lang") || "tr";
+  }
+
+  function t(k, fallback) {
+    const b = window.__ATA_I18N_RELEASES || {};
+    return b[k] || fallback;
+  }
+
+  function formatDate(iso) {
     if (!iso) return "";
     const d = new Date(iso + (iso.length === 10 ? "T12:00:00" : ""));
     if (Number.isNaN(d.getTime())) return iso;
-    return d.toLocaleDateString("tr-TR", {
+    return d.toLocaleDateString(lang() === "en" ? "en-US" : "tr-TR", {
       day: "numeric",
       month: "long",
       year: "numeric",
@@ -34,12 +43,12 @@
   }
 
   async function init() {
-    const errEl = document.getElementById("releases-error");
     const latestRoot = document.getElementById("latest-root");
+    if (!latestRoot) return;
+
+    const errEl = document.getElementById("releases-error");
     const olderRoot = document.getElementById("older-root");
     const olderSection = document.getElementById("older-section");
-
-    if (!latestRoot) return;
 
     try {
       const res = await fetch("data/changelog.json", { cache: "no-store" });
@@ -54,26 +63,29 @@
 
       const row = document.createElement("div");
       row.className = "version-card__row";
-      row.innerHTML = `
-        <span class="version-badge">Güncel sürüm</span>
-        <span class="version-meta" id="latest-meta"></span>
-      `;
-      const meta = row.querySelector("#latest-meta");
+      const badge = document.createElement("span");
+      badge.className = "version-badge";
+      badge.textContent = t("badgeLatest", "Güncel sürüm");
+      const meta = document.createElement("span");
+      meta.className = "version-meta";
       const sizePart = L.sizeBytes != null ? ` · ${formatBytes(L.sizeBytes)}` : "";
-      meta.textContent = `Sürüm ${L.versionLabel || L.version} · ${formatDateTR(L.date)}${sizePart}`;
+      const vw = t("versionWord", "Sürüm");
+      meta.textContent = `${vw} ${L.versionLabel || L.version} · ${formatDate(L.date)}${sizePart}`;
+      row.appendChild(badge);
+      row.appendChild(meta);
 
       const dl = document.createElement("a");
       dl.className = "btn-dl";
       dl.href = L.apkFile;
       dl.setAttribute("download", L.apkDisplayName || "");
-      dl.textContent = "APK indir";
+      dl.textContent = t("downloadApk", "APK indir");
 
       card.appendChild(row);
       card.appendChild(dl);
       if (L.notes && L.notes.length) {
         const h3 = document.createElement("h3");
         h3.className = "subhead-ch";
-        h3.textContent = "Yama notları (bu sürüm)";
+        h3.textContent = t("notesTitle", "Yama notları (bu sürüm)");
         card.appendChild(h3);
         card.appendChild(elNotesList(L.notes));
       }
@@ -91,7 +103,8 @@
           const ht = document.createElement("h3");
           ht.className = "history-block__title";
           const sizeH = ver.sizeBytes != null ? ` · ${formatBytes(ver.sizeBytes)}` : "";
-          ht.textContent = `Sürüm ${ver.versionLabel || ver.version} (${formatDateTR(ver.date)})${sizeH}`;
+          const vw2 = t("versionWord", "Sürüm");
+          ht.textContent = `${vw2} ${ver.versionLabel || ver.version} (${formatDate(ver.date)})${sizeH}`;
           block.appendChild(ht);
           block.appendChild(elNotesList(ver.notes));
           historyRoot.appendChild(block);
@@ -115,11 +128,12 @@
           const label = document.createElement("span");
           label.className = "version-meta";
           const sizeO = item.sizeBytes != null ? ` · ${formatBytes(item.sizeBytes)}` : "";
-          label.textContent = `Sürüm ${item.versionLabel || item.version} · ${formatDateTR(item.date)}${sizeO}`;
+          const vw3 = t("versionWord", "Sürüm");
+          label.textContent = `${vw3} ${item.versionLabel || item.version} · ${formatDate(item.date)}${sizeO}`;
           const a = document.createElement("a");
           a.href = item.apkFile;
           a.setAttribute("download", item.apkDisplayName || "");
-          a.textContent = "İndir";
+          a.textContent = t("download", "İndir");
           top.appendChild(label);
           top.appendChild(a);
           li.appendChild(top);
@@ -133,15 +147,12 @@
     } catch (e) {
       if (errEl) {
         errEl.hidden = false;
-        errEl.textContent =
-          "Sürüm listesi yüklenemedi. Sayfayı yenileyin veya daha sonra tekrar deneyin.";
+        errEl.textContent = t("errLoad", "Sürüm listesi yüklenemedi. Sayfayı yenileyin veya daha sonra tekrar deneyin.");
       }
     }
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
-  } else {
-    init();
-  }
+  window.addEventListener("ata-ready", () => {
+    if (document.getElementById("latest-root")) init();
+  });
 })();

@@ -646,6 +646,7 @@ a:hover {
   background: var(--bg-card);
   box-shadow: var(--shadow-soft);
   transition: box-shadow 0.45s var(--ease-out), border-color 0.35s ease, transform 0.45s var(--ease-out);
+  text-align: center;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -689,10 +690,11 @@ a:hover {
 }
 
 .credits-list dd {
-  margin: 0.15rem 0 0;
+  margin: 0.15rem auto 0;
   font-size: 0.9rem;
   color: var(--text);
   line-height: 1.5;
+  max-width: 28rem;
 }
 
 /* ——— İndir / releases ——— */
@@ -1019,7 +1021,8 @@ a:hover {
   background: rgba(255, 255, 255, 0.45);
 }
 
-.app-footer p {
+.app-footer p,
+.app-footer__line {
   margin: 0;
   font-size: 0.8125rem;
   color: var(--muted);
@@ -1047,6 +1050,219 @@ a:hover {
 
 .app-shell .app-content {
   flex: 1;
+}
+
+/* ——— Tema: gece ——— */
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+[data-theme="dark"] :root,
+[data-theme="dark"] {
+  --bg: #0c1118;
+  --bg-deep: #121a24;
+  --bg-elevated: #151d28;
+  --bg-card: rgba(22, 32, 44, 0.92);
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --text: #e8edf3;
+  --muted: #94a8bc;
+  --accent: #4da3ff;
+  --accent-dim: rgba(77, 163, 255, 0.14);
+  --accent-hover: #6eb4ff;
+  --sky-band: rgba(77, 163, 255, 0.12);
+  --shadow: 0 12px 48px rgba(0, 0, 0, 0.45);
+  --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="dark"] body {
+  background-image:
+    linear-gradient(180deg, #101820 0%, #0c1118 35%, #0a0e14 100%),
+    radial-gradient(ellipse 100% 55% at 50% -8%, rgba(77, 163, 255, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 80% 50% at 90% 25%, rgba(77, 163, 255, 0.08) 0%, transparent 48%),
+    radial-gradient(ellipse 60% 45% at 8% 40%, rgba(100, 140, 200, 0.06) 0%, transparent 42%);
+}
+
+[data-theme="dark"] body::before {
+  background:
+    radial-gradient(ellipse 40% 36% at 70% 10%, rgba(77, 163, 255, 0.16) 0%, transparent 55%),
+    radial-gradient(ellipse 36% 34% at 15% 58%, rgba(77, 163, 255, 0.1) 0%, transparent 50%);
+}
+
+[data-theme="dark"] .app-top {
+  background: rgba(12, 17, 24, 0.82);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+}
+
+[data-theme="dark"] .app-top.is-scrolled {
+  background: rgba(12, 17, 24, 0.95);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .btn--primary {
+  color: #061018;
+}
+
+[data-theme="dark"] .btn--ghost {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+[data-theme="dark"] .btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .app-footer {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+[data-theme="dark"] .comments-wrap {
+  background: var(--bg-elevated);
+}
+
+[data-theme="dark"] .prose .note,
+[data-theme="dark"] .prose .placeholder {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme="dark"] .alert-soft {
+  color: #f0d0a8;
+  background: rgba(200, 120, 40, 0.18);
+  border-color: rgba(255, 160, 80, 0.28);
+}
+
+[data-theme="dark"] .version-badge {
+  color: #061018;
+}
+
+/* ——— Üst bar: dil + tema ——— */
+.app-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-shrink: 0;
+}
+
+.lang-seg {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+}
+
+.lang-seg button {
+  margin: 0;
+  padding: 0.35rem 0.65rem;
+  font-family: inherit;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  background: transparent;
+  color: var(--muted);
+  transition: background 0.25s var(--ease-out), color 0.2s ease, transform 0.2s ease;
+}
+
+.lang-seg button:hover {
+  color: var(--text);
+}
+
+.lang-seg button.is-active {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(11, 107, 203, 0.35);
+}
+
+[data-theme="dark"] .lang-seg button.is-active {
+  color: #061018;
+}
+
+.theme-toggle {
+  width: 2.35rem;
+  height: 2.35rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  cursor: pointer;
+  font-size: 1.05rem;
+  line-height: 1;
+  transition: transform 0.35s var(--ease-spring), border-color 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: var(--shadow-soft);
+}
+
+.theme-toggle:hover {
+  border-color: rgba(11, 107, 203, 0.35);
+  transform: scale(1.06);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .app-top__inner {
+    flex-wrap: wrap;
+  }
+
+  .app-controls {
+    width: 100%;
+    justify-content: flex-end;
+    order: 3;
+  }
+
+  .app-menu {
+    order: 2;
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+/* ——— Simge: beyaz çerçeve gider ——— */
+.app-brand__mark {
+  border: none;
+  background: var(--icon-pad, rgba(11, 107, 203, 0.06));
+}
+
+[data-theme="dark"] .app-brand__mark {
+  --icon-pad: rgba(255, 255, 255, 0.06);
+}
+
+.app-brand__mark img {
+  object-fit: contain;
+  padding: 2px;
+  clip-path: inset(1px round 7px);
+}
+
+.app-hero__icon img {
+  object-fit: contain;
+  padding: 6px;
+  clip-path: inset(4px round 14px);
+  background: transparent;
+}
+
+.app-hero__icon {
+  border: none;
+  background: linear-gradient(145deg, rgba(11, 107, 203, 0.12), rgba(255, 255, 255, 0.55));
+  box-shadow: var(--shadow), 0 0 0 1px rgba(11, 107, 203, 0.08) inset;
+}
+
+[data-theme="dark"] .app-hero__icon {
+  background: linear-gradient(145deg, rgba(77, 163, 255, 0.15), rgba(20, 30, 42, 0.95));
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.credits-list dt {
+  text-align: center;
 }
 
 /* ——— Scroll reveal ——— */
