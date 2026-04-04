@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="ATA Quick Guide — Android APK nasıl yüklenir">
+  <meta name="description" content="ATA Quick Guide — Android’e APK ile nasıl yüklenir (bilinmeyen kaynaklar, kurulum adımları).">
   <meta name="theme-color" content="#0b0d11">
   <title>Nasıl yüklenir — ATA Quick Guide</title>
+  <link rel="icon" type="image/png" href="images/app-icon.png">
   <link rel="canonical" href="https://ata-quick-guide.bartwo.me/nasil-yuklenir.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,7 +18,7 @@
     <header class="app-top">
       <div class="container app-top__inner">
         <a class="app-brand" href="index.html">
-          <span class="app-brand__mark" aria-hidden="true"></span>
+          <span class="app-brand__mark"><img src="images/app-icon.png" width="32" height="32" alt=""></span>
           ATA Quick Guide
         </a>
         <nav class="app-menu" aria-label="Site">
@@ -32,29 +33,61 @@
       <div class="page-intro">
         <h1>Nasıl yüklenir</h1>
         <p class="lead">
-          Aşağıdaki metinler taslak; adımları ve uyarıları kendi oyununa / uygulamana göre doldurman yeterli.
+          Bu uygulama <strong>Google Play dışından</strong> dağıtıldığı için kurulum, herhangi bir Android uygulamasına
+          <strong>APK dosyası ile</strong> yaptığın standart adımlarla aynıdır. Aşağıda tipik bir akış var; üretici arayüzüne göre menü isimleri biraz değişebilir.
         </p>
       </div>
 
       <article class="prose">
-        <h2>1. Gereksinimler</h2>
-        <p class="placeholder">
-          Örnek: Android sürümü, depolama alanı, bilinmeyen kaynaklar… Buraya yaz.
+        <h2>1. Ön koşullar</h2>
+        <ul>
+          <li>Android telefon veya tablet (mümkünse güncel bir sürüm).</li>
+          <li>Yeterli boş depolama alanı (APK boyutundan biraz fazlası yeterli).</li>
+          <li>APK’yı <a href="indir.html">indir sayfasından</a> indirmiş olman.</li>
+        </ul>
+
+        <h2>2. “Bilinmeyen uygulamalara” izin</h2>
+        <p>
+          Android, varsayılan olarak yalnızca Play Store benzeri mağazalardan gelen kurulumlara izin verir.
+          Tarayıcı veya Dosyalar uygulaması üzerinden yükleyeceksen, o uygulamaya tek seferlik izin vermen gerekir.
+        </p>
+        <ol>
+          <li><strong>Ayarlar</strong> uygulamasını aç.</li>
+          <li><strong>Uygulamalar</strong> veya <strong>Bildirimler ve uygulamalar</strong> bölümüne gir.</li>
+          <li>APK’yı açacağın uygulamayı seç (çoğu zaman <strong>Chrome</strong>, <strong>İndirilenler</strong> veya <strong>Dosyalar</strong>).</li>
+          <li><strong>Bilinmeyen uygulamaları yükle</strong> / <strong>Bu kaynaktan yüklemeye izin ver</strong> seçeneğini aç.</li>
+        </ol>
+        <p class="note">
+          Bazı cihazlarda bu ayar, ilk kurulum sırasında indirme tamamlanınca çıkan pencerede de sorulur; orada da aynı şekilde izin verebilirsin.
         </p>
 
-        <h2>2. APK dosyasını indir</h2>
-        <p class="placeholder">
-          <a href="indir.html">İndir sayfasına</a> git, güncel APK’yı indir. Eski sürüm gerekiyorsa aynı sayfadaki listeyi kullan.
+        <h2>3. APK’yı indir ve aç</h2>
+        <ol>
+          <li><a href="indir.html">İndir</a> sayfasından güncel <code style="color:var(--accent);">.apk</code> dosyasını indir.</li>
+          <li>Bildirim çubuğundan indirilen dosyaya dokun veya <strong>Dosyalar</strong> / <strong>İndirilenler</strong> içinden APK’yı bul.</li>
+          <li>Dosyaya dokun; paket yükleyici açılır.</li>
+        </ol>
+
+        <h2>4. Kurulumu onayla</h2>
+        <ol>
+          <li>İstenen izinleri oku (depolama, ağ vb.).</li>
+          <li><strong>Yükle</strong> veya <strong>Kur</strong> düğmesine bas.</li>
+          <li>Bitince <strong>Aç</strong> ile uygulamayı başlatabilir veya ana ekrandan simgeye dokunabilirsin.</li>
+        </ol>
+
+        <h2>5. Play Protect ve güvenlik uyarıları</h2>
+        <p>
+          Google Play Protect, Play dışı APK’larda uyarı gösterebilir. Uygulamayı <strong>bu resmi indirme sayfasından</strong>
+          aldıysan risk düşüktür; yine de sadece güvendiğin kaynaklardan kur.
+        </p>
+        <p class="note">
+          “Yine de yükle” gibi bir seçenek çıkarsa, yalnızca dosyanın doğru kaynaktan indirildiğinden eminsen ilerle.
         </p>
 
-        <h2>3. Kurulum adımları</h2>
-        <p class="placeholder">
-          Ekran görüntüsü veya madde madde: dosyaya dokun → paketi yükle → izinler…
-        </p>
-
-        <h2>4. Sorun giderme</h2>
-        <p class="placeholder">
-          Kurulum engellenirse, Play Protect, imza uyarısı vb. için notlarını buraya ekle.
+        <h2>6. Güncelleme (yeni APK)</h2>
+        <p>
+          Yeni sürüm çıktığında yine <a href="indir.html">indir sayfasından</a> son APK’yı indirip üzerine kurman yeterli;
+          veriler çoğu uygulamada korunur, ancak kritik veri varsa yedek almak iyi olur.
         </p>
       </article>
     </main>
