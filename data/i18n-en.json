@@ -5,10 +5,10 @@
   },
   "skip": "Skip to content",
   "nav": {
-    "what": "What is it?",
+    "what": "The app",
     "features": "Features",
     "download": "Download",
-    "how": "How to install",
+    "how": "Install",
     "team": "Team",
     "feedback": "Feedback",
     "home": "Home"
@@ -59,8 +59,14 @@
   },
   "feedback": {
     "h": "Feedback",
-    "p": "Comment below for missing chapters, bugs, or ideas. After signing in with GitHub, the comment box appears. There is also a thread on the Download page.",
-    "note": "Comments use <strong>Utterances</strong> on GitHub Issues. <strong>Issues</strong> must be enabled and the <a href=\"https://github.com/apps/utterances\" target=\"_blank\" rel=\"noopener\">Utterances</a> app installed on the repo."
+    "p": "Leave your name and message below; comments appear on this page (same list as on the download page).",
+    "privacy": "Comments are stored <strong>only in this browser</strong>; they are not sent to a server and won’t show on other devices.",
+    "nameLabel": "Name",
+    "commentLabel": "Comment",
+    "placeholderName": "Your name or nickname",
+    "placeholderComment": "Suggestion, missing chapter, bug…",
+    "submit": "Post comment",
+    "noComments": "No comments yet — be the first."
   },
   "footer": {
     "html": "© __YEAR__ ATA Quick Guide · <a href=\"nasil-yuklenir.html\">Install</a> · <a href=\"indir.html\">Releases</a> · <a href=\"#credits\">Team</a> · <a href=\"#geri-bildirim\">Feedback</a>"
@@ -69,7 +75,7 @@
     "downloadTitle": "Download — ATA Quick Guide",
     "downloadDesc": "ATA Quick Guide — download APK, releases, changelog",
     "downloadH1": "Download & releases",
-    "downloadLead": "The app is in <strong>early access</strong>; download the latest APK from this page. Google Play and App Store are coming soon—see badges on the home page. Changelog and older builds are below; leave feedback at the bottom.",
+    "downloadLead": "The app is in <strong>early access</strong>; download the latest APK from this page. Changelog and older builds are below. Use the form at the bottom for feedback (stored only in your browser).",
     "installTitle": "How to install — ATA Quick Guide",
     "installDesc": "How to install the ATA Quick Guide APK on Android.",
     "installH1": "How to install",
@@ -89,7 +95,7 @@
     "sectionHistory": "Changelog (archived)",
     "historyMuted": "Archived versions only; current notes are in the card above.",
     "sectionFeedback": "Feedback",
-    "feedbackNote": "Sign in with GitHub to comment. Uses Utterances; Issues must be enabled on the repo."
+    "feedbackNote": "Enter your name and comment; the list is kept in this browser."
   },
   "install": {
     "s1h": "1. Requirements",
