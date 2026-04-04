@@ -31,7 +31,7 @@
     </header>
 
     <main class="app-content container">
-      <div class="page-intro">
+      <div class="page-intro page-intro--hero">
         <h1>İndir &amp; sürümler</h1>
         <p class="lead">
           Uygulama şu an <strong>erken erişim / beta</strong>; güncel paket bu sayfadan APK olarak indirilir.
@@ -42,23 +42,23 @@
 
       <p id="releases-error" class="alert-soft" role="alert" hidden></p>
 
-      <section class="section-block" aria-labelledby="latest-h">
+      <section class="section-block reveal" aria-labelledby="latest-h">
         <h2 id="latest-h">Güncel uygulama sürümü</h2>
         <div id="latest-root"></div>
       </section>
 
-      <section class="section-block" id="older-section" aria-labelledby="older-h">
+      <section class="section-block reveal" id="older-section" aria-labelledby="older-h">
         <h2 id="older-h">Eski sürümler</h2>
         <div id="older-root"></div>
       </section>
 
-      <section class="section-block" id="history-section" aria-labelledby="history-h">
+      <section class="section-block reveal" id="history-section" aria-labelledby="history-h">
         <h2 id="history-h">Önceki güncellemelerin yama notları</h2>
         <p class="muted">Sadece arşivlenmiş sürümler; güncelin notları yukarıdaki kartta.</p>
         <div id="history-root"></div>
       </section>
 
-      <section class="section-block" aria-labelledby="fb-h">
+      <section class="section-block reveal" aria-labelledby="fb-h">
         <h2 id="fb-h">Geri bildirim</h2>
         <p class="comments-note">
           Yorumlar GitHub Issues üzerinden kaydolur (Utterances). Repoda
@@ -83,7 +83,8 @@
     </footer>
   </div>
 
-  <script src="js/releases-page.js"></script>
+  <script src="js/app-motion.js" defer></script>
+  <script src="js/releases-page.js" defer></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
   </script>
