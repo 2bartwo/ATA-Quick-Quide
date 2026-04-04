@@ -1,0 +1,16 @@
+{
+  "appName": "ATA Quick Guide",
+  "latest": {
+    "version": "2",
+    "versionLabel": "v2",
+    "date": "2026-04-04",
+    "sizeBytes": 48875607,
+    "apkFile": "releases/ATA-Quick-Guide-v2.apk",
+    "apkDisplayName": "ATA-Quick-Guide-v2.apk",
+    "notes": [
+      "Güncelleme notlarını buraya yaz — RoIya her güncellemede bu listeyi ve sürüm bilgisini düzenle.",
+      "Yeni APK yüklediğinde `data/changelog.json` içinde `latest` ve `older` alanlarını güncelle."
+    ]
+  },
+  "older": []
+}

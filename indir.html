@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ATA Quick Guide — APK indir, sürümler ve yama notları">
+  <meta name="theme-color" content="#000000">
+  <title>İndir — ATA Quick Guide</title>
+  <link rel="canonical" href="https://ata-quick-guide.bartwo.me/indir.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/bartwo.css">
+  <link rel="stylesheet" href="css/site-pages.css">
+  <script src="js/tab-flair.js" defer></script>
+</head>
+<body class="body--page">
+  <div class="page-bg" aria-hidden="true"></div>
+
+  <nav class="site-nav" aria-label="Site menüsü">
+    <a class="site-nav__brand" href="index.html">ATA Quick Guide</a>
+    <span class="site-nav__links">
+      <a href="index.html">Ana sayfa</a>
+      <a href="indir.html" aria-current="page">İndir</a>
+      <a href="nasil-yuklenir.html">Nasıl yüklenir</a>
+    </span>
+  </nav>
+
+  <main class="doc-main">
+    <h1>İndir &amp; sürümler</h1>
+    <p class="doc-lead">
+      Güncel APK burada. Eski sürümler ve yama notları aşağıda; geri bildirim için yorum bırakabilirsin.
+    </p>
+
+    <p id="releases-error" class="alert-soft" role="alert" hidden></p>
+
+    <section class="section-block" aria-labelledby="latest-h">
+      <h2 id="latest-h">Güncel uygulama sürümü</h2>
+      <div id="latest-root"></div>
+    </section>
+
+    <section class="section-block" id="older-section" aria-labelledby="older-h">
+      <h2 id="older-h">Eski sürümler</h2>
+      <div id="older-root"></div>
+    </section>
+
+    <section class="section-block" id="history-section" aria-labelledby="history-h">
+      <h2 id="history-h">Önceki güncellemelerin yama notları</h2>
+      <p class="muted">Sadece eski sürümler; güncelin notları yukarıdaki kartta.</p>
+      <div id="history-root"></div>
+    </section>
+
+    <section class="section-block" aria-labelledby="fb-h">
+      <h2 id="fb-h">Geri bildirim</h2>
+      <p class="comments-note">
+        Yorumlar GitHub Issues üzerinden kaydolur (Utterances). Repoda
+        <strong>Settings → General → Features → Issues</strong> açık olmalıdır.
+      </p>
+      <div class="comments-wrap">
+        <script src="https://utteranc.es/client.js"
+          repo="2bartwo/ATA-Quick-Quide"
+          issue-term="pathname"
+          theme="github-dark"
+          crossorigin="anonymous"
+          async>
+        </script>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer site-footer--page">
+    <p class="footer-line">
+      <span class="footer-text">© <span id="year"></span> ATA Quick Guide</span>
+    </p>
+  </footer>
+
+  <script src="js/releases-page.js"></script>
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
