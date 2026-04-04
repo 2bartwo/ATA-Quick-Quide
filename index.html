@@ -3,103 +3,104 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="ATA Quick Guide — ata-quick-guide.bartwo.me">
-  <meta name="theme-color" content="#000000">
-  <title>ATA Quick Guide</title>
-  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==" id="favicon-dynamic">
+  <meta name="description" content="ATA Quick Guide — resmi indirme sayfası. Android APK, sürüm notları ve kurulum.">
+  <meta name="theme-color" content="#0b0d11">
+  <title>ATA Quick Guide — İndir</title>
+  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==">
   <link rel="canonical" href="https://ata-quick-guide.bartwo.me/">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://ata-quick-guide.bartwo.me/">
   <meta property="og:title" content="ATA Quick Guide">
-  <meta property="og:description" content="ATA Quick Guide — ata-quick-guide.bartwo.me">
-  <meta property="og:image" content="https://ata-quick-guide.bartwo.me/og-image.png?v=2">
-  <meta property="og:image:alt" content="ATA Quick Guide — krom logo">
+  <meta property="og:description" content="ATA Quick Guide resmi indirme sayfası.">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="ATA Quick Guide">
-  <meta name="twitter:description" content="ATA Quick Guide — ata-quick-guide.bartwo.me">
-  <meta name="twitter:image" content="https://ata-quick-guide.bartwo.me/og-image.png?v=2">
+  <meta name="twitter:description" content="ATA Quick Guide resmi indirme sayfası.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/bartwo.css">
-  <link rel="stylesheet" href="css/site-pages.css">
-  <script src="js/tab-flair.js" defer></script>
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
-      "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/"
-    }
-  }
-  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app-site.css">
 </head>
 <body>
-  <nav class="site-nav" aria-label="Site menüsü">
-    <a class="site-nav__brand" href="index.html" aria-current="page">ATA Quick Guide</a>
-    <span class="site-nav__links">
-      <a href="indir.html">İndir</a>
-      <a href="nasil-yuklenir.html">Nasıl yüklenir</a>
-    </span>
-  </nav>
+  <a class="visually-hidden" href="#icerik">İçeriğe geç</a>
 
-  <div class="bg" aria-hidden="true">
-    <canvas id="stars"></canvas>
-    <div class="bg-fog"></div>
-    <div class="bg-vignette"></div>
-  </div>
-
-  <main class="stage">
-    <div class="hero-3d">
-      <div class="logo-neon-bloom" aria-hidden="true"></div>
-      <div class="hero-depth-glow" aria-hidden="true"></div>
-      <div
-        id="load-veil"
-        class="load-veil"
-        aria-hidden="true"
-        aria-busy="true"
-        aria-label="Yükleniyor"
-      >
-        <div class="load-veil__spin">
-          <svg class="load-veil__sigil" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-            <path fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="miter"
-              d="M50 6 L76 86 L8 36 L92 36 L24 86 Z"/>
-          </svg>
-        </div>
+  <div class="app-shell">
+    <header class="app-top">
+      <div class="container app-top__inner">
+        <a class="app-brand" href="index.html" aria-current="page">
+          <span class="app-brand__mark" aria-hidden="true"></span>
+          ATA Quick Guide
+        </a>
+        <nav class="app-menu" aria-label="Site">
+          <a href="#nedir">Ne işe yarar?</a>
+          <a href="#ozellikler">Özellikler</a>
+          <a href="indir.html">İndir</a>
+          <a href="nasil-yuklenir.html">Nasıl yüklenir</a>
+        </nav>
       </div>
-      <div id="three-root" class="three-root" role="img" aria-label="ATA Quick Guide 3D logo"></div>
-      <h1 class="sr-only">ATA Quick Guide</h1>
-    </div>
-  </main>
+    </header>
 
-  <div class="crt-shim" aria-hidden="true"></div>
+    <main id="icerik" class="app-content container">
+      <section class="app-hero" aria-labelledby="hero-title">
+        <div class="app-hero__icon" aria-hidden="true"></div>
+        <h1 id="hero-title">ATA Quick Guide</h1>
+        <p class="lead">
+          <span class="placeholder-text">Kısa tanıtım cümlesi: uygulama ne sunuyor, kime yönelik — burayı sonra sen dolduracaksın.</span>
+        </p>
+        <div class="btn-row">
+          <a class="btn btn--primary" href="indir.html">APK indir</a>
+          <a class="btn btn--ghost" href="#nedir">Detaylar</a>
+        </div>
+      </section>
 
-  <div class="vhs" aria-hidden="true">
-    <canvas id="vhs-noise" class="vhs-noise-canvas"></canvas>
-    <div class="vhs-scanlines"></div>
-    <div class="vhs-flicker"></div>
+      <section id="nedir" class="section" aria-labelledby="nedir-h">
+        <div class="section__head">
+          <h2 id="nedir-h">Ne işe yarar?</h2>
+          <p>
+            <span class="placeholder-text">RoIya veya oyun içi rehber, araçlar, topluluk içeriği… Uygulamanın amacını 2–4 cümleyle buraya yaz.</span>
+          </p>
+        </div>
+      </section>
+
+      <section id="ozellikler" class="section" aria-labelledby="ozellikler-h">
+        <div class="section__head">
+          <h2 id="ozellikler-h">Öne çıkanlar</h2>
+          <p>Özet maddeleri aşağıda; metinleri istediğin gibi değiştir.</p>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <h3>Özellik bir</h3>
+            <p class="placeholder-text">Bu kartta ilk ana özelliği anlat.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Özellik iki</h3>
+            <p class="placeholder-text">İkinci fayda veya modül.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Özellik üç</h3>
+            <p class="placeholder-text">Üçüncü madde veya güven / güncelleme politikası özeti.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="dl-h">
+        <div class="section__head">
+          <h2 id="dl-h">Güvenli indirme</h2>
+          <p>Güncel paket ve sürüm geçmişi indir sayfasında. Kurulum için ayrı rehber hazırladık.</p>
+        </div>
+        <div class="cta-strip">
+          <p>Android için APK dosyası — sürüm notları ve eski sürümler dahil.</p>
+          <a class="btn btn--primary" href="indir.html">İndir sayfasına git</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <div class="container">
+        <p>© <span id="year"></span> ATA Quick Guide · <a href="nasil-yuklenir.html">Kurulum</a> · <a href="indir.html">Sürümler</a></p>
+      </div>
+    </footer>
   </div>
 
-  <div id="easter-toast" class="easter-toast" role="status" aria-live="polite"></div>
-
-  <footer class="site-footer">
-    <p class="footer-line">
-      <svg class="pentagram" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-        <path fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="miter"
-          d="M50 6 L76 86 L8 36 L92 36 L24 86 Z"/>
-      </svg>
-      <span class="footer-text">© <span id="year"></span> ATA Quick Guide. All rights reserved.</span>
-      <button type="button" class="ambient-toggle" id="ambient-toggle" aria-label="Şerit gürültüsü aç veya kapat" aria-pressed="false" title="Tape hiss">⟡</button>
-      <svg class="pentagram" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-        <path fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="miter"
-          d="M50 6 L76 86 L8 36 L92 36 L24 86 Z"/>
-      </svg>
-    </p>
-  </footer>
-
-  <script src="js/stars.js"></script>
-  <script src="js/vhs.js"></script>
-  <script src="js/extras.js"></script>
-  <script type="module" src="js/model.js"></script>
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
   </script>
