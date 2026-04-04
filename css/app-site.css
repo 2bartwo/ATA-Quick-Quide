@@ -1,18 +1,22 @@
-/* ATA Quick Guide — uygulama indirme sitesi (ana siteden bağımsız) */
+/* ATA Quick Guide — havacılık / gökyüzü, ferah açık tema */
 :root {
-  --bg: #0b0d11;
-  --bg-elevated: #12151c;
-  --bg-card: #161a22;
-  --border: rgba(255, 255, 255, 0.08);
-  --text: #eef0f4;
-  --muted: #8f98ab;
-  --accent: #4da3ff;
-  --accent-dim: rgba(77, 163, 255, 0.15);
-  --accent-hover: #6eb4ff;
-  --radius: 12px;
-  --radius-sm: 8px;
+  --bg: #e4eef8;
+  --bg-deep: #d4e4f4;
+  --bg-elevated: #ffffff;
+  --bg-card: rgba(255, 255, 255, 0.94);
+  --border: rgba(19, 47, 76, 0.12);
+  --border-strong: rgba(19, 47, 76, 0.18);
+  --text: #143a52;
+  --muted: #5a7a94;
+  --accent: #0b6bcb;
+  --accent-dim: rgba(11, 107, 203, 0.12);
+  --accent-hover: #0956a8;
+  --sky-band: rgba(125, 185, 232, 0.35);
+  --radius: 14px;
+  --radius-sm: 10px;
   --font: "Plus Jakarta Sans", system-ui, sans-serif;
-  --shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+  --shadow: 0 12px 40px rgba(19, 47, 76, 0.08);
+  --shadow-soft: 0 4px 24px rgba(19, 47, 76, 0.06);
 }
 
 *,
@@ -34,8 +38,10 @@ body {
   color: var(--text);
   background: var(--bg);
   background-image:
-    radial-gradient(ellipse 120% 80% at 50% -20%, rgba(77, 163, 255, 0.12) 0%, transparent 55%),
-    radial-gradient(ellipse 80% 50% at 100% 50%, rgba(77, 163, 255, 0.04) 0%, transparent 45%);
+    linear-gradient(180deg, #f0f7fd 0%, #e4eef8 28%, #dbe8f4 55%, #d2e2f0 100%),
+    radial-gradient(ellipse 100% 60% at 50% -5%, rgba(255, 255, 255, 0.9) 0%, transparent 58%),
+    radial-gradient(ellipse 90% 45% at 85% 20%, var(--sky-band) 0%, transparent 50%),
+    radial-gradient(ellipse 70% 40% at 10% 35%, rgba(180, 210, 240, 0.4) 0%, transparent 45%);
 }
 
 a {
@@ -61,8 +67,9 @@ a:hover {
   top: 0;
   z-index: 50;
   border-bottom: 1px solid var(--border);
-  background: rgba(11, 13, 17, 0.85);
-  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset;
 }
 
 .app-top__inner {
@@ -97,7 +104,7 @@ a:hover {
   overflow: hidden;
   flex-shrink: 0;
   border: 1px solid var(--border);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--shadow-soft);
 }
 
 .app-brand__mark img {
@@ -144,7 +151,7 @@ a:hover {
   border: 1px solid transparent;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease, box-shadow 0.15s ease;
 }
 
 .btn:focus-visible {
@@ -154,23 +161,25 @@ a:hover {
 
 .btn--primary {
   background: var(--accent);
-  color: #061018;
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(11, 107, 203, 0.28);
 }
 
 .btn--primary:hover {
   background: var(--accent-hover);
-  color: #061018;
+  color: #fff;
+  transform: translateY(-1px);
 }
 
 .btn--ghost {
-  background: transparent;
-  border-color: var(--border);
+  background: rgba(255, 255, 255, 0.7);
+  border-color: var(--border-strong);
   color: var(--text);
 }
 
 .btn--ghost:hover {
-  background: var(--bg-elevated);
-  border-color: rgba(255, 255, 255, 0.14);
+  background: #fff;
+  border-color: var(--accent);
 }
 
 .btn-row {
@@ -180,26 +189,122 @@ a:hover {
   margin-top: 1.75rem;
 }
 
+/* ——— Beta + mağaza ——— */
+.beta-pill {
+  margin: 0 0 1rem;
+}
+
+.beta-pill span {
+  display: inline-block;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #0a4d7c;
+  background: linear-gradient(135deg, rgba(11, 107, 203, 0.14) 0%, rgba(125, 185, 232, 0.25) 100%);
+  border: 1px solid rgba(11, 107, 203, 0.22);
+  border-radius: 999px;
+}
+
+.store-panel {
+  margin-top: 2rem;
+  padding: 1.35rem 1.5rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-soft);
+  text-align: center;
+}
+
+.store-panel__copy {
+  margin: 0 0 1.15rem;
+  max-width: 36rem;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.store-panel__copy strong {
+  color: var(--text);
+}
+
+.store-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem 1.5rem;
+}
+
+.store-badge {
+  height: 48px;
+  width: auto;
+  max-width: 100%;
+  display: block;
+  opacity: 0.72;
+  filter: saturate(0.65);
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+.store-badge--apple {
+  height: 40px;
+}
+
+.store-badge:hover {
+  opacity: 0.88;
+  filter: saturate(0.85);
+}
+
+.store-badge-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.store-badge-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 /* ——— Ana içerik ——— */
 .app-content {
   padding-bottom: 4rem;
 }
 
 .app-hero {
-  padding: 3.25rem 0 2.5rem;
+  padding: 2.75rem 0 2rem;
   text-align: center;
+  position: relative;
+}
+
+.app-hero::after {
+  content: "";
+  display: block;
+  width: min(12rem, 50%);
+  height: 3px;
+  margin: 2rem auto 0;
+  border-radius: 3px;
+  background: linear-gradient(90deg, transparent, rgba(11, 107, 203, 0.35), rgba(125, 185, 232, 0.5), rgba(11, 107, 203, 0.35), transparent);
+  opacity: 0.85;
 }
 
 @media (min-width: 640px) {
   .app-hero {
-    padding: 4.5rem 0 3rem;
+    padding: 3.5rem 0 2.25rem;
   }
 }
 
 .app-hero__icon {
   width: 5.5rem;
   height: 5.5rem;
-  margin: 0 auto 1.5rem;
+  margin: 0 auto 1.25rem;
   border-radius: 1.25rem;
   overflow: hidden;
   border: 1px solid var(--border);
@@ -220,6 +325,7 @@ a:hover {
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.15;
+  color: var(--text);
 }
 
 .app-hero .lead {
@@ -250,6 +356,7 @@ a:hover {
   font-size: 1.25rem;
   font-weight: 600;
   letter-spacing: -0.02em;
+  color: var(--text);
 }
 
 .section__head p {
@@ -275,12 +382,14 @@ a:hover {
   border-radius: var(--radius);
   border: 1px solid var(--border);
   background: var(--bg-card);
+  box-shadow: var(--shadow-soft);
 }
 
 .feature-card h3 {
   margin: 0 0 0.4rem;
   font-size: 0.9375rem;
   font-weight: 600;
+  color: var(--text);
 }
 
 .feature-card p {
@@ -299,8 +408,9 @@ a:hover {
   margin-top: 0.5rem;
   padding: 1.75rem 1.5rem;
   border-radius: var(--radius);
-  border: 1px solid rgba(77, 163, 255, 0.25);
-  background: var(--accent-dim);
+  border: 1px solid rgba(11, 107, 203, 0.2);
+  background: linear-gradient(135deg, rgba(11, 107, 203, 0.08) 0%, rgba(255, 255, 255, 0.9) 100%);
+  box-shadow: var(--shadow-soft);
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -321,7 +431,61 @@ a:hover {
   color: var(--text);
 }
 
-/* ——— İndir / releases (JS ile doldurulur) ——— */
+/* ——— Credits ——— */
+.credits-block {
+  padding: 2.5rem 0 1rem;
+}
+
+.credits-card {
+  max-width: 32rem;
+  margin: 0 auto;
+  padding: 1.5rem 1.65rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-soft);
+}
+
+.credits-card h2 {
+  margin: 0 0 1.25rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-align: center;
+  color: var(--text);
+}
+
+.credits-list {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.credits-list dt {
+  margin: 0;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.credits-list dt:first-of-type {
+  padding-top: 0;
+  border-top: none;
+}
+
+.credits-list dd {
+  margin: 0.15rem 0 0;
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* ——— İndir / releases ——— */
 .page-intro {
   padding: 2.5rem 0 1rem;
 }
@@ -331,6 +495,7 @@ a:hover {
   font-size: clamp(1.5rem, 4vw, 2rem);
   font-weight: 700;
   letter-spacing: -0.02em;
+  color: var(--text);
 }
 
 .page-intro .lead {
@@ -358,11 +523,12 @@ a:hover {
   border-radius: var(--radius);
   border: 1px solid var(--border);
   background: var(--bg-card);
+  box-shadow: var(--shadow-soft);
 }
 
 .version-card--latest {
-  border-color: rgba(77, 163, 255, 0.35);
-  background: linear-gradient(165deg, rgba(77, 163, 255, 0.08) 0%, var(--bg-card) 40%);
+  border-color: rgba(11, 107, 203, 0.35);
+  background: linear-gradient(165deg, rgba(11, 107, 203, 0.08) 0%, var(--bg-card) 45%);
 }
 
 .version-card__row {
@@ -380,7 +546,7 @@ a:hover {
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #061018;
+  color: #fff;
   background: var(--accent);
   border-radius: 4px;
 }
@@ -400,17 +566,18 @@ a:hover {
   font-size: 0.8125rem;
   font-weight: 600;
   text-decoration: none;
-  color: #061018;
+  color: #fff;
   background: var(--accent);
   border: none;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: background 0.15s ease;
+  box-shadow: 0 4px 12px rgba(11, 107, 203, 0.25);
 }
 
 .btn-dl:hover {
   background: var(--accent-hover);
-  color: #061018;
+  color: #fff;
 }
 
 .btn-dl:focus-visible {
@@ -432,7 +599,7 @@ a:hover {
   padding-left: 1.2rem;
   font-size: 0.875rem;
   line-height: 1.55;
-  color: rgba(238, 240, 244, 0.88);
+  color: var(--text);
 }
 
 .changelog-list li {
@@ -453,6 +620,7 @@ a:hover {
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
   background: var(--bg-elevated);
+  box-shadow: var(--shadow-soft);
 }
 
 .older-item__top {
@@ -485,9 +653,9 @@ a:hover {
   padding: 0.85rem 1rem;
   font-size: 0.875rem;
   line-height: 1.5;
-  color: #fec8a8;
-  background: rgba(180, 60, 40, 0.2);
-  border: 1px solid rgba(255, 120, 80, 0.35);
+  color: #8b4513;
+  background: rgba(255, 200, 120, 0.25);
+  border: 1px solid rgba(200, 120, 40, 0.35);
   border-radius: var(--radius-sm);
   margin-bottom: 1.5rem;
 }
@@ -532,7 +700,7 @@ a:hover {
   max-width: 42rem;
   font-size: 0.9375rem;
   line-height: 1.7;
-  color: rgba(238, 240, 244, 0.9);
+  color: var(--text);
 }
 
 .prose h2 {
@@ -555,7 +723,7 @@ a:hover {
 .prose ul {
   margin: 0 0 1rem;
   padding-left: 1.35rem;
-  color: rgba(238, 240, 244, 0.88);
+  color: var(--text);
 }
 
 .prose li {
@@ -571,7 +739,7 @@ a:hover {
   padding: 0.75rem 1rem;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
-  background: var(--bg-elevated);
+  background: rgba(255, 255, 255, 0.85);
   font-size: 0.875rem;
   color: var(--muted);
 }
@@ -581,9 +749,14 @@ a:hover {
   padding: 0.75rem 1rem;
   border-radius: var(--radius-sm);
   border-left: 3px solid var(--accent);
-  background: var(--bg-elevated);
+  background: rgba(255, 255, 255, 0.85);
   color: var(--muted);
   font-style: italic;
+}
+
+.prose code {
+  color: var(--accent);
+  font-size: 0.88em;
 }
 
 /* ——— Footer ——— */
@@ -591,6 +764,7 @@ a:hover {
   margin-top: auto;
   padding: 2rem 0;
   border-top: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.45);
 }
 
 .app-footer p {
@@ -598,6 +772,7 @@ a:hover {
   font-size: 0.8125rem;
   color: var(--muted);
   text-align: center;
+  line-height: 1.65;
 }
 
 .visually-hidden {
