@@ -59,14 +59,8 @@
   },
   "feedback": {
     "h": "Feedback",
-    "p": "Leave your name and message below; comments appear on this page (same list as on the download page).",
-    "privacy": "Comments are stored <strong>only in this browser</strong>; they are not sent to a server and won’t show on other devices.",
-    "nameLabel": "Name",
-    "commentLabel": "Comment",
-    "placeholderName": "Your name or nickname",
-    "placeholderComment": "Suggestion, missing chapter, bug…",
-    "submit": "Post comment",
-    "noComments": "No comments yet — be the first."
+    "p": "<strong>Everyone can read</strong> comments. Sign in with GitHub to post.",
+    "note": "Comments use <strong>Utterances</strong> on GitHub Issues. <strong>Issues</strong> must be enabled and the <a href=\"https://github.com/apps/utterances\" target=\"_blank\" rel=\"noopener\">Utterances</a> app installed on the repo."
   },
   "footer": {
     "html": "© __YEAR__ ATA Quick Guide · <a href=\"nasil-yuklenir.html\">Install</a> · <a href=\"indir.html\">Releases</a> · <a href=\"#credits\">Team</a> · <a href=\"#geri-bildirim\">Feedback</a>"
@@ -75,7 +69,7 @@
     "downloadTitle": "Download — ATA Quick Guide",
     "downloadDesc": "ATA Quick Guide — download APK, releases, changelog",
     "downloadH1": "Download & releases",
-    "downloadLead": "The app is in <strong>early access</strong>; download the latest APK from this page. Changelog and older builds are below. Use the form at the bottom for feedback (stored only in your browser).",
+    "downloadLead": "The app is in <strong>early access</strong>; download the latest APK from this page. Changelog and older builds are below. Use the comment section at the bottom (public read; GitHub sign-in to post).",
     "installTitle": "How to install — ATA Quick Guide",
     "installDesc": "How to install the ATA Quick Guide APK on Android.",
     "installH1": "How to install",
@@ -95,7 +89,7 @@
     "sectionHistory": "Changelog (archived)",
     "historyMuted": "Archived versions only; current notes are in the card above.",
     "sectionFeedback": "Feedback",
-    "feedbackNote": "Enter your name and comment; the list is kept in this browser."
+    "feedbackNote": "Comments are public. Sign in with GitHub to post; uses Utterances."
   },
   "install": {
     "s1h": "1. Requirements",

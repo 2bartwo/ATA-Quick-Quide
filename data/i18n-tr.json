@@ -59,14 +59,8 @@
   },
   "feedback": {
     "h": "Geri bildirim",
-    "p": "Eksik chapter, hata veya öneri için ismini yazıp yorumunu bırak; liste bu sayfada görünür (indir sayfasıyla aynı liste).",
-    "privacy": "Yorumlar <strong>yalnızca bu tarayıcıda</strong> saklanır; başka cihaz veya tarayıcıda görünmez. Sunucuya gönderilmez.",
-    "nameLabel": "İsim",
-    "commentLabel": "Yorum",
-    "placeholderName": "Adın veya takma adın",
-    "placeholderComment": "Öneri, eksik chapter veya hata…",
-    "submit": "Yorumu gönder",
-    "noComments": "Henüz yorum yok — ilk sen yaz."
+    "p": "Yorumları <strong>herkes görebilir</strong>. Yazmak için GitHub hesabınla giriş yapman gerekir.",
+    "note": "Yorumlar <strong>Utterances</strong> ile GitHub Issues üzerinde tutulur. Repoda <strong>Issues</strong> açık ve <a href=\"https://github.com/apps/utterances\" target=\"_blank\" rel=\"noopener\">Utterances uygulaması</a> kurulu olmalıdır."
   },
   "footer": {
     "html": "© __YEAR__ ATA Quick Guide · <a href=\"nasil-yuklenir.html\">Kurulum</a> · <a href=\"indir.html\">Sürümler</a> · <a href=\"#credits\">Ekip</a> · <a href=\"#geri-bildirim\">Geri bildirim</a>"
@@ -75,7 +69,7 @@
     "downloadTitle": "İndir — ATA Quick Guide",
     "downloadDesc": "ATA Quick Guide — APK indir, sürümler ve yama notları",
     "downloadH1": "İndir & sürümler",
-    "downloadLead": "Uygulama şu an <strong>erken erişim</strong>; güncel paket bu sayfadan APK olarak indirilir. Yama notları ve eski sürümler aşağıda. Geri bildirim için sayfa sonundaki formu kullan (yorumlar yalnızca tarayıcında saklanır).",
+    "downloadLead": "Uygulama şu an <strong>erken erişim</strong>; güncel paket bu sayfadan APK olarak indirilir. Yama notları ve eski sürümler aşağıda. Geri bildirim için sayfa sonundaki yorum alanını kullan (herkes okuyabilir; yazmak için GitHub girişi).",
     "installTitle": "Nasıl yüklenir — ATA Quick Guide",
     "installDesc": "ATA Quick Guide — Android’e APK ile nasıl yüklenir.",
     "installH1": "Nasıl yüklenir",
@@ -95,7 +89,7 @@
     "sectionHistory": "Önceki güncellemelerin yama notları",
     "historyMuted": "Sadece arşivlenmiş sürümler; güncelin notları yukarıdaki kartta.",
     "sectionFeedback": "Geri bildirim",
-    "feedbackNote": "İsim ve yorumunu yaz; liste bu tarayıcıda tutulur."
+    "feedbackNote": "Yorumlar herkese açık. Yazmak için GitHub ile giriş yap; Utterances kullanılır."
   },
   "install": {
     "s1h": "1. Ön koşullar",

@@ -99,26 +99,10 @@
         </div>
       </section>
 
-      <section class="section reveal" aria-labelledby="nedir">
+      <section id="nedir" class="section reveal" aria-labelledby="nedir-h">
         <div class="section__head">
-          <h2 id="nedir" data-i18n="nedir.h">Ne işe yarar?</h2>
+          <h2 id="nedir-h" data-i18n="nedir.h">Ne işe yarar?</h2>
           <p data-i18n-html="nedir.p"></p>
-          <h3 id="ozellikler" class="subsection-title" data-i18n="features.h">Öne çıkanlar</h3>
-          <p class="subsection-lead" data-i18n="features.lead">Saha veya ofiste, referansa ihtiyaç duyduğunda tek bakışta chapter mantığına odaklan.</p>
-        </div>
-        <div class="feature-grid">
-          <article class="feature-card reveal reveal-stagger-1">
-            <h3 data-i18n="features.f1h">Hızlı erişim</h3>
-            <p data-i18n="features.f1p">Chapter yapısına telefondan kısa yoldan ulaş; uzun doküman karıştırmadan kontrol et.</p>
-          </article>
-          <article class="feature-card reveal reveal-stagger-2">
-            <h3 data-i18n="features.f2h">Doğru referans</h3>
-            <p data-i18n="features.f2p">Standart ATA numaralandırmasıyla uyumlu düzen; yanlış başlığa takılmadan bakım ve çalışma akışını destekler.</p>
-          </article>
-          <article class="feature-card reveal reveal-stagger-3">
-            <h3 data-i18n="features.f3h">Mobil kullanım</h3>
-            <p data-i18n="features.f3p">Android APK olarak yükle; bağlantı veya tarayıcı sekmesi derdi olmadan uygulamadan kullan.</p>
-          </article>
         </div>
       </section>
 
@@ -141,22 +125,10 @@
       <section id="geri-bildirim" class="section reveal" aria-labelledby="fb-h">
         <div class="section__head">
           <h2 id="fb-h" data-i18n="feedback.h">Geri bildirim</h2>
-          <p data-i18n="feedback.p">Eksik chapter, hata veya öneri için ismini yazıp yorumunu bırak; liste bu sayfada görünür.</p>
+          <p data-i18n="feedback.p">Yorumları herkes okuyabilir; yazmak için GitHub ile giriş gerekir.</p>
         </div>
-        <p class="comments-note" data-i18n-html="feedback.privacy">Yorumlar yalnızca bu tarayıcıda saklanır; başka cihazda görünmez.</p>
-        <form id="local-comment-form" class="local-comment-form" novalidate>
-          <label class="local-comment-form__field">
-            <span data-i18n="feedback.nameLabel">İsim</span>
-            <input type="text" name="comment-name" maxlength="80" required autocomplete="name" data-i18n-placeholder="feedback.placeholderName" placeholder="Adın veya takma adın">
-          </label>
-          <label class="local-comment-form__field">
-            <span data-i18n="feedback.commentLabel">Yorum</span>
-            <textarea name="comment-body" rows="4" maxlength="2000" required data-i18n-placeholder="feedback.placeholderComment" placeholder="Mesajın…"></textarea>
-          </label>
-          <button type="submit" class="btn btn--primary" data-i18n="feedback.submit">Yorumu gönder</button>
-        </form>
-        <p id="local-comments-empty" class="local-comments__empty" data-i18n="feedback.noComments">Henüz yorum yok — ilk sen yaz.</p>
-        <div id="local-comments-list" class="local-comments-list" role="feed" aria-label="Yorumlar" tabindex="-1"></div>
+        <p class="comments-note" data-i18n-html="feedback.note"></p>
+        <div id="utterances-host" class="comments-wrap" data-issue-term="pathname"></div>
       </section>
     </main>
 
@@ -168,7 +140,6 @@
   </div>
 
   <script src="js/site-ui.js" defer></script>
-  <script src="js/local-comments.js" defer></script>
   <script src="js/app-motion.js" defer></script>
 </body>
 </html>
