@@ -5,7 +5,7 @@
 
   const phrases = reduced
     ? ["ATA Quick Quide"]
-    : ["ATA Quick Quide", "ata-quick-quide.bartwo.me", "\u26e4 \u26e4 \u26e4 \u26e4 \u26e4"];
+    : ["ATA Quick Quide", "bartwo.me", "\u26e4 \u26e4 \u26e4 \u26e4 \u26e4"];
 
   function toChars(s) {
     return Array.from(s);
