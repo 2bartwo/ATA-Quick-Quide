@@ -51,29 +51,6 @@
     t.textContent = document.documentElement.getAttribute("data-theme") === "dark" ? "☀" : "☾";
   }
 
-  function utteranceTheme() {
-    return document.documentElement.getAttribute("data-theme") === "dark" ? "github-dark" : "github-light";
-  }
-
-  function mountUtterances() {
-    const host = document.getElementById("utterances-host");
-    if (!host) return;
-    host.innerHTML = "";
-    const term = host.getAttribute("data-issue-term") || "pathname";
-    const s = document.createElement("script");
-    s.src = "https://utteranc.es/client.js";
-    s.setAttribute("repo", "2bartwo/ATA-Quick-Quide");
-    s.setAttribute("issue-term", term);
-    s.setAttribute("theme", utteranceTheme());
-    s.setAttribute("crossorigin", "anonymous");
-    s.async = true;
-    host.appendChild(s);
-  }
-
-  function remountUtterances() {
-    if (document.getElementById("utterances-host")) mountUtterances();
-  }
-
   function replaceYear(html) {
     return html.replace(/__YEAR__/g, String(new Date().getFullYear()));
   }
@@ -155,7 +132,6 @@
       window.__ATA_I18N_RELEASES = window.__ATA_I18N_RELEASES || {};
     }
     window.dispatchEvent(new CustomEvent("ata-ready", { detail: { lang } }));
-    remountUtterances();
   }
 
   applyTheme(getStoredTheme());
@@ -168,8 +144,6 @@
       const cur = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
       applyTheme(cur === "dark" ? "light" : "dark");
     });
-
-    window.addEventListener("ata-theme", remountUtterances);
 
     document.querySelectorAll("[data-lang-btn]").forEach((btn) => {
       btn.addEventListener("click", () => {
