@@ -3,7 +3,7 @@
   const SIZE = 48;
   const CURSOR = "|";
 
-  const phrases = reduced ? ["bartwo"] : ["insta: 2bartwo", "bartwo", "\u26e4 \u26e4 \u26e4 \u26e4 \u26e4"];
+  const phrases = reduced ? ["ATA Quick Quide"] : ["ATA Quick Quide", "ATA Quick Quide", "\u26e4 \u26e4 \u26e4 \u26e4 \u26e4"];
 
   function toChars(s) {
     return Array.from(s);
