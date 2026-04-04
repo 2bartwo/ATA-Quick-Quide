@@ -65,8 +65,25 @@
 
       <section class="section-block reveal" aria-labelledby="fb-h">
         <h2 id="fb-h" data-i18n="releases.sectionFeedback">Geri bildirim</h2>
-        <p class="comments-note" data-i18n-html="feedback.note"></p>
-        <div id="utterances-host" class="comments-wrap" data-issue-term="pathname"></div>
+        <p class="comments-note" data-i18n-html="feedback.noteFirebase"></p>
+        <div id="public-comments-root" class="comments-wrap comments-wrap--stack">
+          <p id="firebase-setup-hint" class="alert-soft" data-i18n-html="feedback.firebaseSetup"></p>
+          <div id="firebase-comments-ui" hidden>
+            <p id="public-comment-status" class="comments-status" hidden role="status"></p>
+            <form id="public-comment-form" class="public-comment-form" novalidate>
+              <label class="public-comment-form__field">
+                <span data-i18n="feedback.nameLabel">İsim</span>
+                <input type="text" name="comment-name" maxlength="80" required autocomplete="name" data-i18n-placeholder="feedback.placeholderName" placeholder="">
+              </label>
+              <label class="public-comment-form__field">
+                <span data-i18n="feedback.commentLabel">Yorum</span>
+                <textarea name="comment-body" rows="4" maxlength="2000" required data-i18n-placeholder="feedback.placeholderComment" placeholder=""></textarea>
+              </label>
+              <button type="submit" class="btn btn--primary" data-i18n="feedback.submit">Gönder</button>
+            </form>
+            <div id="public-comments-list" class="public-comments-list"></div>
+          </div>
+        </div>
       </section>
     </main>
 
@@ -77,7 +94,9 @@
     </footer>
   </div>
 
+  <script src="js/firebase-config.js"></script>
   <script src="js/site-ui.js" defer></script>
+  <script src="js/public-comments.js" defer></script>
   <script src="js/app-motion.js" defer></script>
   <script src="js/releases-page.js" defer></script>
 </body>

@@ -971,6 +971,227 @@ a:hover {
   box-shadow: 0 0 0 3px rgba(8, 112, 217, 0.08);
 }
 
+.comments-wrap--stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: auto;
+}
+
+.public-comment-form {
+  display: grid;
+  gap: 1rem;
+  max-width: 32rem;
+  margin-bottom: 0.25rem;
+  padding: 1.15rem 1.25rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  box-shadow: var(--shadow-soft);
+}
+
+.public-comment-form__field {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.public-comment-form__field input,
+.public-comment-form__field textarea {
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 400;
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--bg-elevated);
+  color: var(--text);
+  width: 100%;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.public-comment-form__field input:focus,
+.public-comment-form__field textarea:focus {
+  outline: none;
+  border-color: rgba(8, 112, 217, 0.45);
+  box-shadow: 0 0 0 3px rgba(8, 112, 217, 0.1);
+}
+
+.public-comment-form .btn {
+  justify-self: start;
+}
+
+.comments-status {
+  margin: 0 0 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.comments-status--pending {
+  color: var(--muted);
+}
+
+.comments-status--ok {
+  color: #1a7f4c;
+}
+
+.comments-status--err {
+  color: #b42318;
+}
+
+.public-comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  max-width: 40rem;
+}
+
+.public-comments__empty {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.public-comment-card {
+  padding: 1rem 1.1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow-soft);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .public-comment-card {
+    animation: card-pop-in 0.55s var(--ease-out) both;
+  }
+
+  .public-comments-list .public-comment-card:nth-child(1) {
+    animation-delay: 0.03s;
+  }
+
+  .public-comments-list .public-comment-card:nth-child(2) {
+    animation-delay: 0.07s;
+  }
+
+  .public-comments-list .public-comment-card:nth-child(3) {
+    animation-delay: 0.11s;
+  }
+
+  .public-comments-list .public-comment-card:nth-child(n + 4) {
+    animation-delay: 0.14s;
+  }
+}
+
+@keyframes card-pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.public-comment-card__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.35rem 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.public-comment-card__name {
+  font-size: 0.9375rem;
+  color: var(--text);
+}
+
+.public-comment-card__time {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.public-comment-card__body {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--text);
+  word-break: break-word;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .section.reveal.is-inview .section__head h2,
+  .section-block.reveal.is-inview > h2:first-of-type {
+    animation: head-slide-in 0.65s var(--ease-out) both;
+  }
+
+  .credits-block.reveal.is-inview .credits-card {
+    animation: card-lift-in 0.75s var(--ease-out) 0.08s both;
+  }
+
+  .store-panel {
+    animation: panel-soft-glow 10s ease-in-out infinite alternate;
+  }
+
+  .app-menu a {
+    transition: color 0.25s ease, transform 0.35s var(--ease-spring);
+  }
+
+  .app-menu a:hover {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes head-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes card-lift-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes panel-soft-glow {
+  from {
+    box-shadow: var(--shadow-soft);
+  }
+  to {
+    box-shadow: 0 12px 40px rgba(8, 112, 217, 0.12), var(--shadow-soft);
+  }
+}
+
+[data-theme="dark"] .comments-status--ok {
+  color: #5ecf8f;
+}
+
+[data-theme="dark"] .comments-status--err {
+  color: #ff8a7a;
+}
+
+[data-theme="dark"] .public-comment-form__field input:focus,
+[data-theme="dark"] .public-comment-form__field textarea:focus {
+  border-color: rgba(77, 163, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(77, 163, 255, 0.12);
+}
+
 /* ——— Nasıl yüklenir ——— */
 .prose {
   max-width: 42rem;

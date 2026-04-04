@@ -59,8 +59,20 @@
   },
   "feedback": {
     "h": "Feedback",
-    "p": "<strong>Everyone can read</strong> comments. Sign in with GitHub to post.",
-    "note": "Comments use <strong>Utterances</strong> on GitHub Issues. <strong>Issues</strong> must be enabled and the <a href=\"https://github.com/apps/utterances\" target=\"_blank\" rel=\"noopener\">Utterances</a> app installed on the repo."
+    "p": "<strong>Everyone can read and post</strong> — no GitHub account needed.",
+    "noteFirebase": "Comments are stored on Firebase (configured for this site).",
+    "firebaseSetup": "<strong>Comments are not connected yet.</strong> Create a Firebase project, enable Firestore, paste your web app config into <code>js/firebase-config.js</code>, and deploy the rules from <code>firestore.rules</code> in the Firebase console. Then comments are visible to all visitors.",
+    "nameLabel": "Name",
+    "commentLabel": "Comment",
+    "placeholderName": "Your name or nickname",
+    "placeholderComment": "Suggestion, missing chapter, bug…",
+    "submit": "Send",
+    "noComments": "No comments yet — be the first.",
+    "sending": "Sending…",
+    "sentOk": "Posted.",
+    "sentError": "Could not post. Check your connection or Firestore rules.",
+    "loadError": "Could not load the comments service.",
+    "listenError": "Could not load the comment list."
   },
   "footer": {
     "html": "© __YEAR__ ATA Quick Guide · <a href=\"nasil-yuklenir.html\">Install</a> · <a href=\"indir.html\">Releases</a> · <a href=\"#credits\">Team</a> · <a href=\"#geri-bildirim\">Feedback</a>"
@@ -69,7 +81,7 @@
     "downloadTitle": "Download — ATA Quick Guide",
     "downloadDesc": "ATA Quick Guide — download APK, releases, changelog",
     "downloadH1": "Download & releases",
-    "downloadLead": "The app is in <strong>early access</strong>; download the latest APK from this page. Changelog and older builds are below. Use the comment section at the bottom (public read; GitHub sign-in to post).",
+    "downloadLead": "The app is in <strong>early access</strong>; download the latest APK from this page. Changelog and older builds are below. Use the comment section at the bottom (public read/post when Firebase is configured).",
     "installTitle": "How to install — ATA Quick Guide",
     "installDesc": "How to install the ATA Quick Guide APK on Android.",
     "installH1": "How to install",
@@ -89,7 +101,7 @@
     "sectionHistory": "Changelog (archived)",
     "historyMuted": "Archived versions only; current notes are in the card above.",
     "sectionFeedback": "Feedback",
-    "feedbackNote": "Comments are public. Sign in with GitHub to post; uses Utterances."
+    "feedbackNote": "Comments are public via Firebase (no GitHub). The site maintainer must configure Firebase."
   },
   "install": {
     "s1h": "1. Requirements",
