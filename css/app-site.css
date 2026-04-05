@@ -1025,50 +1025,93 @@ a:hover {
   filter: drop-shadow(0 28px 56px rgba(0, 0, 0, 0.45)) drop-shadow(0 14px 28px rgba(0, 0, 0, 0.3));
 }
 
-/* Hover: pointer:fine hibrit PC’lerde çoğu zaman false oluyor; sadece (hover: hover) */
-@media (hover: hover) {
-  @media (prefers-reduced-motion: no-preference) {
-    .landing-phones .hero-device--iphone {
-      transition:
-        transform 0.55s var(--ease-out),
-        filter 0.55s var(--ease-out);
-    }
-
-    .landing-phones .hero-device__iphone-inner {
-      transition: box-shadow 0.55s var(--ease-out);
-    }
-
-    .landing-phones .hero-device--iphone:hover {
-      transform: rotate(-4deg) scale(1.06) translateY(-14px);
-      filter: drop-shadow(0 44px 76px rgba(15, 53, 80, 0.28)) drop-shadow(0 22px 44px rgba(0, 0, 0, 0.15));
-    }
-
-    .landing-phones .hero-device--iphone:hover .hero-device__iphone-inner {
-      box-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.11) inset,
-        0 0 0 1px rgba(0, 0, 0, 0.3) inset,
-        0 0 40px rgba(13, 110, 253, 0.18);
-    }
-
-    [data-theme="dark"] .landing-phones .hero-device--iphone:hover {
-      transform: rotate(-4deg) scale(1.06) translateY(-14px);
-      filter: drop-shadow(0 48px 80px rgba(0, 0, 0, 0.6)) drop-shadow(0 26px 52px rgba(0, 0, 0, 0.38));
-    }
-
-    [data-theme="dark"] .landing-phones .hero-device--iphone:hover .hero-device__iphone-inner {
-      box-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.08) inset,
-        0 0 0 1px rgba(0, 0, 0, 0.42) inset,
-        0 0 44px rgba(10, 132, 255, 0.22);
-    }
+/* Hero telefon: hover’da hafif titreme (büyütme + yükseltme animasyon içinde) */
+@keyframes hero-phone-shake {
+  0%,
+  100% {
+    transform: rotate(-4deg) scale(1.06) translateY(-14px) translateX(0);
+  }
+  12.5% {
+    transform: rotate(-5.6deg) scale(1.06) translateY(-14px) translateX(-4px);
+  }
+  25% {
+    transform: rotate(-2.6deg) scale(1.06) translateY(-15px) translateX(3px);
+  }
+  37.5% {
+    transform: rotate(-5.1deg) scale(1.06) translateY(-13px) translateX(-3px);
+  }
+  50% {
+    transform: rotate(-3.1deg) scale(1.06) translateY(-14px) translateX(4px);
+  }
+  62.5% {
+    transform: rotate(-5.4deg) scale(1.06) translateY(-14px) translateX(-2px);
+  }
+  75% {
+    transform: rotate(-3.6deg) scale(1.06) translateY(-13px) translateX(3px);
+  }
+  87.5% {
+    transform: rotate(-4.8deg) scale(1.06) translateY(-15px) translateX(-2px);
   }
 }
 
-@media (hover: hover) and (max-width: 959px) {
-  @media (prefers-reduced-motion: no-preference) {
+@keyframes hero-phone-shake-sm {
+  0%,
+  100% {
+    transform: rotate(-3deg) scale(1.04) translateY(-10px) translateX(0);
+  }
+  20% {
+    transform: rotate(-4.3deg) scale(1.04) translateY(-10px) translateX(-3px);
+  }
+  40% {
+    transform: rotate(-1.9deg) scale(1.04) translateY(-11px) translateX(2px);
+  }
+  60% {
+    transform: rotate(-4deg) scale(1.04) translateY(-9px) translateX(-2px);
+  }
+  80% {
+    transform: rotate(-2.5deg) scale(1.04) translateY(-10px) translateX(3px);
+  }
+}
+
+/* Telefon hover: (hover: hover) bazı masaüstlerinde false döndüğü için kullanılmıyor. Transform transition, keyframes ile çakışmasın diye yalnız filter geçişi */
+@media (prefers-reduced-motion: no-preference) {
+  .landing-phones .hero-device--iphone {
+    transform-origin: 50% 52%;
+    transition: filter 0.45s var(--ease-out);
+  }
+
+  .landing-phones .hero-device__iphone-inner {
+    transition: box-shadow 0.45s var(--ease-out);
+  }
+
+  .landing-phones .hero-device--iphone:hover {
+    animation: hero-phone-shake 0.42s ease-in-out infinite;
+    filter: drop-shadow(0 44px 76px rgba(15, 53, 80, 0.28)) drop-shadow(0 22px 44px rgba(0, 0, 0, 0.15));
+  }
+
+  .landing-phones .hero-device--iphone:hover .hero-device__iphone-inner {
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.11) inset,
+      0 0 0 1px rgba(0, 0, 0, 0.3) inset,
+      0 0 40px rgba(13, 110, 253, 0.18);
+  }
+
+  [data-theme="dark"] .landing-phones .hero-device--iphone:hover {
+    animation: hero-phone-shake 0.42s ease-in-out infinite;
+    filter: drop-shadow(0 48px 80px rgba(0, 0, 0, 0.6)) drop-shadow(0 26px 52px rgba(0, 0, 0, 0.38));
+  }
+
+  [data-theme="dark"] .landing-phones .hero-device--iphone:hover .hero-device__iphone-inner {
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.08) inset,
+      0 0 0 1px rgba(0, 0, 0, 0.42) inset,
+      0 0 44px rgba(10, 132, 255, 0.22);
+  }
+
+  @media (max-width: 959px) {
     .landing-phones .hero-device--iphone:hover,
     [data-theme="dark"] .landing-phones .hero-device--iphone:hover {
-      transform: rotate(-3deg) scale(1.04) translateY(-10px);
+      animation: hero-phone-shake-sm 0.42s ease-in-out infinite;
     }
   }
 }
