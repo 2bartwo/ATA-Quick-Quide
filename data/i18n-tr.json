@@ -17,9 +17,10 @@
     "pill": "Erken erişim"
   },
   "hero": {
+    "headline": "ATA Chapters artık cebinizde",
     "title": "ATA chapter referansı, cepte",
     "subtitle": "Uygulama giriş sayfası tarzında net anlatım; arayüz uygulama içi koyu temayla uyumlu.",
-    "lead": "Havacılıkta kullanılan <strong>ATA chapter</strong> yapısına telefondan <strong>hızlı ve doğru</strong> şekilde bakmanı sağlar. Uçağı açıp ihtiyacın olan bölümü aramak yerine, chapter numarası ve başlıklar elinin altında olur."
+    "lead": "Havacılıkta kullanılan <strong>ATA chapter</strong> yapısına telefondan <strong>hızlı ve doğru</strong> şekilde bakmanı sağlar. Kalın dokümanlarda uzun aramalar yapmak yerine chapter numarası ve başlıklar cebinde hazır olur."
   },
   "showcase": {
     "h": "Uygulama içi görünüm",
@@ -111,7 +112,7 @@
     "navTestimonials": "Yorumlar",
     "navContact": "İletişim",
     "heroKicker": "Erken erişim",
-    "heroH1": "Chapter referansı artık telefonunda",
+    "heroH1": "ATA Chapters artık cebinizde",
     "heroCta1": "Uygulamayı indir",
     "heroCta2": "Daha fazla bilgi",
     "featuresEyebrow": "Özellikler",
@@ -179,8 +180,7 @@
     "s2l4": "Bilinmeyen uygulamaları yükle / Bu kaynaktan yüklemeye izin ver seçeneğini aç.",
     "s2note": "Bazı cihazlarda bu ayar, ilk kurulum sırasında indirme tamamlanınca çıkan pencerede de sorulur; orada da aynı şekilde izin verebilirsin.",
     "s3h": "3. APK’yı indir ve aç",
-    "s3l1a": "İndir",
-    "s3l1b": " sayfasından güncel .apk dosyasını indir.",
+    "s3l1": "<a href=\"indir.html\">İndir</a> sayfasından güncel <code>.apk</code> dosyasını indir.",
     "s3l2": "Bildirim çubuğundan indirilen dosyaya dokun veya Dosyalar / İndirilenler içinden APK’yı bul.",
     "s3l3": "Dosyaya dokun; paket yükleyici açılır.",
     "s4h": "4. Kurulumu onayla",

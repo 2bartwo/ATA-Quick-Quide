@@ -8,8 +8,8 @@
     "apkFile": "releases/ATA-Quick-Guide-v2.apk",
     "apkDisplayName": "ATA-Quick-Guide-v2.apk",
     "notes": [
-      "Güncelleme notlarını buraya yaz — RoIya her güncellemede bu listeyi ve sürüm bilgisini düzenle.",
-      "Yeni APK yüklediğinde `data/changelog.json` içinde `latest` ve `older` alanlarını güncelle."
+      "Erken erişim sürümü: ATA chapter listesi, arama ve genişletilebilir bölümler.",
+      "Arayüz ve kararlılık iyileştirmeleri."
     ]
   },
   "older": []

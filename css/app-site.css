@@ -1662,7 +1662,19 @@ a:hover {
   .app-menu {
     order: 2;
     width: 100%;
+    max-width: 100%;
     justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    gap: 0.5rem 1rem;
+    padding-bottom: 0.25rem;
+    scrollbar-width: thin;
+  }
+
+  .app-menu a {
+    flex-shrink: 0;
   }
 }
 

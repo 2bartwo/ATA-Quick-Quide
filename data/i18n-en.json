@@ -17,9 +17,10 @@
     "pill": "Early access"
   },
   "hero": {
+    "headline": "ATA chapters in your pocket",
     "title": "ATA chapters in your pocket",
     "subtitle": "Landing-style clarity; UI matches the in-app dark experience.",
-    "lead": "Helps you look up the aviation <strong>ATA chapter</strong> structure on your phone <strong>quickly and accurately</strong>. Chapter numbers and titles stay at your fingertips—without digging through manuals."
+    "lead": "Helps you look up the aviation <strong>ATA chapter</strong> structure on your phone <strong>quickly and accurately</strong>. Instead of long searches through heavy manuals, chapter numbers and titles stay ready in your pocket."
   },
   "showcase": {
     "h": "Inside the app",
@@ -111,7 +112,7 @@
     "navTestimonials": "Testimonials",
     "navContact": "Contact",
     "heroKicker": "Early access",
-    "heroH1": "ATA chapters on your phone",
+    "heroH1": "ATA chapters in your pocket",
     "heroCta1": "Download the app",
     "heroCta2": "Learn more",
     "featuresEyebrow": "Features",
