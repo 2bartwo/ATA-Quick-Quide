@@ -19,7 +19,8 @@
   --shadow-soft: 0 6px 28px rgba(15, 53, 80, 0.07);
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-spring: cubic-bezier(0.34, 1.3, 0.64, 1);
-  --hero-phone-width: min(252px, 80vw);
+  --hero-phone-width: min(400px, 94vw);
+  --hero-mockup-shift-x: 0;
 }
 
 *,
@@ -122,6 +123,12 @@ a:hover {
   max-width: 68rem;
   margin: 0 auto;
   padding: 0 1.25rem;
+}
+
+/* Ana sayfa hero: referans düzenine yakın daha geniş içerik (≈60/40 grid) */
+.app-content.container:has(.landing-hero) {
+  max-width: 72rem;
+  padding-inline: clamp(1rem, 4vw, 2rem);
 }
 
 /* ——— Üst bar ——— */
@@ -680,7 +687,7 @@ a:hover {
 
 .landing-hero__grid {
   display: grid;
-  gap: 2.5rem;
+  gap: clamp(1.75rem, 4vw, 2.5rem);
   align-items: center;
   overflow: visible;
 }
@@ -697,7 +704,7 @@ a:hover {
 .landing-hero__visual-scene {
   position: relative;
   width: 100%;
-  max-width: min(22rem, 100%);
+  max-width: min(30rem, 100%);
   margin-inline: auto;
 }
 
@@ -741,15 +748,19 @@ a:hover {
 }
 
 [data-theme="dark"] .landing-hero__blob--1 {
-  background: radial-gradient(circle, rgba(10, 132, 255, 0.42) 0%, transparent 68%);
+  background: radial-gradient(circle, rgba(10, 132, 255, 0.55) 0%, transparent 68%);
 }
 
 [data-theme="dark"] .landing-hero__blob--2 {
-  background: radial-gradient(circle, rgba(100, 170, 255, 0.2) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(100, 170, 255, 0.28) 0%, transparent 70%);
 }
 
 [data-theme="dark"] .landing-hero__blob--3 {
-  background: radial-gradient(circle, rgba(10, 132, 255, 0.18) 0%, transparent 65%);
+  background: radial-gradient(circle, rgba(10, 132, 255, 0.26) 0%, transparent 65%);
+}
+
+[data-theme="dark"] .landing-hero__blob {
+  opacity: 0.55;
 }
 
 .landing-hero__ring {
@@ -812,28 +823,39 @@ a:hover {
 
 @media (min-width: 640px) and (max-width: 959px) {
   :root {
-    --hero-phone-width: min(276px, 72vw);
+    --hero-phone-width: min(500px, 90vw);
   }
 
   .landing-phones {
-    min-height: 360px;
+    min-height: 500px;
   }
 }
 
 @media (min-width: 960px) {
+  /* Metin / telefon: telefon sütunu biraz daha geniş */
   .landing-hero__grid {
     align-items: center;
-    gap: 2.75rem;
-    grid-template-columns: minmax(0, 1fr) minmax(260px, min(320px, 30vw));
+    gap: 1.75rem;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 4fr);
+  }
+
+  .landing-hero__visual {
+    justify-content: center;
+  }
+
+  .landing-hero__copy {
+    align-self: center;
+    max-width: 36rem;
   }
 
   :root {
-    --hero-phone-width: min(292px, 26vw);
+    --hero-phone-width: min(760px, 100%);
+    --hero-mockup-shift-x: -0.5rem;
   }
 }
 
 .landing-hero__copy {
-  max-width: 38rem;
+  max-width: 36rem;
 }
 
 .landing-hero__subtitle {
@@ -886,301 +908,77 @@ a:hover {
   align-items: center;
   justify-content: center;
   overflow: visible;
+  perspective: 1100px;
+  perspective-origin: 38% 42%;
 }
 
 @media (min-width: 960px) {
   .landing-phones {
-    min-height: 440px;
+    min-height: min(780px, 68vw);
     justify-content: center;
+    align-items: center;
+    perspective-origin: 50% 45%;
   }
 
   .landing-hero__visual-scene {
     max-width: none;
+    width: 100%;
+  }
+
+  .hero-photo-mockup {
+    width: 100%;
+    max-width: min(760px, 100%);
   }
 }
 
-/* Titanyum gövde + yan tuşlar; sahte durum çubuğu + home indicator */
-.hero-device--iphone {
+/*
+ * Gerçek iPhone ürün fotoğrafı: images/iphone-photo-frame-cutout.png
+ * Ekran deliği şeffaf; app SS aynı oranlı kare içinde yüzdeyle hizalanır (1000px asset).
+ */
+.hero-photo-mockup {
   position: relative;
   line-height: 0;
   width: var(--hero-phone-width);
   max-width: 100%;
-  transform: rotate(-7deg);
-  filter: drop-shadow(0 28px 56px rgba(15, 53, 80, 0.2)) drop-shadow(0 12px 24px rgba(0, 0, 0, 0.12));
+  transform-style: preserve-3d;
+  transform: translateX(var(--hero-mockup-shift-x)) rotateY(-11deg) rotateX(4deg) translateZ(0);
+  filter: drop-shadow(0 26px 52px rgba(15, 53, 80, 0.22)) drop-shadow(0 12px 28px rgba(0, 0, 0, 0.16));
 }
 
-/* Sol: ses / aksiyon; sağ: güç — ince metal çubuklar */
-.hero-device--iphone::before,
-.hero-device--iphone::after {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  width: 3px;
-  border-radius: 2px;
-  background: linear-gradient(180deg, #8a8a93 0%, #4a4a52 40%, #2e2e35 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.22),
-    0 0 0 1px rgba(0, 0, 0, 0.35);
-  pointer-events: none;
-}
-
-.hero-device--iphone::before {
-  left: -2px;
-  top: 22%;
-  height: 16%;
-}
-
-.hero-device--iphone::after {
-  right: -2px;
-  top: 26%;
-  height: 11%;
-}
-
-.hero-device__iphone-inner {
+.hero-photo-mockup__inner {
   position: relative;
-  z-index: 1;
   width: 100%;
-  aspect-ratio: 402 / 874;
-  border-radius: 2.45rem;
-  padding: 0.38rem;
-  background:
-    linear-gradient(168deg, rgba(255, 255, 255, 0.13) 0%, transparent 38%),
-    linear-gradient(148deg, #4d4d55 0%, #2e2e33 18%, #1a1b1f 52%, #26262c 82%, #3c3c44 100%);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.12),
-    0 1px 0 rgba(255, 255, 255, 0.14) inset,
-    0 0 0 1px rgba(0, 0, 0, 0.42) inset,
-    0 -0.08rem 0 rgba(0, 0, 0, 0.28) inset;
-  display: flex;
-  flex-direction: column;
-  transition: box-shadow 0.55s var(--ease-out);
+  aspect-ratio: 1;
 }
 
-.hero-device__screen {
-  --hero-chrome-top: clamp(2.45rem, 11.5%, 2.95rem);
-  --hero-chrome-bottom: 0.95rem;
-  position: relative;
-  flex: 1;
-  min-height: 0;
-  border-radius: 2.2rem;
+.hero-photo-mockup__screen {
+  position: absolute;
+  z-index: 1;
+  left: 31.3%;
+  top: 8.7%;
+  width: 37.2%;
+  height: 81.4%;
+  border-radius: 12.4%;
   overflow: hidden;
   background: #000;
 }
 
-/* Durum çubuğu ile home indicator arasında SS dikey + yatay ortalı */
-.hero-device__screen-body {
+.hero-photo-mockup__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+.hero-photo-mockup__frame {
   position: absolute;
   inset: 0;
-  z-index: 1;
-  padding: var(--hero-chrome-top) 0 var(--hero-chrome-bottom);
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-
-.hero-device__screen .hero-device__img {
-  flex: 1;
-  min-height: 0;
+  z-index: 2;
   width: 100%;
-  object-fit: contain;
-  object-position: center center;
-  display: block;
-}
-
-/* Üst siyah şerit: saat | Island | sinyal / Wi‑Fi / pil */
-.hero-device__screen-top {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 4;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  align-items: center;
-  gap: 0.2rem;
-  min-height: var(--hero-chrome-top);
-  padding: 0.28rem 0.45rem 0.38rem;
-  pointer-events: none;
-  background: #000;
-  color: #fff;
-}
-
-.hero-device__status-time {
-  grid-column: 1;
-  justify-self: start;
-  font-size: clamp(0.68rem, 2.4vw, 0.8rem);
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  font-variant-numeric: tabular-nums;
-  opacity: 0.95;
-}
-
-.hero-device__status-trailing {
-  grid-column: 3;
-  justify-self: end;
-  display: flex;
-  align-items: center;
-  gap: 0.28rem;
-}
-
-.hero-device__signal {
-  display: flex;
-  align-items: flex-end;
-  gap: 1.5px;
-  height: 0.52rem;
-}
-
-.hero-device__signal span {
-  width: 2.5px;
-  border-radius: 1px;
-  background: currentColor;
-}
-
-.hero-device__signal span:nth-child(1) {
-  height: 3px;
-  opacity: 0.4;
-}
-
-.hero-device__signal span:nth-child(2) {
-  height: 5px;
-  opacity: 0.55;
-}
-
-.hero-device__signal span:nth-child(3) {
-  height: 7px;
-  opacity: 0.75;
-}
-
-.hero-device__signal span:nth-child(4) {
-  height: 9px;
-  opacity: 0.95;
-}
-
-.hero-device__wifi-ico {
-  flex-shrink: 0;
-  opacity: 0.95;
-}
-
-.hero-device__battery-ico {
-  position: relative;
-  width: 1.28rem;
-  height: 0.5rem;
-  border-radius: 2px;
-  border: 1.5px solid currentColor;
-  opacity: 0.95;
-  padding: 1px;
-  box-sizing: border-box;
-}
-
-.hero-device__battery-ico::after {
-  content: "";
-  position: absolute;
-  right: -3px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 2px;
-  height: 4px;
-  background: currentColor;
-  border-radius: 0 1px 1px 0;
-  opacity: 0.9;
-}
-
-.hero-device__battery-fill {
-  display: block;
   height: 100%;
-  width: 72%;
-  border-radius: 1px;
-  background: currentColor;
-}
-
-.hero-device__dynamic-island {
-  grid-column: 2;
-  justify-self: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.42rem;
-  min-width: clamp(3.85rem, 24%, 5rem);
-  height: clamp(1.2rem, 8.5%, 1.5rem);
-  padding: 0 0.48rem;
-  border-radius: 999px;
-  background: linear-gradient(155deg, #2e2e32 0%, #121214 38%, #000 100%);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.16),
-    inset 0 -3px 6px rgba(0, 0, 0, 0.75),
-    0 5px 14px rgba(0, 0, 0, 0.55);
-}
-
-.hero-device__island-lens {
-  flex-shrink: 0;
-  width: 0.68rem;
-  height: 0.68rem;
-  border-radius: 50%;
-  background: radial-gradient(circle at 32% 28%, #4a5a6e 0%, #1c222a 42%, #030405 100%);
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
-    inset 0 -2px 5px rgba(0, 0, 0, 0.9),
-    0 0 8px rgba(50, 130, 220, 0.22);
-}
-
-.hero-device__island-stack {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.2rem;
-}
-
-.hero-device__island-led {
-  width: 0.26rem;
-  height: 0.26rem;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 25%, #6ee7a8 0%, #1a6b45 55%, #062818 100%);
-  box-shadow:
-    0 0 5px rgba(80, 220, 140, 0.55),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.2);
-}
-
-.hero-device__island-sensor {
-  width: 0.34rem;
-  height: 0.34rem;
-  border-radius: 50%;
-  background: radial-gradient(circle at 28% 22%, #2c2826 0%, #0c0b0a 70%, #000 100%);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-device__island-led {
-    box-shadow:
-      0 0 3px rgba(80, 220, 140, 0.35),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.15);
-  }
-
-  .landing-hero__blob {
-    filter: blur(28px);
-  }
-}
-
-.hero-device__home-indicator {
-  position: absolute;
-  bottom: 0.42rem;
-  left: 50%;
-  z-index: 4;
-  width: 34%;
-  max-width: 5.4rem;
-  height: 0.3rem;
-  transform: translateX(-50%);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.45);
+  object-fit: contain;
   pointer-events: none;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
-}
-
-[data-theme="light"] .hero-device__home-indicator {
-  background: rgba(0, 0, 0, 0.2);
-  box-shadow: none;
 }
 
 @media (max-width: 959px) {
@@ -1196,9 +994,31 @@ a:hover {
     min-height: 300px;
   }
 
-  .hero-device--iphone {
-    transform: rotate(-5deg);
-    filter: drop-shadow(0 22px 44px rgba(15, 53, 80, 0.18)) drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
+  .hero-photo-mockup {
+    transform: translateX(var(--hero-mockup-shift-x)) rotateY(-7deg) rotateX(3deg) translateZ(0);
+    filter: drop-shadow(0 20px 40px rgba(15, 53, 80, 0.18)) drop-shadow(0 10px 22px rgba(0, 0, 0, 0.12));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-hero__blob {
+    filter: blur(28px);
+  }
+
+  .landing-phones {
+    perspective: none;
+  }
+
+  .hero-photo-mockup {
+    transform-style: flat;
+    transform: translateX(var(--hero-mockup-shift-x)) rotate(-5deg);
+    filter: drop-shadow(0 20px 40px rgba(15, 53, 80, 0.16)) drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
+  }
+
+  @media (max-width: 959px) {
+    .hero-photo-mockup {
+      transform: translateX(var(--hero-mockup-shift-x)) rotate(-4deg);
+    }
   }
 }
 
@@ -1353,41 +1173,17 @@ a:hover {
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
 }
 
-[data-theme="dark"] .hero-device--iphone {
+[data-theme="dark"] .hero-photo-mockup {
   filter: drop-shadow(0 28px 56px rgba(0, 0, 0, 0.45)) drop-shadow(0 14px 28px rgba(0, 0, 0, 0.3));
 }
 
-[data-theme="dark"] .hero-device__iphone-inner {
-  background:
-    linear-gradient(168deg, rgba(255, 255, 255, 0.12) 0%, transparent 34%),
-    linear-gradient(148deg, #5c5c66 0%, #3d3d45 18%, #252528 52%, #323238 82%, #4a4a54 100%);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.16),
-    0 1px 0 rgba(255, 255, 255, 0.12) inset,
-    0 0 0 1px rgba(0, 0, 0, 0.55) inset,
-    0 -0.08rem 0 rgba(0, 0, 0, 0.35) inset;
-}
-
-[data-theme="dark"] .hero-device--iphone::before,
-[data-theme="dark"] .hero-device--iphone::after {
-  background: linear-gradient(180deg, #9a9aa3 0%, #5a5a62 45%, #35353c 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.28),
-    0 0 0 1px rgba(0, 0, 0, 0.5);
-}
-
-/* Hero telefon: hover’da düz + hafif büyüme + arkada mavi ışık */
-.landing-phones .hero-device--iphone {
-  transform-origin: 50% 52%;
+.landing-phones .hero-photo-mockup {
+  transform-origin: 46% 50%;
   transition: transform 0.55s var(--ease-out), filter 0.55s var(--ease-out);
 }
 
-.landing-phones .hero-device__iphone-inner {
-  transition: box-shadow 0.55s var(--ease-out);
-}
-
-.landing-phones .hero-device--iphone:hover {
-  transform: rotate(0deg) scale(1.08) translateY(-14px);
+.landing-phones .hero-photo-mockup:hover {
+  transform: translateX(var(--hero-mockup-shift-x)) rotateY(-3deg) rotateX(1.5deg) scale(1.08) translateY(-14px);
   filter:
     drop-shadow(0 0 22px rgba(13, 110, 253, 0.5))
     drop-shadow(0 0 52px rgba(13, 110, 253, 0.38))
@@ -1396,15 +1192,7 @@ a:hover {
     drop-shadow(0 14px 28px rgba(0, 0, 0, 0.1));
 }
 
-.landing-phones .hero-device--iphone:hover .hero-device__iphone-inner {
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.14),
-    0 1px 0 rgba(255, 255, 255, 0.11) inset,
-    0 0 0 1px rgba(0, 0, 0, 0.3) inset,
-    0 0 48px rgba(13, 110, 253, 0.28);
-}
-
-[data-theme="dark"] .landing-phones .hero-device--iphone:hover {
+[data-theme="dark"] .landing-phones .hero-photo-mockup:hover {
   filter:
     drop-shadow(0 0 26px rgba(10, 132, 255, 0.55))
     drop-shadow(0 0 58px rgba(10, 132, 255, 0.4))
@@ -1413,34 +1201,26 @@ a:hover {
     drop-shadow(0 18px 36px rgba(0, 0, 0, 0.32));
 }
 
-[data-theme="dark"] .landing-phones .hero-device--iphone:hover .hero-device__iphone-inner {
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.18),
-    0 1px 0 rgba(255, 255, 255, 0.1) inset,
-    0 0 0 1px rgba(0, 0, 0, 0.42) inset,
-    0 0 52px rgba(10, 132, 255, 0.32);
-}
-
 @media (max-width: 959px) {
-  .landing-phones .hero-device--iphone:hover {
-    transform: rotate(0deg) scale(1.06) translateY(-10px);
+  .landing-phones .hero-photo-mockup:hover {
+    transform: translateX(var(--hero-mockup-shift-x)) rotateY(-2.5deg) rotateX(1.2deg) scale(1.06) translateY(-10px);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .landing-phones .hero-device--iphone {
+  .landing-phones .hero-photo-mockup {
     transition-duration: 0.2s;
   }
 
-  .landing-phones .hero-device--iphone:hover {
-    transform: rotate(0deg) scale(1.04) translateY(-8px);
+  .landing-phones .hero-photo-mockup:hover {
+    transform: translateX(var(--hero-mockup-shift-x)) rotate(-2deg) scale(1.04) translateY(-8px);
     filter:
       drop-shadow(0 0 16px rgba(13, 110, 253, 0.35))
       drop-shadow(0 28px 48px rgba(15, 53, 80, 0.18))
       drop-shadow(0 12px 24px rgba(0, 0, 0, 0.1));
   }
 
-  [data-theme="dark"] .landing-phones .hero-device--iphone:hover {
+  [data-theme="dark"] .landing-phones .hero-photo-mockup:hover {
     filter:
       drop-shadow(0 0 18px rgba(10, 132, 255, 0.4))
       drop-shadow(0 32px 56px rgba(0, 0, 0, 0.45))
@@ -1448,8 +1228,8 @@ a:hover {
   }
 
   @media (max-width: 959px) {
-    .landing-phones .hero-device--iphone:hover {
-      transform: rotate(0deg) scale(1.03) translateY(-6px);
+    .landing-phones .hero-photo-mockup:hover {
+      transform: translateX(var(--hero-mockup-shift-x)) rotate(-1.5deg) scale(1.03) translateY(-6px);
     }
   }
 }

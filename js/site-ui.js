@@ -64,7 +64,7 @@
     window.dispatchEvent(new CustomEvent("ata-app-sync", { detail: payload }));
   }
 
-  const HERO_PREVIEW_V = "14";
+  const HERO_PREVIEW_V = "15";
 
   function siteRootUrl() {
     const b = document.baseURI || window.location.href;
