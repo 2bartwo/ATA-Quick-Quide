@@ -13,6 +13,81 @@
     return s === "en" ? "en" : "tr";
   }
 
+  const COOKIE_MAX_AGE = 31536000;
+
+  function setCookie(name, value) {
+    document.cookie =
+      name +
+      "=" +
+      encodeURIComponent(value) +
+      ";path=/;max-age=" +
+      COOKIE_MAX_AGE +
+      ";SameSite=Lax";
+  }
+
+  function bridgeLang() {
+    const a = document.documentElement.getAttribute("data-lang");
+    if (a === "en" || a === "tr") return a;
+    return getStoredLang();
+  }
+
+  function bridgeTheme() {
+    const t = document.documentElement.getAttribute("data-theme");
+    if (t === "dark" || t === "light") return t;
+    return getStoredTheme();
+  }
+
+  function pushAppBridgePrefs() {
+    const lang = bridgeLang();
+    const theme = bridgeTheme();
+    setCookie("ata_site_lang", lang);
+    setCookie("ata_site_theme", theme);
+    const payload = { lang, theme, v: 1, t: Date.now() };
+    window.__ATA_APP_PREFS__ = payload;
+    try {
+      sessionStorage.setItem("ata-app-prefs", JSON.stringify(payload));
+    } catch (e) {}
+    let m = document.querySelector('meta[name="ata-pref-lang"]');
+    if (!m) {
+      m = document.createElement("meta");
+      m.setAttribute("name", "ata-pref-lang");
+      document.head.appendChild(m);
+    }
+    m.setAttribute("content", lang);
+    m = document.querySelector('meta[name="ata-pref-theme"]');
+    if (!m) {
+      m = document.createElement("meta");
+      m.setAttribute("name", "ata-pref-theme");
+      document.head.appendChild(m);
+    }
+    m.setAttribute("content", theme);
+    window.dispatchEvent(new CustomEvent("ata-app-sync", { detail: payload }));
+  }
+
+  const HERO_PREVIEW_QS = "?v=12";
+
+  function syncHeroScreens() {
+    const theme = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
+    const lang = document.documentElement.getAttribute("data-lang") === "en" ? "en" : "tr";
+    document.querySelectorAll("img[data-hero-preview]").forEach((img) => {
+      const primary = `images/app-preview-${theme}-${lang}.png${HERO_PREVIEW_QS}`;
+      const legacy = `images/app-screenshot-1.png${HERO_PREVIEW_QS}`;
+      const urls = [primary, legacy];
+      let i = 0;
+      function attempt() {
+        if (i >= urls.length) return;
+        const url = urls[i];
+        i += 1;
+        img.onerror = attempt;
+        img.onload = () => {
+          img.onerror = null;
+        };
+        img.src = url;
+      }
+      attempt();
+    });
+  }
+
   function resolveKey(dict, key) {
     return key.split(".").reduce((o, k) => (o && o[k] !== undefined ? o[k] : null), dict);
   }
@@ -42,6 +117,8 @@
     }
     syncThemeIcon();
     window.dispatchEvent(new CustomEvent("ata-theme", { detail: { theme } }));
+    pushAppBridgePrefs();
+    syncHeroScreens();
   }
 
   function syncThemeIcon() {
@@ -131,7 +208,7 @@
   }
 
   async function loadLang(lang) {
-    const path = `data/i18n-${lang}.json`;
+    const path = new URL(`data/i18n-${lang}.json`, document.baseURI || window.location.href).href;
     const res = await fetch(path, { cache: "no-store" });
     if (!res.ok) throw new Error(String(res.status));
     return res.json();
@@ -159,6 +236,8 @@
       console.warn("i18n load failed", e);
       window.__ATA_I18N_RELEASES = window.__ATA_I18N_RELEASES || {};
       window.__ATA_I18N_DICT__ = window.__ATA_I18N_DICT__ || {};
+      pushAppBridgePrefs();
+      syncHeroScreens();
     }
     window.dispatchEvent(new CustomEvent("ata-ready", { detail: { lang } }));
     remountUtterances();

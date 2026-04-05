@@ -77,6 +77,15 @@
     "test": "Test team",
     "testNames": "Mustafa Değirmencioğlu · Murat Yılmaz · Sena Yılmaz"
   },
+  "appsync": {
+    "h": "Sync with the app",
+    "p1": "The language and theme you pick on this site are stored in the browser. The Android app can read them using one of the methods below.",
+    "p2": "<strong>localStorage:</strong> <code>ata-lang</code> (tr | en), <code>ata-theme</code> (light | dark). <strong>Cookies:</strong> <code>ata_site_lang</code>, <code>ata_site_theme</code>. On each page load, <code>window.__ATA_APP_PREFS__</code> and the <code>ata-app-sync</code> event are updated.",
+    "current": "Current values:",
+    "deeplink": "Deep link (if the app registers the intent):",
+    "openApp": "Open app",
+    "contract": "Machine-readable contract: <a href=\"data/app-sync-contract.json\">app-sync-contract.json</a> — update the scheme and package name for your build."
+  },
   "feedback": {
     "h": "Feedback",
     "maintenanceSolo": "Feedback is <strong>closed</strong> for now; the system is <strong>under maintenance</strong>. We’ll announce here when it reopens.",

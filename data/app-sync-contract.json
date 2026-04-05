@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "description": "ATA Reference / ATA Quick Guide — site ile uygulama dil ve tema senkronu için sözleşme.",
+  "siteOrigin": "https://ata-quick-guide.bartwo.me",
+  "localStorage": {
+    "langKey": "ata-lang",
+    "themeKey": "ata-theme",
+    "allowedLang": ["tr", "en"],
+    "allowedTheme": ["light", "dark"]
+  },
+  "cookies": {
+    "langName": "ata_site_lang",
+    "themeName": "ata_site_theme",
+    "path": "/",
+    "note": "Site, dil/tema değişince bu çerezleri yazar. Uygulama aynı domain’de WebView açarsa CookieManager ile okunabilir."
+  },
+  "metaTags": {
+    "lang": "ata-pref-lang",
+    "theme": "ata-pref-theme"
+  },
+  "windowExport": "__ATA_APP_PREFS__",
+  "customEvent": "ata-app-sync",
+  "deepLink": {
+    "scheme": "ataquickguide",
+    "host": "sync",
+    "example": "ataquickguide://sync?lang=en&theme=light",
+    "note": "Android’de intent-filter ile yakalayın; package adını kendi uygulamanızla değiştirin."
+  },
+  "openAppPage": "/open-app.html"
+}

@@ -11,8 +11,14 @@
       try {
         var t = localStorage.getItem("ata-theme");
         document.documentElement.setAttribute("data-theme", t === "dark" ? "dark" : "light");
+        var l = localStorage.getItem("ata-lang");
+        var en = l === "en";
+        document.documentElement.setAttribute("data-lang", en ? "en" : "tr");
+        document.documentElement.setAttribute("lang", en ? "en" : "tr");
       } catch (e) {
         document.documentElement.setAttribute("data-theme", "light");
+        document.documentElement.setAttribute("data-lang", "tr");
+        document.documentElement.setAttribute("lang", "tr");
       }
     })();
   </script>
@@ -66,7 +72,7 @@
         <div class="landing-hero__grid">
           <div class="landing-hero__copy">
             <p class="beta-pill"><span data-i18n="beta.pill">Erken erişim</span></p>
-            <h1 id="hero-title" data-i18n="hero.headline">ATA Chapters artık cebinizde</h1>
+            <h1 id="hero-title" data-i18n="hero.headline">ATA Chapters Artık Cebinizde</h1>
             <p class="lead" data-i18n-html="hero.lead"></p>
             <div class="btn-row">
               <a class="btn btn--primary" href="indir.html" data-i18n="btn.apk">APK indir</a>
@@ -90,17 +96,36 @@
           </div>
           <div class="landing-hero__visual" aria-hidden="true">
             <div class="landing-phones">
-              <div class="phone-frame phone-frame--back">
-                <div class="phone-frame__screen">
-                  <img src="images/app-screenshot-2.png" width="390" height="844" alt="">
-                </div>
-              </div>
-              <div class="phone-frame phone-frame--front">
-                <div class="phone-frame__screen">
-                  <img src="images/app-screenshot-1.png" width="390" height="844" alt="">
+              <div class="hero-device hero-device--iphone">
+                <div class="hero-device__iphone-inner">
+                  <div class="hero-device__screen">
+                    <img
+                      class="hero-device__img"
+                      data-hero-preview="front"
+                      src="images/app-preview-light-tr.png?v=12"
+                      width="390"
+                      height="844"
+                      alt=""
+                      decoding="async"
+                    >
+                    <span class="hero-device__cam" aria-hidden="true"></span>
+                  </div>
                 </div>
               </div>
             </div>
+            <script>
+              (function () {
+                try {
+                  var t = localStorage.getItem("ata-theme") === "dark" ? "dark" : "light";
+                  var l = localStorage.getItem("ata-lang") === "en" ? "en" : "tr";
+                  var root = document.querySelector(".landing-hero__visual");
+                  if (!root) return;
+                  root.querySelectorAll("img[data-hero-preview]").forEach(function (img) {
+                    img.src = "images/app-preview-" + t + "-" + l + ".png?v=12";
+                  });
+                } catch (e) {}
+              })();
+            </script>
           </div>
         </div>
       </section>

@@ -11,8 +11,14 @@
       try {
         var t = localStorage.getItem("ata-theme");
         document.documentElement.setAttribute("data-theme", t === "dark" ? "dark" : "light");
+        var l = localStorage.getItem("ata-lang");
+        var en = l === "en";
+        document.documentElement.setAttribute("data-lang", en ? "en" : "tr");
+        document.documentElement.setAttribute("lang", en ? "en" : "tr");
       } catch (e) {
         document.documentElement.setAttribute("data-theme", "light");
+        document.documentElement.setAttribute("data-lang", "tr");
+        document.documentElement.setAttribute("lang", "tr");
       }
     })();
   </script>

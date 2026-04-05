@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Uygulama senkron — ATA Quick Guide</title>
+  <meta name="robots" content="noindex">
+  <script>
+    (function () {
+      try {
+        var q = new URLSearchParams(window.location.search);
+        var lq = q.get("lang");
+        var th = q.get("theme");
+        if (lq === "en" || lq === "tr") localStorage.setItem("ata-lang", lq);
+        if (th === "light" || th === "dark") localStorage.setItem("ata-theme", th);
+        var t = localStorage.getItem("ata-theme");
+        document.documentElement.setAttribute("data-theme", t === "dark" ? "dark" : "light");
+        var l = localStorage.getItem("ata-lang");
+        var en = l === "en";
+        document.documentElement.setAttribute("data-lang", en ? "en" : "tr");
+        document.documentElement.setAttribute("lang", en ? "en" : "tr");
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "light");
+        document.documentElement.setAttribute("data-lang", "tr");
+        document.documentElement.setAttribute("lang", "tr");
+      }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app-site.css">
+  <style>
+    .sync-page { max-width: 32rem; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+    .sync-page h1 { font-size: 1.35rem; margin: 0 0 0.75rem; }
+    .sync-page p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; margin: 0 0 1rem; }
+    .sync-page code { font-size: 0.8rem; word-break: break-all; display: block; padding: 0.75rem; background: var(--bg-elevated); border-radius: var(--radius-sm); border: 1px solid var(--border); margin: 0.5rem 0 1rem; }
+    .sync-page .btn-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.25rem; }
+  </style>
+</head>
+<body data-page="sync">
+  <div class="app-shell">
+    <header class="app-top">
+      <div class="container app-top__inner">
+        <a class="app-brand" href="index.html">
+          <span class="app-brand__mark"><img src="images/app-icon.png" width="32" height="32" alt=""></span>
+          ATA Quick Guide
+        </a>
+        <nav class="app-menu" aria-label="Site">
+          <a href="index.html" data-i18n="nav.home">Ana sayfa</a>
+        </nav>
+        <div class="app-controls" role="toolbar" aria-label="Dil ve tema">
+          <div class="lang-seg" role="group" aria-label="Dil">
+            <button type="button" data-lang-btn="tr" aria-pressed="true">TR</button>
+            <button type="button" data-lang-btn="en" aria-pressed="false">EN</button>
+          </div>
+          <button type="button" class="theme-toggle" data-theme-toggle aria-label="Tema">☾</button>
+        </div>
+      </div>
+    </header>
+    <main class="app-content container sync-page">
+      <h1 data-i18n="appsync.h">Uygulama ile senkron</h1>
+      <p data-i18n="appsync.p1">Ana sitede seçtiğin dil ve tema tarayıcıda kayıtlı. Android uygulaması aşağıdaki yöntemlerden biriyle bu değerleri okuyabilir.</p>
+      <p data-i18n-html="appsync.p2"></p>
+      <p data-i18n="appsync.current">Şu anki değerler:</p>
+      <code id="sync-prefs-out" aria-live="polite">—</code>
+      <p data-i18n="appsync.deeplink">Derin bağlantı (uygulamada intent tanımlıysa):</p>
+      <code id="sync-deeplink-out">—</code>
+      <div class="btn-row">
+        <a class="btn btn--primary" id="sync-open-app" href="#" data-i18n="appsync.openApp">Uygulamayı aç</a>
+        <a class="btn btn--ghost" href="index.html" data-i18n="nav.home">Ana sayfa</a>
+      </div>
+      <p class="muted" style="margin-top:2rem;font-size:0.8rem" data-i18n-html="appsync.contract"></p>
+    </main>
+    <footer class="app-footer">
+      <div class="container">
+        <p class="app-footer__line"><a href="index.html">ATA Quick Guide</a></p>
+      </div>
+    </footer>
+  </div>
+  <script src="js/site-ui.js" defer></script>
+  <script src="js/app-sync-page.js" defer></script>
+</body>
+</html>

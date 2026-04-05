@@ -17,7 +17,7 @@
     "pill": "Erken erişim"
   },
   "hero": {
-    "headline": "ATA Chapters artık cebinizde",
+    "headline": "ATA Chapters Artık Cebinizde",
     "title": "ATA chapter referansı, cepte",
     "subtitle": "Uygulama giriş sayfası tarzında net anlatım; arayüz uygulama içi koyu temayla uyumlu.",
     "lead": "Havacılıkta kullanılan <strong>ATA chapter</strong> yapısına telefondan <strong>hızlı ve doğru</strong> şekilde bakmanı sağlar. Kalın dokümanlarda uzun aramalar yapmak yerine chapter numarası ve başlıklar cebinde hazır olur."
@@ -77,6 +77,15 @@
     "test": "Test ekibi",
     "testNames": "Mustafa Değirmencioğlu · Murat Yılmaz · Sena Yılmaz"
   },
+  "appsync": {
+    "h": "Uygulama ile senkron",
+    "p1": "Ana sitede seçtiğin dil ve tema tarayıcıda kayıtlı. Android uygulaması aşağıdaki yöntemlerden biriyle bu değerleri okuyabilir.",
+    "p2": "<strong>localStorage:</strong> <code>ata-lang</code> (tr | en), <code>ata-theme</code> (light | dark). <strong>Çerezler:</strong> <code>ata_site_lang</code>, <code>ata_site_theme</code>. Sayfa yüklenince <code>window.__ATA_APP_PREFS__</code> ve olay <code>ata-app-sync</code> güncellenir.",
+    "current": "Şu anki değerler:",
+    "deeplink": "Derin bağlantı (uygulamada intent tanımlıysa):",
+    "openApp": "Uygulamayı aç",
+    "contract": "Makine okunur şema: <a href=\"data/app-sync-contract.json\">app-sync-contract.json</a> — şema adı ve paket adını kendi uygulamanıza göre güncelleyin."
+  },
   "feedback": {
     "h": "Geri bildirim",
     "maintenanceSolo": "Geri bildirim bırakma şu an <strong>kapalıdır</strong>; sistem <strong>bakım aşamasındadır</strong>. Açıldığında bu sayfadan duyurulur.",
@@ -118,7 +127,7 @@
     "navTestimonials": "Yorumlar",
     "navContact": "İletişim",
     "heroKicker": "Erken erişim",
-    "heroH1": "ATA Chapters artık cebinizde",
+    "heroH1": "ATA Chapters Artık Cebinizde",
     "heroCta1": "Uygulamayı indir",
     "heroCta2": "Daha fazla bilgi",
     "featuresEyebrow": "Özellikler",
