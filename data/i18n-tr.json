@@ -20,7 +20,7 @@
     "headline": "ATA Chapters Artık Cebinizde",
     "title": "ATA chapter referansı, cepte",
     "subtitle": "Uygulama giriş sayfası tarzında net anlatım; arayüz uygulama içi koyu temayla uyumlu.",
-    "lead": "Havacılıkta kullanılan <strong>ATA chapter</strong> yapısına telefondan <strong>hızlı ve doğru</strong> şekilde bakmanı sağlar. Kalın dokümanlarda uzun aramalar yapmak yerine chapter numarası ve başlıklar cebinde hazır olur."
+    "lead": "Havacılıkta kullanılan <strong>ATA chapter</strong> yapısına telefondan <strong>hızlı ve doğru</strong> şekilde bakmanı sağlar. Kalın dokümanlarda uzun aramalar yapmak yerine chapter numarası ve başlıklar <span class=\"text-nobreak\">cebinde hazır olur.</span>"
   },
   "showcase": {
     "h": "Uygulama içi görünüm",
