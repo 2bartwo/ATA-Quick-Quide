@@ -1681,7 +1681,7 @@ a:hover {
     width: 100%;
     max-width: 100%;
     min-width: 0;
-    justify-content: flex-start;
+    justify-content: center;
     flex-wrap: wrap;
     row-gap: 0.45rem;
     padding-top: 0.15rem;
@@ -1697,6 +1697,7 @@ a:hover {
 @media (max-width: 480px) {
   .app-menu {
     flex-wrap: nowrap;
+    justify-content: flex-start;
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;

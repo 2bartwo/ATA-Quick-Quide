@@ -43,8 +43,8 @@
     "copy": "<strong>Google Play</strong> ve <strong>App Store</strong> sürümleri <strong>yakında</strong> yayında olacak. Şu an uygulama <strong>erken erişim</strong> aşamasında; en güncel yapıyı doğrudan bu siteden <strong>APK</strong> ile indirip kurabilirsin.",
     "gpAlt": "Yakında Google Play’de",
     "asAlt": "Yakında App Store’da",
-    "gpBadgeSrc": "https://play.google.com/intl/en_us/badges/static/images/badges/tr_badge_web_generic.png",
-    "asBadgeSrc": "https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/tr-tr?size=250x83&releaseDate=1276560000",
+    "gpBadgeSrc": "https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png",
+    "asBadgeSrc": "https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&releaseDate=1276560000",
     "soon": "Yakında"
   },
   "nedir": {
@@ -71,7 +71,7 @@
     "dev": "Geliştirici",
     "devName": "Yusuf Mirza Sökmen",
     "devSite": "Site geliştiricisi",
-    "devSiteNames": "Bartu Yıldız · Yusuf Mirza Sökmen",
+    "devSiteNames": "Bartu Yıldız",
     "mentor": "Mentor",
     "mentorName": "Mahmut Abdurrahman Cığşar",
     "test": "Test ekibi",
