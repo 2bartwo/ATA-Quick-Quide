@@ -121,7 +121,8 @@
                   var root = document.querySelector(".landing-hero__visual");
                   if (!root) return;
                   root.querySelectorAll("img[data-hero-preview]").forEach(function (img) {
-                    img.src = "images/app-preview-" + t + "-" + l + ".png?v=12";
+                    img.src =
+                      "images/app-preview-" + t + "-" + l + ".png?v=12&m=" + encodeURIComponent(t);
                   });
                 } catch (e) {}
               })();

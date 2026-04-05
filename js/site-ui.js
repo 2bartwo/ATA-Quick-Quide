@@ -64,15 +64,23 @@
     window.dispatchEvent(new CustomEvent("ata-app-sync", { detail: payload }));
   }
 
-  const HERO_PREVIEW_QS = "?v=12";
+  const HERO_PREVIEW_V = "12";
+
+  function heroPreviewUrls(theme, lang) {
+    const base = new URL("images/", document.baseURI || window.location.href);
+    const primary = new URL(`app-preview-${theme}-${lang}.png`, base);
+    primary.searchParams.set("v", HERO_PREVIEW_V);
+    primary.searchParams.set("m", theme);
+    const legacy = new URL("app-screenshot-1.png", base);
+    legacy.searchParams.set("v", HERO_PREVIEW_V);
+    return [primary.href, legacy.href];
+  }
 
   function syncHeroScreens() {
     const theme = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
     const lang = document.documentElement.getAttribute("data-lang") === "en" ? "en" : "tr";
+    const urls = heroPreviewUrls(theme, lang);
     document.querySelectorAll("img[data-hero-preview]").forEach((img) => {
-      const primary = `images/app-preview-${theme}-${lang}.png${HERO_PREVIEW_QS}`;
-      const legacy = `images/app-screenshot-1.png${HERO_PREVIEW_QS}`;
-      const urls = [primary, legacy];
       let i = 0;
       function attempt() {
         if (i >= urls.length) return;
@@ -95,6 +103,7 @@
   function applyTheme(theme) {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem(THEME_KEY, theme);
+    syncHeroScreens();
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) {
       meta.setAttribute("content", theme === "dark" ? "#0a0a0a" : "#e4eef8");
@@ -118,7 +127,6 @@
     syncThemeIcon();
     window.dispatchEvent(new CustomEvent("ata-theme", { detail: { theme } }));
     pushAppBridgePrefs();
-    syncHeroScreens();
   }
 
   function syncThemeIcon() {
@@ -223,6 +231,73 @@
     });
   }
 
+  function prefersReducedMotion() {
+    try {
+      return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    } catch (e) {
+      return true;
+    }
+  }
+
+  function langSwapTargets() {
+    const shell = document.querySelector(".app-shell");
+    if (!shell) {
+      const main = document.querySelector("main.app-content");
+      return main ? [main] : [];
+    }
+    const out = [];
+    const menu = shell.querySelector("header.app-top .app-menu");
+    const main = shell.querySelector("main.app-content");
+    const foot = shell.querySelector("footer.app-footer");
+    if (menu) out.push(menu);
+    if (main) out.push(main);
+    if (foot) out.push(foot);
+    return out;
+  }
+
+  function waitAnimationEnd(el, fallbackMs) {
+    return new Promise((resolve) => {
+      const t = window.setTimeout(resolve, fallbackMs);
+      const done = () => {
+        window.clearTimeout(t);
+        resolve();
+      };
+      el.addEventListener("animationend", done, { once: true });
+    });
+  }
+
+  async function applyLangWithTransition(lang) {
+    const cur = document.documentElement.getAttribute("data-lang");
+    if (cur === lang) return;
+
+    const els = langSwapTargets();
+    if (!els.length || prefersReducedMotion()) {
+      await applyLang(lang);
+      return;
+    }
+
+    els.forEach((el) => el.classList.add("ata-lang-swap-phase-out"));
+    await Promise.all(els.map((el) => waitAnimationEnd(el, 400)));
+    await applyLang(lang);
+    els.forEach((el) => {
+      el.classList.remove("ata-lang-swap-phase-out");
+      el.classList.add("ata-lang-swap-phase-in");
+    });
+    const seg = document.querySelector(".lang-seg");
+    if (seg) {
+      seg.classList.remove("ata-lang-seg-nudge");
+      void seg.offsetWidth;
+      seg.classList.add("ata-lang-seg-nudge");
+      seg.addEventListener(
+        "animationend",
+        () => seg.classList.remove("ata-lang-seg-nudge"),
+        { once: true }
+      );
+    }
+    await Promise.all(els.map((el) => waitAnimationEnd(el, 550)));
+    els.forEach((el) => el.classList.remove("ata-lang-swap-phase-in"));
+  }
+
   async function applyLang(lang) {
     document.documentElement.setAttribute("lang", lang === "en" ? "en" : "tr");
     document.documentElement.setAttribute("data-lang", lang);
@@ -254,12 +329,19 @@
       applyTheme(cur === "dark" ? "light" : "dark");
     });
 
+    window.addEventListener("storage", (e) => {
+      if (e.key !== THEME_KEY || e.newValue == null) return;
+      if (e.newValue !== "light" && e.newValue !== "dark") return;
+      if (e.newValue === document.documentElement.getAttribute("data-theme")) return;
+      applyTheme(e.newValue);
+    });
+
     window.addEventListener("ata-theme", remountUtterances);
 
     document.querySelectorAll("[data-lang-btn]").forEach((btn) => {
       btn.addEventListener("click", () => {
         const l = btn.getAttribute("data-lang-btn");
-        if (l === "tr" || l === "en") applyLang(l);
+        if (l === "tr" || l === "en") applyLangWithTransition(l);
       });
     });
 

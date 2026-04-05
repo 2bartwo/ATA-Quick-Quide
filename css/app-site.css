@@ -460,6 +460,58 @@ a:hover {
   padding-bottom: 4rem;
 }
 
+/* Dil değişimi: içerik çıkış / giriş (erişilebilirlik: azaltılmış hareket) */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes ata-lang-swap-out {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(0.45rem);
+    }
+  }
+
+  @keyframes ata-lang-swap-in {
+    from {
+      opacity: 0;
+      transform: translateY(-0.35rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes ata-lang-seg-nudge {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    45% {
+      transform: scale(1.05);
+    }
+  }
+
+  main.app-content.ata-lang-swap-phase-out,
+  .app-shell > footer.app-footer.ata-lang-swap-phase-out,
+  header.app-top .app-menu.ata-lang-swap-phase-out {
+    animation: ata-lang-swap-out 0.24s var(--ease-out) forwards;
+    pointer-events: none;
+  }
+
+  main.app-content.ata-lang-swap-phase-in,
+  .app-shell > footer.app-footer.ata-lang-swap-phase-in,
+  header.app-top .app-menu.ata-lang-swap-phase-in {
+    animation: ata-lang-swap-in 0.42s var(--ease-out) forwards;
+  }
+
+  .lang-seg.ata-lang-seg-nudge {
+    animation: ata-lang-seg-nudge 0.42s var(--ease-spring);
+  }
+}
+
 .app-hero {
   padding: 2.75rem 0 2rem;
   text-align: center;
@@ -623,6 +675,7 @@ a:hover {
   display: grid;
   gap: 2.5rem;
   align-items: center;
+  overflow: visible;
 }
 
 .landing-hero__visual {
@@ -630,6 +683,7 @@ a:hover {
   min-width: 0;
   display: flex;
   justify-content: center;
+  overflow: visible;
 }
 
 @media (min-width: 960px) {
@@ -692,6 +746,7 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: visible;
 }
 
 @media (min-width: 960px) {
@@ -968,6 +1023,54 @@ a:hover {
 
 [data-theme="dark"] .hero-device--iphone {
   filter: drop-shadow(0 28px 56px rgba(0, 0, 0, 0.45)) drop-shadow(0 14px 28px rgba(0, 0, 0, 0.3));
+}
+
+/* Hover: pointer:fine hibrit PC’lerde çoğu zaman false oluyor; sadece (hover: hover) */
+@media (hover: hover) {
+  @media (prefers-reduced-motion: no-preference) {
+    .landing-phones .hero-device--iphone {
+      transition:
+        transform 0.55s var(--ease-out),
+        filter 0.55s var(--ease-out);
+    }
+
+    .landing-phones .hero-device__iphone-inner {
+      transition: box-shadow 0.55s var(--ease-out);
+    }
+
+    .landing-phones .hero-device--iphone:hover {
+      transform: rotate(-4deg) scale(1.06) translateY(-14px);
+      filter: drop-shadow(0 44px 76px rgba(15, 53, 80, 0.28)) drop-shadow(0 22px 44px rgba(0, 0, 0, 0.15));
+    }
+
+    .landing-phones .hero-device--iphone:hover .hero-device__iphone-inner {
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.11) inset,
+        0 0 0 1px rgba(0, 0, 0, 0.3) inset,
+        0 0 40px rgba(13, 110, 253, 0.18);
+    }
+
+    [data-theme="dark"] .landing-phones .hero-device--iphone:hover {
+      transform: rotate(-4deg) scale(1.06) translateY(-14px);
+      filter: drop-shadow(0 48px 80px rgba(0, 0, 0, 0.6)) drop-shadow(0 26px 52px rgba(0, 0, 0, 0.38));
+    }
+
+    [data-theme="dark"] .landing-phones .hero-device--iphone:hover .hero-device__iphone-inner {
+      box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.08) inset,
+        0 0 0 1px rgba(0, 0, 0, 0.42) inset,
+        0 0 44px rgba(10, 132, 255, 0.22);
+    }
+  }
+}
+
+@media (hover: hover) and (max-width: 959px) {
+  @media (prefers-reduced-motion: no-preference) {
+    .landing-phones .hero-device--iphone:hover,
+    [data-theme="dark"] .landing-phones .hero-device--iphone:hover {
+      transform: rotate(-3deg) scale(1.04) translateY(-10px);
+    }
+  }
 }
 
 /* Bölümler */
