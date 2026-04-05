@@ -72,18 +72,19 @@
   },
   "feedback": {
     "h": "Geri bildirim",
+    "maintenanceSolo": "Geri bildirim bırakma şu an <strong>kapalıdır</strong>; sistem <strong>bakım aşamasındadır</strong>. Açıldığında bu sayfadan duyurulur.",
     "maintenance": "Geri bildirim ve yorum alanı <strong>geliştirme / bakım</strong> aşamasında olabilir; yükleme veya görünümde geçici kesintiler yaşanabilir.",
     "p": "Eksik chapter, hata veya öneri için aşağıdaki kutudan yorum bırakabilirsin. <strong>Yorumları herkes görebilir.</strong>",
     "note": "Yazmak için <strong>GitHub</strong> ile giriş yapman gerekir (bir kerelik). Yorumlar <strong>Utterances</strong> ile bu reponun Issues kaydına düşer. Repoda <a href=\"https://github.com/2bartwo/ATA-Quick-Quide/issues\" target=\"_blank\" rel=\"noopener\">Issues</a> açık ve <a href=\"https://github.com/apps/utterances\" target=\"_blank\" rel=\"noopener\">Utterances uygulaması</a> kurulu olmalıdır."
   },
   "footer": {
-    "html": "© __YEAR__ ATA Quick Guide · <a href=\"nasil-yuklenir.html\">Kurulum</a> · <a href=\"indir.html\">Sürümler</a> · <a href=\"#credits\">Ekip</a> · <a href=\"#geri-bildirim\">Geri bildirim</a>"
+    "html": "© __YEAR__ ATA Quick Guide · <a href=\"nasil-yuklenir.html\">Kurulum</a> · <a href=\"indir.html\">Sürümler</a> · <a href=\"#credits\">Ekip</a>"
   },
   "page": {
     "downloadTitle": "İndir — ATA Quick Guide",
     "downloadDesc": "ATA Quick Guide — APK indir, sürümler ve yama notları",
     "downloadH1": "İndir & sürümler",
-    "downloadLead": "Uygulama şu an <strong>erken erişim</strong>; güncel paket bu sayfadan APK olarak indirilir. Yama notları ve eski sürümler aşağıda. Geri bildirim için sayfa sonundaki yorum alanını kullan.",
+    "downloadLead": "Uygulama şu an <strong>erken erişim</strong>; güncel paket bu sayfadan APK olarak indirilir. Yama notları ve eski sürümler aşağıda.",
     "installTitle": "Nasıl yüklenir — ATA Quick Guide",
     "installDesc": "ATA Quick Guide — Android’e APK ile nasıl yüklenir.",
     "installH1": "Nasıl yüklenir",

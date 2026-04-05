@@ -928,6 +928,11 @@ a:hover {
   border-color: rgba(10, 132, 255, 0.28);
 }
 
+.feedback-maintenance--solo {
+  max-width: 40rem;
+  margin-top: 0.5rem;
+}
+
 .placeholder-text {
   color: var(--muted);
   font-style: italic;
