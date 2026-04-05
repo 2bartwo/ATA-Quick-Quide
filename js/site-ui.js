@@ -115,6 +115,11 @@
       const v = resolveKey(dict, key);
       if (v != null) el.setAttribute("placeholder", v);
     });
+    document.querySelectorAll("[data-i18n-src]").forEach((el) => {
+      const key = el.getAttribute("data-i18n-src");
+      const v = resolveKey(dict, key);
+      if (v != null) el.setAttribute("src", String(v));
+    });
     const p = document.body.getAttribute("data-page");
     if (p === "index" && dict.meta) {
       if (dict.meta.title) document.title = dict.meta.title;
