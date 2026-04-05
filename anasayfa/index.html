@@ -38,7 +38,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/app-site.css?v=50">
+  <link rel="stylesheet" href="../css/app-site.css?v=57">
 </head>
 <body data-page="index" data-site-root="../">
   <a class="visually-hidden" href="#icerik" data-i18n="skip">İçeriğe geç</a>
@@ -107,24 +107,14 @@
                 <span class="landing-hero__spark landing-hero__spark--2"></span>
               </div>
               <div class="landing-phones">
-              <div class="hero-photo-mockup">
+              <div class="hero-photo-mockup hero-photo-mockup--composite">
                 <div class="hero-photo-mockup__inner">
-                  <div class="hero-photo-mockup__screen">
-                    <img
-                      class="hero-photo-mockup__img"
-                      data-hero-preview="front"
-                      src="../images/app-preview-light-tr.png?v=15"
-                      width="402"
-                      height="874"
-                      alt=""
-                      decoding="async"
-                    >
-                  </div>
                   <img
-                    class="hero-photo-mockup__frame"
-                    src="../images/iphone-photo-frame-cutout.png?v=1"
-                    width="1000"
-                    height="1000"
+                    class="hero-photo-mockup__img"
+                    data-hero-preview="front"
+                    src="../images/app-preview-light-tr.png?v=19"
+                    width="484"
+                    height="1024"
                     alt=""
                     decoding="async"
                   >
@@ -141,7 +131,7 @@
                   if (!root) return;
                   root.querySelectorAll("img[data-hero-preview]").forEach(function (img) {
                     img.src =
-                      "../images/app-preview-" + t + "-" + l + ".png?v=15&m=" + encodeURIComponent(t);
+                      "../images/app-preview-" + t + "-" + l + ".png?v=19&m=" + encodeURIComponent(t);
                   });
                 } catch (e) {}
               })();
@@ -209,7 +199,7 @@
     </footer>
   </div>
 
-  <script src="../js/site-ui.js?v=28" defer></script>
+  <script src="../js/site-ui.js?v=31" defer></script>
   <script src="../js/app-motion.js?v=25" defer></script>
   <script src="../js/landing-page.js?v=25" defer></script>
 </body>

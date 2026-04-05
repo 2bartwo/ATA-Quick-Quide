@@ -19,7 +19,7 @@
   --shadow-soft: 0 6px 28px rgba(15, 53, 80, 0.07);
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-spring: cubic-bezier(0.34, 1.3, 0.64, 1);
-  --hero-phone-width: min(400px, 94vw);
+  --hero-phone-width: min(440px, 96vw);
   --hero-mockup-shift-x: 0;
 }
 
@@ -127,7 +127,7 @@ a:hover {
 
 /* Ana sayfa hero: referans düzenine yakın daha geniş içerik (≈60/40 grid) */
 .app-content.container:has(.landing-hero) {
-  max-width: 72rem;
+  max-width: min(100%, 140rem);
   padding-inline: clamp(1rem, 4vw, 2rem);
 }
 
@@ -823,20 +823,20 @@ a:hover {
 
 @media (min-width: 640px) and (max-width: 959px) {
   :root {
-    --hero-phone-width: min(500px, 90vw);
+    --hero-phone-width: min(400px, 86vw);
   }
 
   .landing-phones {
-    min-height: 500px;
+    min-height: 480px;
   }
 }
 
 @media (min-width: 960px) {
-  /* Metin / telefon: telefon sütunu biraz daha geniş */
+  /* Telefon çerçevesi görseli için daha geniş sağ sütun */
   .landing-hero__grid {
     align-items: center;
-    gap: 1.75rem;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 4fr);
+    gap: 1.5rem;
+    grid-template-columns: minmax(0, 4.5fr) minmax(0, 5.5fr);
   }
 
   .landing-hero__visual {
@@ -849,7 +849,8 @@ a:hover {
   }
 
   :root {
-    --hero-phone-width: min(760px, 100%);
+    /* Kare yerine dikey PNG: genişlik sütunu doldurursa yükseklik ~2.1× olur — makul tavan */
+    --hero-phone-width: min(360px, 100%);
     --hero-mockup-shift-x: -0.5rem;
   }
 }
@@ -914,7 +915,7 @@ a:hover {
 
 @media (min-width: 960px) {
   .landing-phones {
-    min-height: min(780px, 68vw);
+    min-height: min(720px, 72vh);
     justify-content: center;
     align-items: center;
     perspective-origin: 50% 45%;
@@ -924,16 +925,10 @@ a:hover {
     max-width: none;
     width: 100%;
   }
-
-  .hero-photo-mockup {
-    width: 100%;
-    max-width: min(760px, 100%);
-  }
 }
 
 /*
- * Gerçek iPhone ürün fotoğrafı: images/iphone-photo-frame-cutout.png
- * Ekran deliği şeffaf; app SS aynı oranlı kare içinde yüzdeyle hizalanır (1000px asset).
+ * Hero: birleşik mockup PNG (484×1024), çerçeve+ekran tek dosyada — images/app-preview-*.png
  */
 .hero-photo-mockup {
   position: relative;
@@ -951,34 +946,19 @@ a:hover {
   aspect-ratio: 1;
 }
 
-.hero-photo-mockup__screen {
-  position: absolute;
-  z-index: 1;
-  left: 31.3%;
-  top: 8.7%;
-  width: 37.2%;
-  height: 81.4%;
-  border-radius: 12.4%;
-  overflow: hidden;
-  background: #000;
+/* Kare kutu + contain → yanlarda “siyah şerit” hissi; PNG en-boyu ile hizala */
+.hero-photo-mockup--composite .hero-photo-mockup__inner {
+  aspect-ratio: 484 / 1024;
 }
 
-.hero-photo-mockup__img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
-  display: block;
-}
-
-.hero-photo-mockup__frame {
+.hero-photo-mockup--composite .hero-photo-mockup__img {
   position: absolute;
   inset: 0;
-  z-index: 2;
   width: 100%;
   height: 100%;
   object-fit: contain;
-  pointer-events: none;
+  object-position: center center;
+  display: block;
 }
 
 @media (max-width: 959px) {
