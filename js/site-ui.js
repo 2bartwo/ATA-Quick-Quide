@@ -69,8 +69,14 @@
   function siteRootUrl() {
     const b = document.baseURI || window.location.href;
     const r = document.body && document.body.getAttribute("data-site-root");
-    if (r) return new URL(r, b);
-    return new URL("./", b);
+    if (!r) return new URL("./", b);
+    let resolved = new URL(r, b);
+    /* .../anasayfa/index.html + "../" → .../anasayfa/ (yanlış); bir "../" daha site kökü */
+    const path = new URL(b).pathname || "";
+    if (r === "../" && /\/[^/]+\.html$/i.test(path)) {
+      resolved = new URL("../", resolved);
+    }
+    return resolved;
   }
 
   function heroPreviewUrls(theme, lang) {
