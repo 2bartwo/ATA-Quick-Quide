@@ -1032,95 +1032,36 @@ a:hover {
   filter: drop-shadow(0 28px 56px rgba(0, 0, 0, 0.45)) drop-shadow(0 14px 28px rgba(0, 0, 0, 0.3));
 }
 
-/* Hero telefon: hover’da hafif titreme (büyütme + yükseltme animasyon içinde) */
-@keyframes hero-phone-shake {
-  0%,
-  100% {
-    transform: rotate(-4deg) scale(1.06) translateY(-14px) translateX(0);
-  }
-  12.5% {
-    transform: rotate(-5.6deg) scale(1.06) translateY(-14px) translateX(-4px);
-  }
-  25% {
-    transform: rotate(-2.6deg) scale(1.06) translateY(-15px) translateX(3px);
-  }
-  37.5% {
-    transform: rotate(-5.1deg) scale(1.06) translateY(-13px) translateX(-3px);
-  }
-  50% {
-    transform: rotate(-3.1deg) scale(1.06) translateY(-14px) translateX(4px);
-  }
-  62.5% {
-    transform: rotate(-5.4deg) scale(1.06) translateY(-14px) translateX(-2px);
-  }
-  75% {
-    transform: rotate(-3.6deg) scale(1.06) translateY(-13px) translateX(3px);
-  }
-  87.5% {
-    transform: rotate(-4.8deg) scale(1.06) translateY(-15px) translateX(-2px);
-  }
+/* Hero telefon: hover’da hareket / titreme yok; yalnızca gölge güçlenir */
+.landing-phones .hero-device--iphone {
+  transform-origin: 50% 52%;
+  transition: filter 0.45s var(--ease-out);
 }
 
-@keyframes hero-phone-shake-sm {
-  0%,
-  100% {
-    transform: rotate(-3deg) scale(1.04) translateY(-10px) translateX(0);
-  }
-  20% {
-    transform: rotate(-4.3deg) scale(1.04) translateY(-10px) translateX(-3px);
-  }
-  40% {
-    transform: rotate(-1.9deg) scale(1.04) translateY(-11px) translateX(2px);
-  }
-  60% {
-    transform: rotate(-4deg) scale(1.04) translateY(-9px) translateX(-2px);
-  }
-  80% {
-    transform: rotate(-2.5deg) scale(1.04) translateY(-10px) translateX(3px);
-  }
+.landing-phones .hero-device__iphone-inner {
+  transition: box-shadow 0.45s var(--ease-out);
 }
 
-/* Telefon hover: (hover: hover) bazı masaüstlerinde false döndüğü için kullanılmıyor. Transform transition, keyframes ile çakışmasın diye yalnız filter geçişi */
-@media (prefers-reduced-motion: no-preference) {
-  .landing-phones .hero-device--iphone {
-    transform-origin: 50% 52%;
-    transition: filter 0.45s var(--ease-out);
-  }
+.landing-phones .hero-device--iphone:hover {
+  filter: drop-shadow(0 40px 68px rgba(15, 53, 80, 0.24)) drop-shadow(0 18px 38px rgba(0, 0, 0, 0.12));
+}
 
-  .landing-phones .hero-device__iphone-inner {
-    transition: box-shadow 0.45s var(--ease-out);
-  }
+.landing-phones .hero-device--iphone:hover .hero-device__iphone-inner {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.11) inset,
+    0 0 0 1px rgba(0, 0, 0, 0.3) inset,
+    0 0 40px rgba(13, 110, 253, 0.18);
+}
 
-  .landing-phones .hero-device--iphone:hover {
-    animation: hero-phone-shake 0.42s ease-in-out infinite;
-    filter: drop-shadow(0 44px 76px rgba(15, 53, 80, 0.28)) drop-shadow(0 22px 44px rgba(0, 0, 0, 0.15));
-  }
+[data-theme="dark"] .landing-phones .hero-device--iphone:hover {
+  filter: drop-shadow(0 44px 72px rgba(0, 0, 0, 0.55)) drop-shadow(0 22px 44px rgba(0, 0, 0, 0.32));
+}
 
-  .landing-phones .hero-device--iphone:hover .hero-device__iphone-inner {
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.11) inset,
-      0 0 0 1px rgba(0, 0, 0, 0.3) inset,
-      0 0 40px rgba(13, 110, 253, 0.18);
-  }
-
-  [data-theme="dark"] .landing-phones .hero-device--iphone:hover {
-    animation: hero-phone-shake 0.42s ease-in-out infinite;
-    filter: drop-shadow(0 48px 80px rgba(0, 0, 0, 0.6)) drop-shadow(0 26px 52px rgba(0, 0, 0, 0.38));
-  }
-
-  [data-theme="dark"] .landing-phones .hero-device--iphone:hover .hero-device__iphone-inner {
-    box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.08) inset,
-      0 0 0 1px rgba(0, 0, 0, 0.42) inset,
-      0 0 44px rgba(10, 132, 255, 0.22);
-  }
-
-  @media (max-width: 959px) {
-    .landing-phones .hero-device--iphone:hover,
-    [data-theme="dark"] .landing-phones .hero-device--iphone:hover {
-      animation: hero-phone-shake-sm 0.42s ease-in-out infinite;
-    }
-  }
+[data-theme="dark"] .landing-phones .hero-device--iphone:hover .hero-device__iphone-inner {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 0 0 1px rgba(0, 0, 0, 0.42) inset,
+    0 0 44px rgba(10, 132, 255, 0.22);
 }
 
 /* Bölümler */
@@ -1989,47 +1930,60 @@ a:hover {
   }
 }
 
-/* ——— Ana sayfa: APK tıklanınca uçak geçişi (landing-page.js) ——— */
-@media (prefers-reduced-motion: no-preference) {
-  .ata-apk-fly {
-    position: fixed;
-    inset: 0;
-    z-index: 10050;
-    pointer-events: none;
-    overflow: hidden;
+/* ——— Ana sayfa: APK uçak (landing-page.js). Stiller her zaman yüklü; reduced-motion’da süre kısalır ——— */
+@keyframes ata-apk-fly-path {
+  0% {
+    transform: translate3d(-50%, calc(100vh + 56px), 0) scale(0.9);
+    opacity: 0;
   }
+  12% {
+    opacity: 1;
+  }
+  86% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(-50%, calc(-100vh - 88px), 0) scale(1.04);
+    opacity: 0;
+  }
+}
 
+.ata-apk-fly {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.ata-apk-fly__plane {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: clamp(72px, 13vw, 132px);
+  height: auto;
+  display: block;
+  overflow: visible;
+  color: #ffffff;
+  filter:
+    drop-shadow(0 0 1px rgba(15, 53, 80, 0.45))
+    drop-shadow(0 4px 18px rgba(13, 110, 253, 0.35))
+    drop-shadow(0 10px 28px rgba(15, 53, 80, 0.2));
+  will-change: transform, opacity;
+  animation: ata-apk-fly-path 1.82s cubic-bezier(0.28, 0.55, 0.22, 1) forwards;
+}
+
+[data-theme="dark"] .ata-apk-fly__plane {
+  color: #0a0b10;
+  filter:
+    drop-shadow(0 0 1px rgba(255, 255, 255, 0.35))
+    drop-shadow(0 4px 22px rgba(10, 132, 255, 0.28))
+    drop-shadow(0 12px 36px rgba(0, 0, 0, 0.55));
+}
+
+@media (prefers-reduced-motion: reduce) {
   .ata-apk-fly__plane {
-    position: absolute;
-    left: 38%;
-    width: clamp(76px, 15vw, 148px);
-    height: auto;
-    display: block;
-    color: #0c2744;
-    filter: drop-shadow(0 10px 24px rgba(15, 53, 80, 0.28));
-    will-change: transform, opacity;
-    animation: ata-apk-fly-path 1.82s cubic-bezier(0.32, 0.02, 0.12, 1) forwards;
-  }
-
-  [data-theme="dark"] .ata-apk-fly__plane {
-    color: #e8eef6;
-    filter: drop-shadow(0 12px 32px rgba(0, 0, 0, 0.55));
-  }
-
-  @keyframes ata-apk-fly-path {
-    0% {
-      transform: translate3d(-50%, calc(100vh + 48px), 0) rotate(-14deg) scale(0.88);
-      opacity: 0;
-    }
-    10% {
-      opacity: 1;
-    }
-    88% {
-      opacity: 1;
-    }
-    100% {
-      transform: translate3d(-50%, calc(-100vh - 100px), 0) rotate(-14deg) scale(1.06);
-      opacity: 0;
-    }
+    animation-duration: 0.38s;
+    animation-timing-function: ease-out;
   }
 }

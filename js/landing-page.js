@@ -5,8 +5,12 @@
     try {
       return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     } catch (e) {
-      return true;
+      return false;
     }
+  }
+
+  function apkNavigateDelayMs() {
+    return prefersReducedMotion() ? 420 : 1880;
   }
 
   function headerOffset() {
@@ -54,58 +58,77 @@
   }
 
   function playJetWhoosh() {
-    const ACtx = window.AudioContext || window.webkitAudioContext;
-    if (!ACtx) return;
-    const ctx = new ACtx();
-    const t0 = ctx.currentTime;
+    if (prefersReducedMotion()) return;
     try {
-      ctx.resume();
-    } catch (e) {}
-
-    const noiseDur = 0.42;
-    const bufferSize = ctx.sampleRate * noiseDur;
-    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
-    }
-    const noise = ctx.createBufferSource();
-    noise.buffer = buffer;
-
-    const filter = ctx.createBiquadFilter();
-    filter.type = "lowpass";
-    filter.Q.value = 0.7;
-    filter.frequency.setValueAtTime(2400, t0);
-    filter.frequency.exponentialRampToValueAtTime(180, t0 + noiseDur);
-
-    const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.0001, t0);
-    gain.gain.exponentialRampToValueAtTime(0.09, t0 + 0.04);
-    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + noiseDur);
-
-    noise.connect(filter);
-    filter.connect(gain);
-    gain.connect(ctx.destination);
-    noise.start(t0);
-    noise.stop(t0 + noiseDur + 0.02);
-
-    window.setTimeout(() => {
+      const ACtx = window.AudioContext || window.webkitAudioContext;
+      if (!ACtx) return;
+      const ctx = new ACtx();
+      const t0 = ctx.currentTime;
       try {
-        ctx.close();
+        ctx.resume();
       } catch (e) {}
-    }, 800);
+
+      const noiseDur = 0.42;
+      const bufferSize = Math.max(1, Math.floor(ctx.sampleRate * noiseDur));
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+      }
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.Q.value = 0.7;
+      filter.frequency.setValueAtTime(2400, t0);
+      filter.frequency.exponentialRampToValueAtTime(180, t0 + noiseDur);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.exponentialRampToValueAtTime(0.09, t0 + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + noiseDur);
+
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      noise.start(t0);
+      noise.stop(t0 + noiseDur + 0.02);
+
+      window.setTimeout(() => {
+        try {
+          ctx.close();
+        } catch (e) {}
+      }, 800);
+    } catch (e) {
+      /* ses opsiyonel; asla gezinmeyi engelleme */
+    }
   }
 
-  function planeSvg() {
+  function planeLayer() {
     const wrap = document.createElement("div");
     wrap.className = "ata-apk-fly";
     wrap.setAttribute("aria-hidden", "true");
-    wrap.innerHTML =
-      '<svg class="ata-apk-fly__plane" viewBox="0 0 240 100" fill="currentColor" xmlns="http://www.w3.org/2000/svg">' +
-      '<path d="M8 52 L72 38 L118 42 L198 28 L228 18 L236 50 L228 82 L198 72 L118 58 L72 62 Z"/>' +
-      '<path d="M108 38 L108 18 L128 14 L132 38 Z"/>' +
-      '<ellipse cx="52" cy="50" rx="10" ry="6" opacity="0.35"/>' +
-      "</svg>";
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("class", "ata-apk-fly__plane");
+    svg.setAttribute("viewBox", "0 0 100 108");
+    svg.setAttribute("aria-hidden", "true");
+    const body = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    body.setAttribute("fill", "currentColor");
+    body.setAttribute(
+      "d",
+      "M50 4 L92 100 L50 74 L8 100 Z"
+    );
+    svg.appendChild(body);
+    const crease = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    crease.setAttribute("fill", "none");
+    crease.setAttribute("stroke", "currentColor");
+    crease.setAttribute("stroke-width", "1.5");
+    crease.setAttribute("stroke-linejoin", "miter");
+    crease.setAttribute("opacity", "0.22");
+    crease.setAttribute("d", "M50 4 L50 74 L8 100");
+    svg.appendChild(crease);
+    wrap.appendChild(svg);
     return wrap;
   }
 
@@ -114,13 +137,31 @@
   function runApkFlyThenNavigate(href) {
     if (apkFxBusy) return;
     apkFxBusy = true;
-    const layer = planeSvg();
-    document.body.appendChild(layer);
-    playJetWhoosh();
+    const delay = apkNavigateDelayMs();
+    try {
+      const layer = planeLayer();
+      document.body.appendChild(layer);
+      requestAnimationFrame(() => {
+        try {
+          playJetWhoosh();
+        } catch (e) {}
+      });
+    } catch (e) {
+      apkFxBusy = false;
+      window.location.href = href;
+      return;
+    }
     window.setTimeout(() => {
       apkFxBusy = false;
       window.location.href = href;
-    }, 1880);
+    }, delay);
+  }
+
+  function isApkDownloadLink(a) {
+    if (!a || !a.classList.contains("btn--primary")) return false;
+    if (a.getAttribute("data-ata-apk-fly") === "1") return true;
+    const h = a.getAttribute("href") || "";
+    return /(^|\/)indir\.html([#?].*)?$/i.test(h) || h.endsWith("indir.html");
   }
 
   document.addEventListener(
@@ -141,13 +182,14 @@
   document.addEventListener(
     "click",
     function (e) {
-      if (prefersReducedMotion()) return;
-      const a = e.target.closest("a.btn--primary[href$='indir.html']");
-      if (!a) return;
-      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || a.getAttribute("target") === "_blank")
-        return;
+      const a = e.target.closest("a");
+      if (!a || !isApkDownloadLink(a)) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+      if (a.getAttribute("target") === "_blank") return;
       e.preventDefault();
-      runApkFlyThenNavigate(a.href || "indir.html");
+      e.stopPropagation();
+      const dest = a.href || a.getAttribute("href");
+      runApkFlyThenNavigate(dest || "indir.html");
     },
     true
   );

@@ -30,8 +30,36 @@
         io.unobserve(entry.target);
       });
     },
-    { root: null, rootMargin: "0px 0px -6% 0px", threshold: 0.08 }
+    {
+      root: null,
+      rootMargin: "0px 0px 12% 0px",
+      threshold: [0, 0.02, 0.06],
+    }
   );
 
   reveals.forEach((el) => io.observe(el));
+
+  /* Geniş ekranda IO bazen geç tetiklenir; içerik görünmez kalmasın */
+  window.setTimeout(() => {
+    reveals.forEach((el) => {
+      if (!el.classList.contains("is-inview")) {
+        const r = el.getBoundingClientRect();
+        if (r.top < window.innerHeight + 120 && r.bottom > -120) {
+          el.classList.add("is-inview");
+          io.unobserve(el);
+        }
+      }
+    });
+  }, 100);
+
+  window.setTimeout(() => {
+    reveals.forEach((el) => {
+      if (!el.classList.contains("is-inview")) {
+        el.classList.add("is-inview");
+        try {
+          io.unobserve(el);
+        } catch (e) {}
+      }
+    });
+  }, 3200);
 })();
