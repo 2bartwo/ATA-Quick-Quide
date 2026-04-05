@@ -72,6 +72,7 @@
   },
   "feedback": {
     "h": "Geri bildirim",
+    "maintenance": "Geri bildirim ve yorum alanı <strong>geliştirme / bakım</strong> aşamasında olabilir; yükleme veya görünümde geçici kesintiler yaşanabilir.",
     "p": "Eksik chapter, hata veya öneri için aşağıdaki kutudan yorum bırakabilirsin. <strong>Yorumları herkes görebilir.</strong>",
     "note": "Yazmak için <strong>GitHub</strong> ile giriş yapman gerekir (bir kerelik). Yorumlar <strong>Utterances</strong> ile bu reponun Issues kaydına düşer. Repoda <a href=\"https://github.com/2bartwo/ATA-Quick-Quide/issues\" target=\"_blank\" rel=\"noopener\">Issues</a> açık ve <a href=\"https://github.com/apps/utterances\" target=\"_blank\" rel=\"noopener\">Utterances uygulaması</a> kurulu olmalıdır."
   },

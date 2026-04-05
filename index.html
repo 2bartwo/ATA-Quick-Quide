@@ -4,10 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="ATA chapter’lara telefondan hızlı erişim. Erken erişim, APK indir; mağazalar yakında.">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="theme-color" content="#e4eef8">
   <title>ATA Quick Guide — İndir</title>
   <script>
-    document.documentElement.setAttribute("data-theme", "light");
+    (function () {
+      try {
+        var t = localStorage.getItem("ata-theme");
+        document.documentElement.setAttribute("data-theme", t === "dark" ? "dark" : "light");
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    })();
   </script>
   <link rel="icon" type="image/png" href="images/app-icon.png">
   <link rel="apple-touch-icon" href="images/app-icon.png">
@@ -23,52 +30,53 @@
   <meta name="twitter:image" content="https://ata-quick-guide.bartwo.me/images/app-screenshot-1.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/app-site.css">
-  <link rel="stylesheet" href="css/wix-clone.css">
 </head>
-<body data-page="index" class="wix-template">
+<body data-page="index">
   <a class="visually-hidden" href="#icerik" data-i18n="skip">İçeriğe geç</a>
 
   <div class="app-shell">
-    <header class="app-top wix-header">
+    <header class="app-top">
       <div class="container app-top__inner">
         <a class="app-brand" href="index.html" aria-current="page">
           <span class="app-brand__mark"><img src="images/app-icon.png" width="32" height="32" alt=""></span>
           ATA Quick Guide
         </a>
         <nav class="app-menu" aria-label="Site">
+          <a href="index.html" data-i18n="nav.home">Ana sayfa</a>
           <a href="#ozellikler" data-i18n="nav.features">Özellikler</a>
-          <a href="#degerler" data-i18n="wix.navValues">Değerlerimiz</a>
-          <a href="#yorumlar" data-i18n="wix.navTestimonials">Yorumlar</a>
           <a href="indir.html" data-i18n="nav.download">İndir</a>
           <a href="nasil-yuklenir.html" data-i18n="nav.how">Kurulum</a>
-          <a href="#iletisim" data-i18n="wix.navContact">İletişim</a>
+          <a href="#credits" data-i18n="nav.team">Ekip</a>
+          <a href="#geri-bildirim" data-i18n="nav.feedback">Geri bildirim</a>
         </nav>
-        <div class="app-controls" role="toolbar" aria-label="Dil">
+        <div class="app-controls" role="toolbar" aria-label="Dil ve tema">
           <div class="lang-seg" role="group" aria-label="Dil">
             <button type="button" data-lang-btn="tr" aria-pressed="true">TR</button>
             <button type="button" data-lang-btn="en" aria-pressed="false">EN</button>
           </div>
+          <button type="button" class="theme-toggle" data-theme-toggle aria-label="Tema">☾</button>
         </div>
       </div>
     </header>
 
     <main id="icerik" class="app-content container">
-      <section class="wix-hero" aria-labelledby="wix-hero-title">
-        <div class="wix-hero__inner">
-          <div class="wix-hero__copy">
-            <p class="wix-hero__kicker" data-i18n="wix.heroKicker">Erken erişim</p>
-            <h1 id="wix-hero-title" class="wix-hero__title" data-i18n="wix.heroH1">Chapter referansı artık telefonunda</h1>
-            <p class="wix-hero__lead" data-i18n-html="hero.lead"></p>
-            <div class="wix-hero__actions">
-              <a class="wix-btn wix-btn--primary" href="indir.html" data-i18n="wix.heroCta1">Uygulamayı indir</a>
-              <a class="wix-btn wix-btn--ghost" href="#ozellikler" data-i18n="wix.heroCta2">Daha fazla bilgi</a>
+      <section class="app-hero landing-hero" aria-labelledby="hero-title">
+        <div class="landing-hero__grid">
+          <div class="landing-hero__copy">
+            <p class="beta-pill"><span data-i18n="beta.pill">Erken erişim</span></p>
+            <h1 id="hero-title" data-i18n="wix.heroH1">Chapter referansı artık telefonunda</h1>
+            <p class="lead" data-i18n-html="hero.lead"></p>
+            <div class="btn-row">
+              <a class="btn btn--primary" href="indir.html" data-i18n="btn.apk">APK indir</a>
+              <a class="btn btn--ghost" href="#ozellikler" data-i18n="nav.features">Özellikler</a>
+              <a class="btn btn--ghost" href="#nedir" data-i18n="btn.details">Detaylar</a>
             </div>
-            <div class="wix-hero__stores" aria-labelledby="store-heading">
+            <div class="store-panel store-panel--compact" aria-labelledby="store-heading">
               <h2 id="store-heading" class="visually-hidden" data-i18n="store.hiddenTitle">Mağaza yayını</h2>
-              <p data-i18n-html="store.copy"></p>
-              <div class="wix-store-row store-badges">
+              <p class="store-panel__copy" data-i18n-html="store.copy"></p>
+              <div class="store-badges">
                 <div class="store-badge-wrap">
                   <img class="store-badge" src="https://play.google.com/intl/en_us/badges/static/images/badges/tr_badge_web_generic.png" height="48" data-i18n-alt="store.gpAlt" alt="" loading="lazy" decoding="async">
                   <span class="store-badge-label" data-i18n="store.soon">Yakında</span>
@@ -80,203 +88,91 @@
               </div>
             </div>
           </div>
-          <div class="wix-hero__device">
-            <div class="wix-phone">
-              <div class="wix-phone__screen">
-                <img src="images/app-screenshot-1.png" width="390" height="844" alt="" data-i18n-alt="showcase.alt1">
+          <div class="landing-hero__visual" aria-hidden="true">
+            <div class="landing-phones">
+              <div class="phone-frame phone-frame--back">
+                <div class="phone-frame__screen">
+                  <img src="images/app-screenshot-2.png" width="390" height="844" alt="">
+                </div>
+              </div>
+              <div class="phone-frame phone-frame--front">
+                <div class="phone-frame__screen">
+                  <img src="images/app-screenshot-1.png" width="390" height="844" alt="">
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section id="ozellikler" class="wix-section wix-section--soft reveal" aria-labelledby="feat-h">
-        <div class="wix-section__head">
-          <p class="wix-section__eyebrow" data-i18n="wix.featuresEyebrow">Özellikler</p>
-          <h2 id="feat-h" data-i18n="wix.featuresH">Öne çıkan özellikler</h2>
-          <p data-i18n="wix.featuresLead"></p>
+      <section id="ozellikler" class="section reveal" aria-labelledby="feat-h">
+        <div class="section__head">
+          <h2 id="feat-h" data-i18n="features.h">Öne çıkanlar</h2>
+          <p data-i18n="features.lead"></p>
         </div>
-        <div class="wix-features__grid">
-          <article class="wix-feature reveal reveal-stagger-1">
-            <div class="wix-feature__icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg>
-            </div>
+        <div class="feature-grid">
+          <article class="feature-card reveal reveal-stagger-1">
             <h3 data-i18n="features.f1h">Hızlı erişim</h3>
             <p data-i18n="features.f1p"></p>
           </article>
-          <article class="wix-feature reveal reveal-stagger-2">
-            <div class="wix-feature__icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><path d="M8 7h8M8 11h6"/></svg>
-            </div>
+          <article class="feature-card reveal reveal-stagger-2">
             <h3 data-i18n="features.f2h">Doğru referans</h3>
             <p data-i18n="features.f2p"></p>
           </article>
-          <article class="wix-feature reveal reveal-stagger-3">
-            <div class="wix-feature__icon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M12 18h.01"/></svg>
-            </div>
+          <article class="feature-card reveal reveal-stagger-3">
             <h3 data-i18n="features.f3h">Mobil kullanım</h3>
             <p data-i18n="features.f3p"></p>
           </article>
         </div>
       </section>
 
-      <section id="degerler" class="wix-section reveal" aria-labelledby="val-h">
-        <div class="wix-section__head">
-          <p class="wix-section__eyebrow" data-i18n="wix.valuesEyebrow">Değerlerimiz</p>
-          <h2 id="val-h" data-i18n="wix.valuesH">İşletme değerlerimiz</h2>
-          <p data-i18n="wix.valuesLead"></p>
-        </div>
-        <div class="wix-values__grid wix-narrow">
-          <article class="wix-value-card">
-            <h3 data-i18n="wix.v1h">Sadelik</h3>
-            <p data-i18n="wix.v1p"></p>
-          </article>
-          <article class="wix-value-card">
-            <h3 data-i18n="wix.v2h">Güvenilirlik</h3>
-            <p data-i18n="wix.v2p"></p>
-          </article>
-          <article class="wix-value-card">
-            <h3 data-i18n="wix.v3h">Mobil öncelik</h3>
-            <p data-i18n="wix.v3p"></p>
-          </article>
-          <article class="wix-value-card">
-            <h3 data-i18n="wix.v4h">Şeffaflık</h3>
-            <p data-i18n="wix.v4p"></p>
-          </article>
-        </div>
-      </section>
-
-      <section id="yorumlar" class="wix-section wix-section--soft reveal" aria-labelledby="test-h">
-        <div class="wix-section__head">
-          <p class="wix-section__eyebrow" data-i18n="wix.testimonialsEyebrow">Yorumlar</p>
-          <h2 id="test-h" data-i18n="wix.testimonialsH">Kullanıcılarımız ne diyor?</h2>
-          <p data-i18n="wix.testimonialsLead"></p>
-        </div>
-        <div class="wix-testimonials__grid">
-          <article class="wix-testimonial">
-            <p class="wix-testimonial__stars" data-i18n="wix.stars">★★★★★</p>
-            <p data-i18n="wix.t1"></p>
-            <div class="wix-testimonial__author">
-              <div class="wix-testimonial__avatar" aria-hidden="true">M</div>
-              <div class="wix-testimonial__meta">
-                <strong data-i18n="wix.t1n"></strong>
-                <span data-i18n="wix.t1r"></span>
-              </div>
-            </div>
-          </article>
-          <article class="wix-testimonial">
-            <p class="wix-testimonial__stars" data-i18n="wix.stars">★★★★★</p>
-            <p data-i18n="wix.t2"></p>
-            <div class="wix-testimonial__author">
-              <div class="wix-testimonial__avatar" aria-hidden="true">S</div>
-              <div class="wix-testimonial__meta">
-                <strong data-i18n="wix.t2n"></strong>
-                <span data-i18n="wix.t2r"></span>
-              </div>
-            </div>
-          </article>
-          <article class="wix-testimonial">
-            <p class="wix-testimonial__stars" data-i18n="wix.stars">★★★★★</p>
-            <p data-i18n="wix.t3"></p>
-            <div class="wix-testimonial__author">
-              <div class="wix-testimonial__avatar" aria-hidden="true">M</div>
-              <div class="wix-testimonial__meta">
-                <strong data-i18n="wix.t3n"></strong>
-                <span data-i18n="wix.t3r"></span>
-              </div>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section id="hakkimizda" class="wix-section reveal" aria-labelledby="nedir-h">
-        <div class="wix-about">
-          <p class="wix-section__eyebrow" data-i18n="wix.aboutEyebrow">Uygulama</p>
+      <section id="nedir" class="section reveal" aria-labelledby="nedir-h">
+        <div class="section__head">
           <h2 id="nedir-h" data-i18n="nedir.h">Ne işe yarar?</h2>
           <p data-i18n-html="nedir.p"></p>
         </div>
       </section>
 
-      <section id="iletisim" class="wix-section wix-section--soft reveal" aria-labelledby="contact-h">
-        <div class="wix-section__head">
-          <p class="wix-section__eyebrow" data-i18n="wix.contactEyebrow">İletişim</p>
-          <h2 id="contact-h" data-i18n="wix.contactH">Bize ulaşın</h2>
-          <p data-i18n="wix.contactLead"></p>
-        </div>
-        <div class="wix-contact__layout">
-          <form class="wix-form" action="#" method="post" novalidate>
-            <label for="wix-name" data-i18n="wix.formName">Ad Soyad</label>
-            <input id="wix-name" name="name" type="text" autocomplete="name" data-i18n-placeholder="wix.formName">
-            <label for="wix-email" data-i18n="wix.formEmail">E-posta</label>
-            <input id="wix-email" name="email" type="email" autocomplete="email" data-i18n-placeholder="wix.formEmail">
-            <label for="wix-msg" data-i18n="wix.formMessage">Mesajınız</label>
-            <textarea id="wix-msg" name="message" rows="5" data-i18n-placeholder="wix.formMessage"></textarea>
-            <button type="submit" class="wix-btn wix-btn--primary" data-i18n="wix.formSubmit">Gönder</button>
-            <p class="wix-form__note" data-i18n="wix.formNote"></p>
-          </form>
+      <section id="credits" class="credits-block credits-block--spotlight reveal" aria-labelledby="credits-h">
+        <div class="credits-card">
+          <h2 id="credits-h" data-i18n="credits.h">Credits</h2>
+          <dl class="credits-list">
+            <dt data-i18n="credits.dev">Geliştirici</dt>
+            <dd>Yusuf Mirza Sökmen</dd>
+            <dt data-i18n="credits.devSite">Site geliştiricisi</dt>
+            <dd>Bartu Yıldız</dd>
+            <dt data-i18n="credits.mentor">Mentor</dt>
+            <dd>Mahmut Abdurrahman Cığşar</dd>
+            <dt data-i18n="credits.test">Test ekibi</dt>
+            <dd>Mustafa Değirmencioğlu, Murat Yılmaz, Sena Yılmaz</dd>
+          </dl>
         </div>
       </section>
 
-      <section id="geri-bildirim" class="section wix-section wix-feedback reveal" aria-labelledby="fb-h">
-        <div class="wix-narrow">
-          <div class="section__head wix-feedback__head">
-            <h2 id="fb-h" data-i18n="wix.communityH">Topluluk geri bildirimi</h2>
-            <p data-i18n="wix.communityLead"></p>
-          </div>
-          <p class="comments-note" data-i18n-html="feedback.note"></p>
-          <div id="utterances-host" class="comments-wrap" data-issue-term="pathname"></div>
+      <section id="geri-bildirim" class="section reveal" aria-labelledby="fb-h">
+        <div class="section__head">
+          <h2 id="fb-h" data-i18n="feedback.h">Geri bildirim</h2>
+          <p class="feedback-maintenance" data-i18n-html="feedback.maintenance"></p>
+          <p data-i18n-html="feedback.p"></p>
         </div>
+        <p class="comments-note" data-i18n-html="feedback.note"></p>
+        <div id="utterances-host" class="comments-wrap" data-issue-term="pathname"></div>
       </section>
 
-      <section class="wix-banner reveal" aria-labelledby="banner-h">
-        <h2 id="banner-h" data-i18n="wix.bannerH">Hemen indirin</h2>
-        <p data-i18n="wix.bannerP"></p>
-        <a class="wix-btn wix-btn--primary" href="indir.html" data-i18n="wix.bannerCta">İndir</a>
-      </section>
-
-      <footer class="wix-footer" id="credits">
-        <div class="wix-footer__grid">
-          <div>
-            <div class="wix-footer__brand">ATA Quick Guide</div>
-            <p class="wix-footer__tag" data-i18n="wix.footerTag"></p>
-          </div>
-          <div class="wix-footer__col">
-            <h3 data-i18n="wix.footerProduct">Ürün</h3>
-            <ul>
-              <li><a href="#ozellikler" data-i18n="wix.lnkFeatures">Özellikler</a></li>
-              <li><a href="indir.html" data-i18n="nav.download">İndir</a></li>
-              <li><a href="nasil-yuklenir.html" data-i18n="wix.lnkInstall">Kurulum</a></li>
-            </ul>
-          </div>
-          <div class="wix-footer__col">
-            <h3 data-i18n="wix.footerLinks">Bağlantılar</h3>
-            <ul>
-              <li><a href="https://github.com/2bartwo/ATA-Quick-Quide" target="_blank" rel="noopener" data-i18n="wix.lnkGh">GitHub</a></li>
-              <li><a href="https://github.com/2bartwo/ATA-Quick-Quide/issues" target="_blank" rel="noopener" data-i18n="wix.lnkIssues">Issues</a></li>
-              <li><a href="#iletisim" data-i18n="wix.navContact">İletişim</a></li>
-            </ul>
-          </div>
-          <div class="wix-footer__col">
-            <h3 data-i18n="wix.footerTeam">Ekip</h3>
-            <ul>
-              <li>Yusuf Mirza Sökmen — <span data-i18n="credits.dev">Geliştirici</span></li>
-              <li>Bartu Yıldız — <span data-i18n="credits.devSite">Site geliştiricisi</span></li>
-              <li>Mahmut Abdurrahman Cığşar — <span data-i18n="credits.mentor">Mentor</span></li>
-              <li>Mustafa Değirmencioğlu, Murat Yılmaz, Sena Yılmaz — <span data-i18n="credits.test">Test ekibi</span></li>
-            </ul>
-          </div>
-        </div>
-        <div class="wix-footer__bottom">
-          <p data-i18n-html="wix.footerLegal"></p>
-        </div>
-      </footer>
+      <div class="cta-strip reveal">
+        <p data-i18n-html="download.cta">Android için APK — bilinen kaynak (bu site) üzerinden indir.</p>
+        <a class="btn btn--primary" href="indir.html" data-i18n="btn.gotoDownload">İndir sayfasına git</a>
+      </div>
     </main>
 
+    <footer class="app-footer">
+      <div class="container">
+        <p class="app-footer__line" data-i18n-html="footer.html"></p>
+      </div>
+    </footer>
   </div>
 
   <script src="js/site-ui.js" defer></script>
-  <script src="js/wix-form.js" defer></script>
   <script src="js/app-motion.js" defer></script>
 </body>
 </html>

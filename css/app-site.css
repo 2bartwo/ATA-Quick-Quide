@@ -908,6 +908,26 @@ a:hover {
   font-size: 0.9375rem;
 }
 
+.section__head p + p {
+  margin-top: 0.75rem;
+}
+
+.feedback-maintenance {
+  margin: 0 0 0.75rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--accent-dim);
+  border: 1px solid rgba(8, 112, 217, 0.2);
+  border-radius: var(--radius-sm);
+}
+
+[data-theme="dark"] .feedback-maintenance {
+  background: rgba(10, 132, 255, 0.12);
+  border-color: rgba(10, 132, 255, 0.28);
+}
+
 .placeholder-text {
   color: var(--muted);
   font-style: italic;
@@ -952,6 +972,25 @@ a:hover {
 /* ——— Credits ——— */
 .credits-block {
   padding: 2.5rem 0 1rem;
+}
+
+.credits-block--spotlight {
+  padding: 3.5rem 0;
+}
+
+.credits-block--spotlight .credits-card {
+  max-width: 36rem;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.credits-block--spotlight .credits-list dt {
+  text-align: center;
+}
+
+.credits-block--spotlight .credits-list dd {
+  text-align: center;
 }
 
 .credits-card {
