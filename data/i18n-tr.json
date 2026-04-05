@@ -94,7 +94,7 @@
     "note": "Yazmak için <strong>GitHub</strong> ile giriş yapman gerekir (bir kerelik). Yorumlar <strong>Utterances</strong> ile bu reponun Issues kaydına düşer. Repoda <a href=\"https://github.com/2bartwo/ATA-Quick-Quide/issues\" target=\"_blank\" rel=\"noopener\">Issues</a> açık ve <a href=\"https://github.com/apps/utterances\" target=\"_blank\" rel=\"noopener\">Utterances uygulaması</a> kurulu olmalıdır."
   },
   "footer": {
-    "html": "© __YEAR__ ATA Quick Guide · <a href=\"nasil-yuklenir.html\">Kurulum</a> · <a href=\"indir.html\">Sürümler</a> · <a href=\"#credits\">Ekip</a>"
+    "html": "© __YEAR__ ATA Quick Guide · <a href=\"../nasil-yuklenir.html\">Kurulum</a> · <a href=\"../indir.html\">Sürümler</a> · <a href=\"#credits\">Ekip</a>"
   },
   "page": {
     "downloadTitle": "İndir — ATA Quick Guide",
@@ -105,8 +105,8 @@
     "installDesc": "ATA Quick Guide — Android’e APK ile nasıl yüklenir.",
     "installH1": "Nasıl yüklenir",
     "installLead": "Bu uygulama <strong>Google Play dışından</strong> dağıtıldığı için kurulum, herhangi bir Android uygulamasına <strong>APK dosyası ile</strong> yaptığın standart adımlarla aynıdır. Aşağıda tipik bir akış var; üretici arayüzüne göre menü isimleri biraz değişebilir.",
-    "footerDownload": "© __YEAR__ ATA Quick Guide · <a href=\"index.html\">Ana sayfa</a> · <a href=\"index.html#credits\">Ekip</a>",
-    "footerInstall": "© __YEAR__ ATA Quick Guide · <a href=\"indir.html\">İndir</a> · <a href=\"index.html#credits\">Ekip</a>"
+    "footerDownload": "© __YEAR__ ATA Quick Guide · <a href=\"anasayfa/\">Ana sayfa</a> · <a href=\"anasayfa/#credits\">Ekip</a>",
+    "footerInstall": "© __YEAR__ ATA Quick Guide · <a href=\"indir.html\">İndir</a> · <a href=\"anasayfa/#credits\">Ekip</a>"
   },
   "releases": {
     "badgeLatest": "Güncel sürüm",

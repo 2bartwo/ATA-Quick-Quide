@@ -66,8 +66,15 @@
 
   const HERO_PREVIEW_V = "12";
 
+  function siteRootUrl() {
+    const b = document.baseURI || window.location.href;
+    const r = document.body && document.body.getAttribute("data-site-root");
+    if (r) return new URL(r, b);
+    return new URL("./", b);
+  }
+
   function heroPreviewUrls(theme, lang) {
-    const base = new URL("images/", document.baseURI || window.location.href);
+    const base = new URL("images/", siteRootUrl());
     const primary = new URL(`app-preview-${theme}-${lang}.png`, base);
     primary.searchParams.set("v", HERO_PREVIEW_V);
     primary.searchParams.set("m", theme);
@@ -216,7 +223,7 @@
   }
 
   async function loadLang(lang) {
-    const path = new URL(`data/i18n-${lang}.json`, document.baseURI || window.location.href).href;
+    const path = new URL(`data/i18n-${lang}.json`, siteRootUrl()).href;
     const res = await fetch(path, { cache: "no-store" });
     if (!res.ok) throw new Error(String(res.status));
     return res.json();

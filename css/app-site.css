@@ -30,6 +30,13 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 body {
@@ -1979,5 +1986,50 @@ a:hover {
 
   .btn-dl:hover {
     transform: none;
+  }
+}
+
+/* ——— Ana sayfa: APK tıklanınca uçak geçişi (landing-page.js) ——— */
+@media (prefers-reduced-motion: no-preference) {
+  .ata-apk-fly {
+    position: fixed;
+    inset: 0;
+    z-index: 10050;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .ata-apk-fly__plane {
+    position: absolute;
+    left: 38%;
+    width: clamp(76px, 15vw, 148px);
+    height: auto;
+    display: block;
+    color: #0c2744;
+    filter: drop-shadow(0 10px 24px rgba(15, 53, 80, 0.28));
+    will-change: transform, opacity;
+    animation: ata-apk-fly-path 1.82s cubic-bezier(0.32, 0.02, 0.12, 1) forwards;
+  }
+
+  [data-theme="dark"] .ata-apk-fly__plane {
+    color: #e8eef6;
+    filter: drop-shadow(0 12px 32px rgba(0, 0, 0, 0.55));
+  }
+
+  @keyframes ata-apk-fly-path {
+    0% {
+      transform: translate3d(-50%, calc(100vh + 48px), 0) rotate(-14deg) scale(0.88);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    88% {
+      opacity: 1;
+    }
+    100% {
+      transform: translate3d(-50%, calc(-100vh - 100px), 0) rotate(-14deg) scale(1.06);
+      opacity: 0;
+    }
   }
 }
