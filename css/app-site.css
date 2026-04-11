@@ -2038,19 +2038,34 @@ button.fb-star:hover {
   position: relative;
   padding: 0.85rem 1rem;
   background: var(--bg-card);
-  border: 1px solid rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.22);
   border-radius: var(--radius-sm);
   box-shadow:
-    0 0 8px rgba(59, 130, 246, 0.08),
-    0 0 20px rgba(59, 130, 246, 0.05);
+    0 0 10px rgba(59, 130, 246, 0.14),
+    0 0 28px rgba(59, 130, 246, 0.08);
+  animation: fb-pulse 3s ease-in-out infinite;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .fb-card:hover {
-  border-color: rgba(59, 130, 246, 0.35);
+  border-color: rgba(59, 130, 246, 0.45);
   box-shadow:
-    0 0 10px rgba(59, 130, 246, 0.15),
-    0 0 30px rgba(59, 130, 246, 0.08);
+    0 0 14px rgba(59, 130, 246, 0.25),
+    0 0 40px rgba(59, 130, 246, 0.12);
+  animation-play-state: paused;
+}
+
+@keyframes fb-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 10px rgba(59, 130, 246, 0.14),
+      0 0 28px rgba(59, 130, 246, 0.08);
+  }
+  50% {
+    box-shadow:
+      0 0 16px rgba(59, 130, 246, 0.24),
+      0 0 40px rgba(59, 130, 246, 0.13);
+  }
 }
 
 .fb-card__head {
@@ -2093,19 +2108,35 @@ button.fb-star:hover {
 
 [data-theme="dark"] .fb-card {
   background: var(--bg-elevated);
-  border-color: rgba(96, 165, 250, 0.18);
+  border-color: rgba(96, 165, 250, 0.25);
   box-shadow:
-    0 0 10px rgba(96, 165, 250, 0.1),
-    0 0 25px rgba(96, 165, 250, 0.06),
-    inset 0 0 12px rgba(96, 165, 250, 0.03);
+    0 0 12px rgba(96, 165, 250, 0.18),
+    0 0 30px rgba(96, 165, 250, 0.1),
+    inset 0 0 14px rgba(96, 165, 250, 0.04);
+  animation-name: fb-pulse-dark;
 }
 
 [data-theme="dark"] .fb-card:hover {
-  border-color: rgba(96, 165, 250, 0.4);
+  border-color: rgba(96, 165, 250, 0.5);
   box-shadow:
-    0 0 12px rgba(96, 165, 250, 0.2),
-    0 0 35px rgba(96, 165, 250, 0.1),
-    inset 0 0 15px rgba(96, 165, 250, 0.05);
+    0 0 18px rgba(96, 165, 250, 0.32),
+    0 0 45px rgba(96, 165, 250, 0.15),
+    inset 0 0 18px rgba(96, 165, 250, 0.06);
+}
+
+@keyframes fb-pulse-dark {
+  0%, 100% {
+    box-shadow:
+      0 0 12px rgba(96, 165, 250, 0.18),
+      0 0 30px rgba(96, 165, 250, 0.1),
+      inset 0 0 14px rgba(96, 165, 250, 0.04);
+  }
+  50% {
+    box-shadow:
+      0 0 20px rgba(96, 165, 250, 0.3),
+      0 0 45px rgba(96, 165, 250, 0.16),
+      inset 0 0 20px rgba(96, 165, 250, 0.06);
+  }
 }
 
 .fb-more {
