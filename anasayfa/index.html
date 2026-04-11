@@ -38,7 +38,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/app-site.css?v=112">
+  <link rel="stylesheet" href="../css/app-site.css?v=113">
 </head>
 <body data-page="index" data-site-root="../">
   <a class="visually-hidden" href="#icerik" data-i18n="skip">İçeriğe geç</a>
@@ -248,6 +248,10 @@
             </form>
             <div id="fb-admin-modal-signed" class="fb-admin-modal__signed" hidden>
               <p data-i18n="feedback.adminSignedOk">Giriş tamam. Aşağıdaki yorumlarda yanıt alanları görünür.</p>
+              <div class="fb-admin-modal__admins">
+                <h3 class="fb-admin-modal__admins-h" data-i18n="feedback.adminListTitle">Yöneticiler</h3>
+                <ul id="fb-admin-list" class="fb-admin-list" aria-label="Yöneticiler"></ul>
+              </div>
               <button type="button" id="fb-admin-modal-out" class="btn btn--outline" data-i18n="feedback.adminSignOut">Çıkış</button>
             </div>
           </div>
@@ -271,10 +275,10 @@
 
   <script defer src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-  <script src="../js/firebase-config.js?v=5" defer></script>
+  <script src="../js/firebase-config.js?v=6" defer></script>
   <script src="../js/site-ui.js?v=34" defer></script>
   <script src="../js/app-motion.js?v=28" defer></script>
   <script src="../js/landing-page.js?v=30" defer></script>
-  <script src="../js/feedback.js?v=18" defer></script>
+  <script src="../js/feedback.js?v=19" defer></script>
 </body>
 </html>

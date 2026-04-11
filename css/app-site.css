@@ -19,7 +19,8 @@
   --shadow-soft: 0 6px 28px rgba(15, 53, 80, 0.07);
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-spring: cubic-bezier(0.34, 1.3, 0.64, 1);
-  --hero-phone-width: min(680px, 90vw);
+  /* Geniş monitörlerde 90vw dev telefon yapmasın; küçük ekranda taşmayı sınırla */
+  --hero-phone-width: min(320px, 88vw, 22rem);
   --hero-mockup-shift-x: 0;
 }
 
@@ -170,8 +171,8 @@ a:hover {
 
 /* Ana sayfa hero: referans düzenine yakın daha geniş içerik (≈60/40 grid) */
 .app-content.container:has(.landing-hero) {
-  max-width: min(100%, 140rem);
-  padding-inline: clamp(1.2rem, 4.5vw, 2.25rem);
+  max-width: min(100%, 84rem);
+  padding-inline: clamp(1rem, 3.2vw, 2rem);
 }
 
 @media (max-width: 639px) {
@@ -975,7 +976,7 @@ html:not([data-theme="dark"]) main.app-content.container:has(.landing-hero) {
 
 @media (min-width: 640px) and (max-width: 959px) {
   :root {
-    --hero-phone-width: min(620px, 88vw);
+    --hero-phone-width: clamp(280px, 48vw, 400px);
   }
 
   .landing-phones {
@@ -1002,8 +1003,8 @@ html:not([data-theme="dark"]) main.app-content.container:has(.landing-hero) {
   }
 
   :root {
-    /* Dikey PNG yüksekliği ~2.1× genişlik; kısa ekranda alt çubuk görünsün diye dvh ile tavan */
-    --hero-phone-width: min(720px, 100%);
+    /* İki sütunda sağ kolon geniş olsa bile mockup fiziksel telefon ölçeğinde kalsın */
+    --hero-phone-width: clamp(260px, 24vw, 400px);
     --hero-mockup-shift-x: -0.5rem;
   }
 }
@@ -2350,8 +2351,109 @@ button.fb-star:hover {
   font-size: 0.85rem;
 }
 
+.fb-admin-modal__admins {
+  margin: 0 0 0.85rem;
+  padding: 0.65rem 0.7rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+}
+
+.fb-admin-modal__admins-h {
+  margin: 0 0 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.fb-admin-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.fb-admin-list__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.8rem;
+}
+
+.fb-admin-list__name {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.fb-admin-list__uid {
+  font-size: 0.65rem;
+  line-height: 1.35;
+  word-break: break-all;
+  color: var(--muted);
+  font-family: ui-monospace, monospace;
+  background: rgba(13, 110, 253, 0.06);
+  padding: 0.2rem 0.35rem;
+  border-radius: 4px;
+}
+
+[data-theme="dark"] .fb-admin-list__uid {
+  background: rgba(96, 165, 250, 0.1);
+}
+
+.fb-card__admin {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-left: auto;
+}
+
 [data-theme="dark"] .fb-card__bottom {
   border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 560px) {
+  .fb-card__bottom {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+  }
+
+  .fb-card__votes {
+    justify-content: flex-start;
+  }
+
+  .fb-card__owner,
+  .fb-card__admin {
+    margin-left: 0;
+    justify-content: flex-end;
+  }
+
+  .fb-card {
+    padding: 0.72rem 0.85rem;
+  }
+
+  .fb-vote {
+    min-height: 2.75rem;
+    padding: 0.35rem 0.75rem;
+  }
+
+  .fb-act {
+    min-height: 2.5rem;
+    padding: 0.32rem 0.65rem;
+    font-size: 0.8rem;
+  }
+
+  #geri-bildirim .fb-form__grid {
+    gap: 0.7rem;
+  }
+
+  #geri-bildirim .fb-form__textarea {
+    min-height: 6.5rem;
+  }
 }
 
 .fb-card__votes.is-busy {

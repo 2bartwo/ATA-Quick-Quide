@@ -15,6 +15,11 @@ window.__FIREBASE_CONFIG__ = {
 
 window.__ATA_FB_OWNER_UID = "Utzc1cGvuPhzSBismyiTQ28pvYf2";
 
+/** Giriş yapan yönetici ile aynı UID’ler; modalda “Yöneticiler” listesi. Silme/yanıt kurallarında da bu UID kullanılır — yeni yönetici eklerken hem burayı hem database.rules içindeki auth.uid koşulunu güncelleyin. */
+window.__ATA_FB_ADMIN_LIST = [
+  { uid: "Utzc1cGvuPhzSBismyiTQ28pvYf2", name: "Site yöneticisi" },
+];
+
 (function () {
   if (typeof firebase === "undefined") return;
   var c = window.__FIREBASE_CONFIG__;

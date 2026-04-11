@@ -1,6 +1,6 @@
 /*
  * Ata Chapters — Geri bildirim (Firebase RTDB REST).
- * Yönetici: Alt+Shift+Y ile gizli giriş penceresi; yanıt alanları yalnızca giriş yapmış yönetici UID’sinde görünür.
+ * Yönetici: Alt+Shift+Y ile gizli giriş; yanıt / yönetici silme yalnızca tanımlı yönetici hesaplarında. Silme RTDB’de auth + UID ile sınırlıdır.
  */
 (function () {
   "use strict";
@@ -59,6 +59,7 @@
   var adminEmailInput = document.getElementById("fb-admin-email");
   var adminPassInput = document.getElementById("fb-admin-pass");
   var adminModalOut = document.getElementById("fb-admin-modal-out");
+  var adminListEl = document.getElementById("fb-admin-list");
 
   if (!form || !listEl) return;
 
@@ -132,12 +133,37 @@
     return typeof u === "string" && u.length > 8 ? u : "";
   }
 
+  function getAdminUids() {
+    var seen = {};
+    var out = [];
+    function add(uid) {
+      if (typeof uid !== "string" || uid.length < 9 || seen[uid]) return;
+      seen[uid] = 1;
+      out.push(uid);
+    }
+    add(getOwnerUid());
+    var list = window.__ATA_FB_ADMIN_LIST;
+    if (list && list.length) {
+      for (var i = 0; i < list.length; i++) {
+        if (list[i] && list[i].uid) add(String(list[i].uid));
+      }
+    }
+    return out;
+  }
+
   function isSiteAdmin() {
     if (!isFirebaseReady()) return false;
-    var own = getOwnerUid();
-    if (!own) return false;
     var u = firebase.auth().currentUser;
-    return !!(u && u.uid === own);
+    if (!u) return false;
+    return getAdminUids().indexOf(u.uid) !== -1;
+  }
+
+  function getAdminListForDisplay() {
+    var list = window.__ATA_FB_ADMIN_LIST;
+    if (list && list.length) return list;
+    var ou = getOwnerUid();
+    if (!ou) return [];
+    return [{ uid: ou, name: dict("adminDefaultName", "Site yöneticisi", "Site administrator") }];
   }
 
   function syncAdminModalUi() {
@@ -145,6 +171,26 @@
     var ok = isSiteAdmin();
     adminModalForm.hidden = ok;
     adminModalSigned.hidden = !ok;
+    if (adminListEl) {
+      if (!ok) adminListEl.innerHTML = "";
+      else {
+        var rows = getAdminListForDisplay();
+        adminListEl.innerHTML = rows
+          .map(function (it) {
+            var name = escapeHtml(it.name || it.note || dict("adminNoName", "Yönetici", "Admin"));
+            var uid = it.uid ? String(it.uid) : "";
+            var uidHtml = uid
+              ? '<code class="fb-admin-list__uid" title="' +
+                escapeAttr(dict("adminUidTitle", "Firebase kullanıcı UID", "Firebase user UID")) +
+                '">' +
+                escapeHtml(uid) +
+                "</code>"
+              : "";
+            return '<li class="fb-admin-list__item"><span class="fb-admin-list__name">' + name + "</span>" + uidHtml + "</li>";
+          })
+          .join("");
+      }
+    }
   }
 
   function setAdminModal(open) {
@@ -305,9 +351,24 @@
       '<div class="fb-card__owner">' +
       '<button type="button" class="fb-act fb-act--edit" data-fb-edit="' + escapeAttr(key) + '">' +
         SVG_EDIT + '<span>' + dict("edit", "Düzenle", "Edit") + '</span></button>' +
-      '<button type="button" class="fb-act fb-act--del" data-fb-del="' + escapeAttr(key) + '">' +
-        SVG_TRASH + '<span>' + dict("delete", "Sil", "Delete") + '</span></button>' +
-      '</div>'
+      "</div>"
+    );
+  }
+
+  function adminActionsHtml(key) {
+    if (!key || !isSiteAdmin()) return "";
+    return (
+      '<div class="fb-card__admin">' +
+      '<button type="button" class="fb-act fb-act--del" data-fb-admin-del="' +
+      escapeAttr(key) +
+      '" title="' +
+      escapeAttr(dict("adminDelTitle", "Yorumu sil (geri alınamaz)", "Delete comment (cannot undo)")) +
+      '">' +
+      SVG_TRASH +
+      '<span>' +
+      dict("adminDel", "Sil (yönetici)", "Delete (admin)") +
+      "</span></button>" +
+      "</div>"
     );
   }
 
@@ -326,7 +387,11 @@
       '<p class="fb-card__msg">' + escapeHtml(item.message) + '</p>' +
       replyBlockHtml(item) +
       adminReplyEditorHtml(item._key) +
-      '<div class="fb-card__bottom">' + voteRowHtml(item) + ownerActionsHtml(item._key) + '</div>';
+      '<div class="fb-card__bottom">' +
+      voteRowHtml(item) +
+      ownerActionsHtml(item._key) +
+      adminActionsHtml(item._key) +
+      "</div>";
     return card;
   }
 
@@ -526,14 +591,34 @@
       return;
     }
 
-    var delBtn = e.target.closest ? e.target.closest("[data-fb-del]") : null;
-    if (delBtn) {
-      var dk = delBtn.getAttribute("data-fb-del");
-      if (!dk || !isOwn(dk)) return;
-      if (!confirm(dict("confirmDel","Yorumu silmek istediğinize emin misiniz?","Delete this comment?"))) return;
-      fetchT(FIREBASE_DB_URL + "/feedback/" + encodeURIComponent(dk) + ".json", { method: "DELETE" })
-        .then(function (r) { if (!r.ok) throw new Error(r.status); removeOwnKey(dk); loadFeedback(); })
-        .catch(function () { showError(dict("delErr","Silinemedi.","Could not delete.")); });
+    var adminDel = e.target.closest ? e.target.closest("[data-fb-admin-del]") : null;
+    if (adminDel) {
+      var ak = adminDel.getAttribute("data-fb-admin-del");
+      if (!ak || !isSiteAdmin()) return;
+      if (!confirm(dict("confirmAdminDel", "Bu yorumu kalıcı olarak silmek istiyor musunuz?", "Permanently delete this comment?"))) return;
+      if (!isFirebaseReady()) return;
+      adminDel.disabled = true;
+      firebase.auth()
+        .currentUser.getIdToken(false)
+        .then(function (token) {
+          var url =
+            FIREBASE_DB_URL +
+            "/feedback/" +
+            encodeURIComponent(ak) +
+            ".json?auth=" +
+            encodeURIComponent(token);
+          return fetchT(url, { method: "DELETE" }).then(function (r) {
+            if (!r.ok) throw new Error(String(r.status));
+            removeOwnKey(ak);
+            loadFeedback();
+          });
+        })
+        .catch(function () {
+          showError(dict("adminDelErr", "Silinemedi. Giriş veya veritabanı kurallarını kontrol edin.", "Could not delete. Check sign-in and database rules."));
+        })
+        .finally(function () {
+          adminDel.disabled = false;
+        });
       return;
     }
 
