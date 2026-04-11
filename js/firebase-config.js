@@ -1,25 +1,19 @@
 /**
- * Firebase — yönetici yanıtları için Auth.
- *
- * apiKey nerede?
- * Firebase Console → sol üst dişli (Project settings) → Genel → aşağı in
- * → "Uygulamalarınız" / Your apps → Web (</>) uygulaması yoksa "Web ekle"
- * → "Firebase SDK ekle" / npm yerine yapılandırma nesnesi (firebaseConfig)
- * → oradaki apiKey: "AIzaSy……" satırını aynen kopyala (genelde AIza ile başlar).
- *
- * Diğer adımlar: Authentication → E-posta/Şifre aç; Users’tan UID → __ATA_FB_OWNER_UID + database.rules.json
+ * Firebase — yönetici yanıtları (Auth). Konsoldan kopyalanan web yapılandırması.
+ * __ATA_FB_OWNER_UID ve database.rules.json içindeki UID hâlâ senin doldurman gerekiyor.
  */
 window.__FIREBASE_CONFIG__ = {
-  apiKey: "",
+  apiKey: "AIzaSyAZjf8SY-pO-ovIRUaz6xzEFRiiaJ1FqxU",
   authDomain: "ata-quick-guide-538b0.firebaseapp.com",
+  databaseURL: "https://ata-quick-guide-538b0-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "ata-quick-guide-538b0",
-  storageBucket: "ata-quick-guide-538b0.appspot.com",
+  storageBucket: "ata-quick-guide-538b0.firebasestorage.app",
   messagingSenderId: "3251106926",
-  /** Konsoldaki firebaseConfig içindeki appId (genelde 1:3251106926:web:… şeklinde) */
-  appId: "",
+  appId: "1:3251106926:web:57ccab57917f2f4935e27f",
+  measurementId: "G-RR5BTB4FQ9",
 };
 
-/** Authentication → Users → satırdaki UID — kurallardaki REPLACE_WITH_YOUR_FIREBASE_AUTH_UID ile aynı */
+/** Authentication → Users → satırdaki UID — Realtime Database kurallarındaki REPLACE_WITH_YOUR_FIREBASE_AUTH_UID ile aynı olmalı */
 window.__ATA_FB_OWNER_UID = "";
 
 (function () {
