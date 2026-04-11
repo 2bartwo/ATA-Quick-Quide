@@ -1,0 +1,16 @@
+{
+  "rules": {
+    "feedback": {
+      "$id": {
+        ".read": "!data.exists() || !data.child('hidden').exists() || data.child('hidden').val() !== true || (auth != null && root.child('moderators').child(auth.uid).val() === true)",
+        ".write": "(!data.exists() && newData.hasChildren(['message','timestamp','name','sentiment','category']) && newData.child('message').isString() && newData.child('message').val().length >= 3 && newData.child('message').val().length <= 500 && newData.child('name').isString() && newData.child('name').val().length >= 5 && newData.child('name').val().length <= 40 && newData.child('timestamp').isNumber() && !newData.hasChild('hidden') && (newData.child('sentiment').val() == 'like' || newData.child('sentiment').val() == 'dislike') && (newData.child('category').val() == 'app_in_app' || newData.child('category').val() == 'app_advice' || newData.child('category').val() == 'app_user_fb' || newData.child('category').val() == 'site_general' || newData.child('category').val() == 'site_complaint' || newData.child('category').val() == 'site_user_fb')) || (auth != null && root.child('moderators').child(auth.uid).val() === true)"
+      }
+    },
+    "moderators": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": false
+      }
+    }
+  }
+}
