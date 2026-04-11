@@ -8,6 +8,7 @@
 
   var RATE_LIMIT_MS = 30000;
   var MAX_MSG_LEN = 500;
+  var MIN_MSG_LEN = 3;
   var MAX_NAME_LEN = 40;
   var PAGE_SIZE = 30;
   var FETCH_TIMEOUT_MS = 18000;
@@ -76,6 +77,7 @@
 
   var allItems = [];
   var visibleCount = PAGE_SIZE;
+  var hoverPreviewRating = null;
 
   function getLang() {
     return document.documentElement.getAttribute("data-lang") || "tr";
@@ -173,11 +175,12 @@
     return null;
   }
 
-  function starGlowClass(r) {
-    if (r == null || !isFinite(r)) return "";
-    if (r >= 5) return "fb-stars--max";
-    if (r <= 2.5) return "fb-stars--warn";
-    return "fb-stars--ok";
+  function tierFromRating(r) {
+    if (r == null || !isFinite(r)) return 0;
+    var t = Math.round(r * 2);
+    if (t < 1) return 0;
+    if (t > 10) return 10;
+    return t;
   }
 
   function starSvgHtml() {
@@ -189,25 +192,32 @@
     );
   }
 
-  function syncInputStarsDisplay(value) {
+  function getCommittedRating() {
+    return clampRating(ratingHidden ? ratingHidden.value : "");
+  }
+
+  function syncInputStarsDisplay() {
     if (!starsInputRoot) return;
+    var value =
+      hoverPreviewRating != null && isFinite(hoverPreviewRating)
+        ? hoverPreviewRating
+        : getCommittedRating();
     var halves = starsInputRoot.querySelectorAll("[data-fb-rate]");
     for (var i = 0; i < halves.length; i++) {
       var el = halves[i];
-      var r = parseFloat(el.getAttribute("data-fb-rate"), 10);
+      var r = parseFloat(el.getAttribute("data-fb-rate"));
       var on = value != null && !isNaN(value) && value >= r;
       el.classList.toggle("is-on", on);
       el.classList.toggle("is-off", !on);
     }
-    starsInputRoot.classList.remove("fb-stars--warn", "fb-stars--ok", "fb-stars--max");
-    if (value == null || isNaN(value)) return;
-    starsInputRoot.classList.add(starGlowClass(value));
+    starsInputRoot.setAttribute("data-fb-tier", String(tierFromRating(value)));
   }
 
   function setRatingInput(value) {
+    hoverPreviewRating = null;
     var v = clampRating(value);
     if (ratingHidden) ratingHidden.value = v != null ? String(v) : "";
-    syncInputStarsDisplay(v);
+    syncInputStarsDisplay();
   }
 
   function buildStarInput() {
@@ -228,17 +238,33 @@
       left.className = "fb-star-half fb-star-half--left";
       left.setAttribute("data-fb-rate", String(si - 0.5));
       left.innerHTML = starSvgHtml();
+      left.addEventListener("mouseenter", function () {
+        var rv = parseFloat(this.getAttribute("data-fb-rate"));
+        if (!isFinite(rv)) return;
+        hoverPreviewRating = rv;
+        syncInputStarsDisplay();
+      });
       var right = document.createElement("button");
       right.type = "button";
       right.className = "fb-star-half fb-star-half--right";
       right.setAttribute("data-fb-rate", String(si));
       right.innerHTML = starSvgHtml();
+      right.addEventListener("mouseenter", function () {
+        var rv = parseFloat(this.getAttribute("data-fb-rate"));
+        if (!isFinite(rv)) return;
+        hoverPreviewRating = rv;
+        syncInputStarsDisplay();
+      });
       pair.appendChild(left);
       pair.appendChild(right);
       row.appendChild(pair);
     }
     starsInputRoot.appendChild(row);
-    syncInputStarsDisplay(null);
+    starsInputRoot.addEventListener("mouseleave", function () {
+      hoverPreviewRating = null;
+      syncInputStarsDisplay();
+    });
+    syncInputStarsDisplay();
   }
 
   if (starsInputRoot) {
@@ -246,7 +272,7 @@
     starsInputRoot.addEventListener("click", function (e) {
       var b = e.target && e.target.closest ? e.target.closest("[data-fb-rate]") : null;
       if (!b || b.disabled) return;
-      var v = parseFloat(b.getAttribute("data-fb-rate"), 10);
+      var v = parseFloat(b.getAttribute("data-fb-rate"));
       if (!isFinite(v)) return;
       setRatingInput(v);
     });
@@ -255,7 +281,7 @@
   function authorStarsHtml(item) {
     var r = getDisplayRating(item);
     if (r == null) return "";
-    var glow = starGlowClass(r);
+    var tier = tierFromRating(r);
     var label = dict("ratingScoreAria", r + " / 5", r + " out of 5");
     var parts = [];
     for (var si = 1; si <= 5; si++) {
@@ -276,9 +302,9 @@
       );
     }
     return (
-      '<span class="fb-stars fb-stars--readonly ' +
-      glow +
-      ' fb-card__author-stars" role="img" aria-label="' +
+      '<span class="fb-stars fb-stars--readonly fb-card__author-stars" data-fb-tier="' +
+      tier +
+      '" role="img" aria-label="' +
       escapeAttr(label) +
       '">' +
       '<span class="fb-stars__row">' +
@@ -476,6 +502,11 @@
       msgInput.focus();
       return;
     }
+    if (message.length < MIN_MSG_LEN) {
+      showError(dict("errMsgShort", "Mesaj en az 3 karakter olmalı.", "Message must be at least 3 characters."));
+      if (msgInput) msgInput.focus();
+      return;
+    }
     if (message.length > MAX_MSG_LEN) {
       showError(dict("msgTooLong", "Mesaj en fazla 500 karakter olabilir.", "Message cannot exceed 500 characters."));
       return;
@@ -502,7 +533,7 @@
       name: name,
       message: message,
       timestamp: Date.now(),
-      rating: rating,
+      rating: Number(rating),
       likes: 0,
       dislikes: 0,
     };
@@ -513,8 +544,12 @@
       body: JSON.stringify(payload),
     })
       .then(function (r) {
-        if (!r.ok) throw new Error(r.status);
-        return r.json();
+        if (r.ok) return r.json();
+        return r.text().then(function (t) {
+          var err = new Error(String(r.status));
+          err.responseText = t;
+          throw err;
+        });
       })
       .then(function () {
         localStorage.setItem("ata-fb-last", String(Date.now()));
@@ -524,14 +559,24 @@
         updateCharCount();
         loadFeedback();
       })
-      .catch(function () {
-        showError(
-          dict(
-            "sendErr",
-            "Gönderilemedi. Kuralları veya alanları kontrol edin.",
-            "Could not send. Check fields or database rules."
-          )
+      .catch(function (err) {
+        var fallback = dict(
+          "sendErr",
+          "Gönderilemedi. Kuralları veya alanları kontrol edin.",
+          "Could not send. Check fields or database rules."
         );
+        var msg = fallback;
+        try {
+          if (err && err.responseText) {
+            var j = JSON.parse(err.responseText);
+            if (j && j.error) msg = String(j.error);
+          }
+        } catch (e1) {
+          if (err && err.responseText && err.responseText.length < 200) {
+            msg = err.responseText;
+          }
+        }
+        showError(msg);
       })
       .finally(function () {
         submitBtn.disabled = false;

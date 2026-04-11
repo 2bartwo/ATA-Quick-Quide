@@ -101,6 +101,7 @@
     "ratingAria": "Half-star rating from 0.5 to 5 for your message",
     "errName": "Enter a valid first and last name: at least two words, letters only; nonsense or placeholder names are not accepted.",
     "errRating": "Pick a star rating (0.5–5, half stars allowed).",
+    "errMsgShort": "Message must be at least 3 characters (database rule).",
     "errProfanity": "Your message or name contains disallowed language.",
     "voteUpAria": "Like this comment",
     "voteDownAria": "Dislike this comment",
