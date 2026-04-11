@@ -38,7 +38,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/app-site.css?v=100">
+  <link rel="stylesheet" href="../css/app-site.css?v=101">
 </head>
 <body data-page="index" data-site-root="../">
   <a class="visually-hidden" href="#icerik" data-i18n="skip">İçeriğe geç</a>
@@ -218,23 +218,12 @@
               <span class="fb-form__label" data-i18n="feedback.fullName">Ad Soyad</span>
               <input id="fb-name" class="fb-form__input" type="text" maxlength="40" required autocomplete="name" placeholder="Örn. Ayşe Yılmaz">
             </label>
-            <fieldset class="fb-form__field fb-form__field--full fb-sentiment">
-              <legend class="fb-form__label" data-i18n="feedback.sentimentLegend">Genel değerlendirme</legend>
-              <div class="fb-sentiment__opts fb-sentiment__opts--thumbs">
-                <label class="fb-sentiment__opt fb-sentiment__opt--thumb">
-                  <input type="radio" name="fb-sentiment" value="like" required>
-                  <span class="fb-thumb" aria-hidden="true">👍</span>
-                  <span class="visually-hidden" data-i18n="feedback.like">Beğendim</span>
-                </label>
-                <label class="fb-sentiment__opt fb-sentiment__opt--thumb">
-                  <input type="radio" name="fb-sentiment" value="dislike">
-                  <span class="fb-thumb" aria-hidden="true">👎</span>
-                  <span class="visually-hidden" data-i18n="feedback.dislike">Beğenmedim</span>
-                </label>
-              </div>
-            </fieldset>
             <div class="fb-form__msg-wrap fb-form__field--full">
-              <label class="fb-form__label" for="fb-msg" data-i18n="feedback.messageLabel">Mesajınız</label>
+              <div class="fb-form__msg-head">
+                <label class="fb-form__label" for="fb-msg" data-i18n="feedback.messageLabel">Mesajınız</label>
+                <div id="fb-stars-input" class="fb-stars fb-stars--input" data-fb-stars-input></div>
+              </div>
+              <input type="hidden" id="fb-rating-value" name="fb-rating" value="">
               <textarea id="fb-msg" class="fb-form__textarea" rows="4" maxlength="500" required placeholder="Geri bildiriminizi yazın…"></textarea>
               <span id="fb-char-count" class="fb-form__chars">500</span>
             </div>
@@ -265,6 +254,6 @@
   <script src="../js/site-ui.js?v=34" defer></script>
   <script src="../js/app-motion.js?v=28" defer></script>
   <script src="../js/landing-page.js?v=30" defer></script>
-  <script src="../js/feedback.js?v=6" defer></script>
+  <script src="../js/feedback.js?v=7" defer></script>
 </body>
 </html>
