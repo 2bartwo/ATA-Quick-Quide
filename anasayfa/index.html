@@ -38,7 +38,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/app-site.css?v=109">
+  <link rel="stylesheet" href="../css/app-site.css?v=110">
 </head>
 <body data-page="index" data-site-root="../">
   <a class="visually-hidden" href="#icerik" data-i18n="skip">İçeriğe geç</a>
@@ -233,6 +233,31 @@
           </div>
         </form>
 
+        <details class="fb-admin" id="fb-admin-panel">
+          <summary class="fb-admin__summary" data-i18n="feedback.adminSummary">Site yöneticisi — yanıt yaz</summary>
+          <div class="fb-admin__body">
+            <p class="fb-admin__lead" data-i18n="feedback.adminLead">Giriş yaptıktan sonra yorumlara yalnızca siz yanıt verebilirsiniz.</p>
+            <p id="fb-admin-missing-api" class="fb-admin__warn" hidden data-i18n="feedback.adminMissingApi">Yönetici girişi için firebase-config.js dosyasına Firebase Web apiKey ekleyin.</p>
+            <p id="fb-admin-missing-uid" class="fb-admin__warn" hidden data-i18n="feedback.adminMissingUid">firebase-config.js içinde __ATA_FB_OWNER_UID (hesap UID) ve Realtime Database kurallarındaki aynı UID alanını doldurun.</p>
+            <p id="fb-admin-wrong-account" class="fb-admin__warn" hidden data-i18n="feedback.adminWrongAccount">Bu hesap yönetici olarak tanımlı değil. Çıkış yapıp doğru hesapla deneyin.</p>
+            <form id="fb-admin-login-form" class="fb-admin__form" autocomplete="on" hidden>
+            <label class="fb-admin__field">
+              <span data-i18n="feedback.adminEmail">E-posta</span>
+              <input id="fb-admin-email" class="fb-form__input" type="email" autocomplete="username" required>
+            </label>
+            <label class="fb-admin__field">
+              <span data-i18n="feedback.adminPassword">Şifre</span>
+              <input id="fb-admin-pass" class="fb-form__input" type="password" autocomplete="current-password" required>
+            </label>
+            <button type="submit" class="btn btn--primary" data-i18n="feedback.adminSignIn">Giriş yap</button>
+            </form>
+            <div id="fb-admin-logged" class="fb-admin__logged" hidden>
+              <p><span data-i18n="feedback.adminSigned">Giriş yapıldı:</span> <strong id="fb-admin-email-display"></strong></p>
+              <button type="button" id="fb-admin-logout" class="btn btn--outline" data-i18n="feedback.adminSignOut">Çıkış</button>
+            </div>
+          </div>
+        </details>
+
         <p id="fb-error" class="fb-error" hidden></p>
 
         <div id="fb-loading" class="fb-loading" aria-live="polite">
@@ -251,9 +276,12 @@
     </footer>
   </div>
 
+  <script defer src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="../js/firebase-config.js?v=2" defer></script>
   <script src="../js/site-ui.js?v=34" defer></script>
   <script src="../js/app-motion.js?v=28" defer></script>
   <script src="../js/landing-page.js?v=30" defer></script>
-  <script src="../js/feedback.js?v=15" defer></script>
+  <script src="../js/feedback.js?v=16" defer></script>
 </body>
 </html>
