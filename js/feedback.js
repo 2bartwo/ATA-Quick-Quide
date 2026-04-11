@@ -114,9 +114,9 @@
   function isOwn(key) { return getOwnKeys().indexOf(key) !== -1; }
 
   function clampRating(n) {
-    var x = Number(n);
-    if (!isFinite(x) || x < 0.5 || x > 5) return null;
-    return Math.round(x * 2) / 2;
+    var x = Math.round(Number(n));
+    if (!isFinite(x) || x < 1 || x > 5) return null;
+    return x;
   }
   function getDisplayRating(item) {
     var r = clampRating(item.rating);
@@ -126,15 +126,20 @@
     return null;
   }
 
-  /* ─── 10 yıldız sistemi ─── */
-  function starVal(index) { return (index + 1) * 0.5; }
+  function findStarBtn(el) {
+    while (el && el !== starsInputRoot) {
+      if (el.getAttribute && el.getAttribute("data-star") != null) return el;
+      el = el.parentNode;
+    }
+    return null;
+  }
 
+  /* ─── 5 yıldız sistemi (1-5 puan) ─── */
   function buildStarRow(count, opts) {
     var html = "";
     var val = opts.value || 0;
-    for (var i = 0; i < count; i++) {
-      var sv = starVal(i);
-      var on = val >= sv;
+    for (var i = 1; i <= count; i++) {
+      var on = val >= i;
       var cls = "fb-star" + (on ? " is-on" : "");
       if (opts.interactive) {
         html += '<button type="button" class="' + cls + '" data-star="' + i + '">' +
@@ -149,10 +154,10 @@
   function syncInputStars() {
     if (!starsInputRoot) return;
     var committed = clampRating(ratingHidden ? ratingHidden.value : "");
-    var display = (hoverStar !== null) ? starVal(hoverStar) : committed;
+    var display = (hoverStar !== null) ? hoverStar : committed;
     var btns = starsInputRoot.querySelectorAll("[data-star]");
     for (var i = 0; i < btns.length; i++) {
-      var sv = starVal(i);
+      var sv = parseInt(btns[i].getAttribute("data-star"), 10);
       var on = display != null && display >= sv;
       btns[i].classList.toggle("is-on", on);
       btns[i].innerHTML = on ? SVG_STAR_FULL : SVG_STAR_EMPTY;
@@ -169,14 +174,14 @@
 
   function buildStarInput() {
     if (!starsInputRoot) return;
-    starsInputRoot.innerHTML = buildStarRow(10, { value: 0, interactive: true });
+    starsInputRoot.innerHTML = buildStarRow(5, { value: 0, interactive: true });
     starsInputRoot.addEventListener("click", function (e) {
-      var btn = e.target.closest ? e.target.closest("[data-star]") : null;
+      var btn = findStarBtn(e.target);
       if (!btn) return;
-      setRating(starVal(parseInt(btn.getAttribute("data-star"), 10)));
+      setRating(parseInt(btn.getAttribute("data-star"), 10));
     });
     starsInputRoot.addEventListener("mouseover", function (e) {
-      var btn = e.target.closest ? e.target.closest("[data-star]") : null;
+      var btn = findStarBtn(e.target);
       if (!btn) return;
       hoverStar = parseInt(btn.getAttribute("data-star"), 10);
       syncInputStars();
@@ -190,7 +195,7 @@
 
   function readonlyStarsHtml(rating) {
     if (rating == null) return "";
-    return '<span class="fb-stars-ro">' + buildStarRow(10, { value: rating, interactive: false }) + '</span>';
+    return '<span class="fb-stars-ro">' + buildStarRow(5, { value: rating, interactive: false }) + '</span>';
   }
 
   /* ─── Kart render ─── */
