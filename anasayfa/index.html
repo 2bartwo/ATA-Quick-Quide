@@ -38,7 +38,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/app-site.css?v=91">
+  <link rel="stylesheet" href="../css/app-site.css?v=97">
 </head>
 <body data-page="index" data-site-root="../">
   <a class="visually-hidden" href="#icerik" data-i18n="skip">İçeriğe geç</a>
@@ -63,7 +63,14 @@
             <button type="button" data-lang-btn="tr" aria-pressed="true">TR</button>
             <button type="button" data-lang-btn="en" aria-pressed="false">EN</button>
           </div>
-          <button type="button" class="theme-toggle" data-theme-toggle aria-label="Tema">☾</button>
+          <button type="button" class="theme-toggle" data-theme-toggle aria-label="Tema">
+            <span class="theme-toggle__moon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </span>
+            <span class="theme-toggle__sun" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+            </span>
+          </button>
         </div>
       </div>
     </header>
@@ -202,8 +209,27 @@
       <section id="geri-bildirim" class="section reveal" aria-labelledby="fb-h">
         <div class="section__head">
           <h2 id="fb-h" data-i18n="feedback.h">Geri bildirim</h2>
-          <p class="feedback-maintenance feedback-maintenance--solo" data-i18n-html="feedback.maintenanceSolo"></p>
+          <p class="section__lead" data-i18n="feedback.p">Eksik chapter, hata veya öneri için aşağıdan yorum bırakabilirsin. Yorumları herkes görebilir.</p>
         </div>
+
+        <form id="fb-form" class="fb-form" autocomplete="off">
+          <div class="fb-form__row">
+            <input id="fb-name" class="fb-form__input" type="text" maxlength="40" placeholder="İsim (isteğe bağlı)">
+            <button id="fb-submit" class="btn btn--primary fb-form__btn" type="submit">Gönder</button>
+          </div>
+          <div class="fb-form__msg-wrap">
+            <textarea id="fb-msg" class="fb-form__textarea" rows="3" maxlength="500" required placeholder="Geri bildiriminizi yazın…"></textarea>
+            <span id="fb-char-count" class="fb-form__chars">500</span>
+          </div>
+        </form>
+
+        <p id="fb-error" class="fb-error" hidden></p>
+        <div id="fb-loading" class="fb-loading" hidden>
+          <span class="fb-spinner"></span>
+        </div>
+        <p id="fb-empty" class="fb-empty" hidden data-i18n="feedback.empty">Henüz geri bildirim yok. İlk yazan sen ol!</p>
+        <div id="fb-list" class="fb-list"></div>
+        <button id="fb-more" class="btn btn--outline fb-more" type="button" hidden data-i18n="feedback.more">Daha fazla göster</button>
       </section>
     </main>
 
@@ -214,8 +240,9 @@
     </footer>
   </div>
 
-  <script src="../js/site-ui.js?v=31" defer></script>
+  <script src="../js/site-ui.js?v=34" defer></script>
   <script src="../js/app-motion.js?v=28" defer></script>
   <script src="../js/landing-page.js?v=30" defer></script>
+  <script src="../js/feedback.js?v=2" defer></script>
 </body>
 </html>
