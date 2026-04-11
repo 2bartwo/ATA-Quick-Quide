@@ -4,8 +4,8 @@
   const CURSOR = "|";
 
   const phrases = reduced
-    ? ["ATA Quick Guide"]
-    : ["ATA Quick Guide", "ata-quick-guide.bartwo.me", "\u26e4 \u26e4 \u26e4 \u26e4 \u26e4"];
+    ? ["Ata Chapters"]
+    : ["Ata Chapters", "ata-quick-guide.bartwo.me", "\u26e4 \u26e4 \u26e4 \u26e4 \u26e4"];
 
   function toChars(s) {
     return Array.from(s);

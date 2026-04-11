@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "description": "ATA Reference / ATA Quick Guide — site ile uygulama dil ve tema senkronu için sözleşme.",
+  "description": "ATA Reference / Ata Chapters — site ile uygulama dil ve tema senkronu için sözleşme.",
   "siteOrigin": "https://ata-quick-guide.bartwo.me",
   "localStorage": {
     "langKey": "ata-lang",

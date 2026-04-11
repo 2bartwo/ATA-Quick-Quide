@@ -1,5 +1,5 @@
 /*
- * ATA Quick Guide — Geri bildirim (Firebase RTDB REST)
+ * Ata Chapters — Geri bildirim (Firebase RTDB REST)
  */
 (function () {
   "use strict";

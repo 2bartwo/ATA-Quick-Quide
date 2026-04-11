@@ -1,4 +1,4 @@
-﻿# ATA Quick Guide - local HTTP server (Python http.server)
+﻿# Ata Chapters - local HTTP server (Python http.server)
 # UTF-8 BOM recommended for Windows PowerShell 5.1 + Turkish Windows
 $ErrorActionPreference = 'Continue'
 Set-Location -LiteralPath $PSScriptRoot
@@ -58,12 +58,12 @@ if (-not $pyExe) {
 }
 
 Write-Host ""
-Write-Host " ATA Quick Guide - yerel sunucu"
+Write-Host " Ata Chapters - yerel sunucu"
 Write-Host " Ana sayfa: $HomeUrl"
 Write-Host ""
 
 $argLine = ($pyPrefix + @('-m', 'http.server', "$Port")) -join ' '
-$cmdPayload = 'cd /d "{0}" && title ATA Quick Guide sunucu && echo. && echo  http.server {1} (Ctrl+C) && echo. && "{2}" {3}' -f @(
+$cmdPayload = 'cd /d "{0}" && title Ata Chapters sunucu && echo. && echo  http.server {1} (Ctrl+C) && echo. && "{2}" {3}' -f @(
     $PSScriptRoot,
     $Port,
     $pyExe,

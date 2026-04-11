@@ -15,7 +15,7 @@ if exist "%ProgramFiles%\Python312\python.exe" set "PATH=%ProgramFiles%\Python31
 if exist "%ProgramFiles%\Python311\python.exe" set "PATH=%ProgramFiles%\Python311;%ProgramFiles%\Python311\Scripts;%PATH%"
 
 echo.
-echo  ATA Quick Guide - yerel sunucu
+echo  Ata Chapters - yerel sunucu
 echo  Ana sayfa: %HOME_URL%
 echo  Kok:       %BASE%/
 echo.
@@ -45,7 +45,7 @@ if %errorlevel%==0 (
 echo Sunucu ayri pencerede; hazir olunca tarayici acilir. Durdurmak: sunucu penceresinde Ctrl+C
 echo.
 
-start "ATA Quick Guide sunucu" cmd /k "cd /d ""%~dp0"" && title ATA Quick Guide sunucu && echo. && echo  http.server %PORT% - Ctrl+C && echo. && %PYRUN% -m http.server %PORT%"
+start "Ata Chapters sunucu" cmd /k "cd /d ""%~dp0"" && title Ata Chapters sunucu && echo. && echo  http.server %PORT% - Ctrl+C && echo. && %PYRUN% -m http.server %PORT%"
 
 set /a _n=0
 :waitup

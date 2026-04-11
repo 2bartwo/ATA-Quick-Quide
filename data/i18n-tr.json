@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "ATA Quick Guide — İndir",
+    "title": "Ata Chapters — İndir",
     "description": "ATA chapter’lara telefondan hızlı erişim. Erken erişim, APK indir; mağazalar yakında."
   },
   "skip": "İçeriğe geç",
@@ -113,19 +113,19 @@
     "delErr": "Silinemedi."
   },
   "footer": {
-    "html": "© __YEAR__ ATA Quick Guide · <a href=\"../nasil-yuklenir.html\">Kurulum</a> · <a href=\"../indir.html\">Sürümler</a> · <a href=\"#credits\">Ekip</a>"
+    "html": "© __YEAR__ Ata Chapters · <a href=\"../nasil-yuklenir.html\">Kurulum</a> · <a href=\"../indir.html\">Sürümler</a> · <a href=\"#credits\">Ekip</a>"
   },
   "page": {
-    "downloadTitle": "İndir — ATA Quick Guide",
-    "downloadDesc": "ATA Quick Guide — APK indir, sürümler ve yama notları",
+    "downloadTitle": "İndir — Ata Chapters",
+    "downloadDesc": "Ata Chapters — APK indir, sürümler ve yama notları",
     "downloadH1": "İndir & sürümler",
     "downloadLead": "Uygulama şu an <strong>erken erişim</strong>; güncel paket bu sayfadan APK olarak indirilir. Yama notları ve eski sürümler aşağıda.",
-    "installTitle": "Nasıl yüklenir — ATA Quick Guide",
-    "installDesc": "ATA Quick Guide — Android’e APK ile nasıl yüklenir.",
+    "installTitle": "Nasıl yüklenir — Ata Chapters",
+    "installDesc": "Ata Chapters — Android’e APK ile nasıl yüklenir.",
     "installH1": "Nasıl yüklenir",
     "installLead": "Bu uygulama <strong>Google Play dışından</strong> dağıtıldığı için kurulum, herhangi bir Android uygulamasına <strong>APK dosyası ile</strong> yaptığın standart adımlarla aynıdır. Aşağıda tipik bir akış var; üretici arayüzüne göre menü isimleri biraz değişebilir.",
-    "footerDownload": "© __YEAR__ ATA Quick Guide · <a href=\"anasayfa/\">Ana sayfa</a> · <a href=\"anasayfa/#credits\">Ekip</a>",
-    "footerInstall": "© __YEAR__ ATA Quick Guide · <a href=\"indir.html\">İndir</a> · <a href=\"anasayfa/#credits\">Ekip</a>"
+    "footerDownload": "© __YEAR__ Ata Chapters · <a href=\"anasayfa/\">Ana sayfa</a> · <a href=\"anasayfa/#credits\">Ekip</a>",
+    "footerInstall": "© __YEAR__ Ata Chapters · <a href=\"indir.html\">İndir</a> · <a href=\"anasayfa/#credits\">Ekip</a>"
   },
   "releases": {
     "upcomingTipLabel": "Yeni sürüm notu",
@@ -200,7 +200,7 @@
     "lnkDownload": "Sürümler",
     "lnkGh": "GitHub",
     "lnkIssues": "Issues",
-    "footerLegal": "© __YEAR__ ATA Quick Guide · <a href=\"nasil-yuklenir.html\">Kurulum</a> · <a href=\"indir.html\">Sürümler</a>",
+    "footerLegal": "© __YEAR__ Ata Chapters · <a href=\"nasil-yuklenir.html\">Kurulum</a> · <a href=\"indir.html\">Sürümler</a>",
     "footerTag": "ATA chapter referansı — erken erişim. Mağaza sürümleri yakında."
   },
   "install": {
