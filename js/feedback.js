@@ -174,18 +174,19 @@
 
   function buildStarInput() {
     if (!starsInputRoot) return;
-    starsInputRoot.innerHTML = buildStarRow(5, { value: 0, interactive: true });
-    starsInputRoot.addEventListener("click", function (e) {
-      var btn = findStarBtn(e.target);
-      if (!btn) return;
-      setRating(parseInt(btn.getAttribute("data-star"), 10));
-    });
-    starsInputRoot.addEventListener("mouseover", function (e) {
-      var btn = findStarBtn(e.target);
-      if (!btn) return;
-      hoverStar = parseInt(btn.getAttribute("data-star"), 10);
-      syncInputStars();
-    });
+    while (starsInputRoot.firstChild) starsInputRoot.removeChild(starsInputRoot.firstChild);
+    for (var i = 1; i <= 5; i++) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "fb-star";
+      btn.setAttribute("data-star", String(i));
+      btn.innerHTML = SVG_STAR_EMPTY;
+      (function (val) {
+        btn.addEventListener("click", function () { setRating(val); });
+        btn.addEventListener("mouseenter", function () { hoverStar = val; syncInputStars(); });
+      })(i);
+      starsInputRoot.appendChild(btn);
+    }
     starsInputRoot.addEventListener("mouseleave", function () {
       hoverStar = null;
       syncInputStars();
