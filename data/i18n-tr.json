@@ -111,23 +111,7 @@
     "save": "Kaydet",
     "confirmDel": "Yorumu silmek istediğinize emin misiniz?",
     "delErr": "Silinemedi.",
-    "adminSummary": "Site yöneticisi — yanıt yaz",
-    "adminLead": "Giriş yaptıktan sonra yorumlara yalnızca siz yanıt verebilirsiniz.",
-    "adminMissingApi": "Yönetici girişi için js/firebase-config.js dosyasına Firebase Web apiKey (ve gerekirse appId) ekleyin.",
-    "adminMissingUid": "firebase-config.js içinde __ATA_FB_OWNER_UID alanına hesabınızın UID’sini yazın; Realtime Database kurallarındaki REPLACE_WITH_YOUR_FIREBASE_AUTH_UID ile aynı olmalı.",
-    "adminWrongAccount": "Bu hesap yönetici olarak tanımlı değil. Çıkış yapıp doğru hesapla deneyin.",
-    "adminEmail": "E-posta",
-    "adminPassword": "Şifre",
-    "adminSignIn": "Giriş yap",
-    "adminSigned": "Giriş yapıldı:",
-    "adminSignOut": "Çıkış",
-    "adminSignInErr": "Giriş başarısız. E-posta veya şifreyi kontrol edin.",
-    "replyLabel": "Yanıt (site)",
-    "replyYour": "Yanıtınız",
-    "replyPh": "Yanıt metni…",
-    "replySend": "Yanıtı yayınla",
-    "replyErr": "Yanıt kaydedilemedi. Kurallar veya girişi kontrol edin.",
-    "replyEmpty": "Yanıt metni yazın."
+    "replyLabel": "Yanıt (site)"
   },
   "footer": {
     "html": "© __YEAR__ Ata Chapters · <a href=\"../nasil-yuklenir.html\">Kurulum</a> · <a href=\"../indir.html\">Sürümler</a> · <a href=\"#credits\">Ekip</a>"
