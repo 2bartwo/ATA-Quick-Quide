@@ -13,6 +13,8 @@
   var FETCH_TIMEOUT_MS = 18000;
   var VOTE_KEY = "ata-fb-vote-";
   var OWN_KEY = "ata-fb-own";
+  var TG_TOKEN = "8698825579:AAGzF_5Snqa-ZP0TU8NMOxYfBsiwbMcBoeo";
+  var TG_CHAT = "6538936434";
 
   var SVG_STAR_EMPTY =
     '<svg class="fb-star-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>';
@@ -269,6 +271,22 @@
     return fetch(url, o).finally(function () { clearTimeout(tid); });
   }
 
+  function notifyTelegram(name, rating, message) {
+    var stars = "";
+    for (var i = 0; i < rating; i++) stars += "⭐";
+    var text = "📩 *Yeni Geri Bildirim*\n\n" +
+      "👤 *İsim:* " + name + "\n" +
+      stars + " (" + rating + "/5)\n\n" +
+      "💬 " + message;
+    try {
+      fetch("https://api.telegram.org/bot" + TG_TOKEN + "/sendMessage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: TG_CHAT, text: text, parse_mode: "Markdown" }),
+      });
+    } catch (e) {}
+  }
+
   function loadFeedback() {
     setLoading(true); if (errorEl) errorEl.hidden = true;
     fetchT(FIREBASE_DB_URL + "/feedback.json")
@@ -339,6 +357,7 @@
       .then(function (res) {
         if (res && res.name) saveOwnKey(res.name);
         localStorage.setItem("ata-fb-last", String(Date.now()));
+        notifyTelegram(name, rating, message);
         form.reset(); setRating(null); updateCharCount(); loadFeedback();
       })
       .catch(function () { showError(dict("sendErr","Gönderilemedi.","Could not send.")); })
