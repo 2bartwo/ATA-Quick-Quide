@@ -2,14 +2,8 @@
   "rules": {
     "feedback": {
       "$id": {
-        ".read": "!data.exists() || !data.child('hidden').exists() || data.child('hidden').val() !== true || (auth != null && root.child('moderators').child(auth.uid).val() === true)",
-        ".write": "(!data.exists() && newData.hasChildren(['message','timestamp','name','sentiment','category']) && newData.child('message').isString() && newData.child('message').val().length >= 3 && newData.child('message').val().length <= 500 && newData.child('name').isString() && newData.child('name').val().length >= 5 && newData.child('name').val().length <= 40 && newData.child('timestamp').isNumber() && !newData.hasChild('hidden') && (newData.child('sentiment').val() == 'like' || newData.child('sentiment').val() == 'dislike') && (newData.child('category').val() == 'app_in_app' || newData.child('category').val() == 'app_advice' || newData.child('category').val() == 'app_user_fb' || newData.child('category').val() == 'site_general' || newData.child('category').val() == 'site_complaint' || newData.child('category').val() == 'site_user_fb')) || (auth != null && root.child('moderators').child(auth.uid).val() === true)"
-      }
-    },
-    "moderators": {
-      "$uid": {
-        ".read": "auth != null && auth.uid === $uid",
-        ".write": false
+        ".read": "!data.exists() || !data.child('hidden').exists() || data.child('hidden').val() !== true",
+        ".write": "(!data.exists() && newData.hasChildren(['message','timestamp','name','sentiment','likes','dislikes']) && newData.child('message').isString() && newData.child('message').val().length >= 3 && newData.child('message').val().length <= 500 && newData.child('name').isString() && newData.child('name').val().length >= 5 && newData.child('name').val().length <= 40 && newData.child('timestamp').isNumber() && (newData.child('sentiment').val() == 'like' || newData.child('sentiment').val() == 'dislike') && newData.child('likes').isNumber() && newData.child('likes').val() == 0 && newData.child('dislikes').isNumber() && newData.child('dislikes').val() == 0 && !newData.hasChild('hidden')) || (data.exists() && newData.child('message').val() == data.child('message').val() && newData.child('name').val() == data.child('name').val() && newData.child('timestamp').val() == data.child('timestamp').val() && (!data.child('sentiment').exists() || newData.child('sentiment').val() == data.child('sentiment').val()) && newData.child('likes').isNumber() && newData.child('dislikes').isNumber() && newData.child('likes').val() >= 0 && newData.child('likes').val() <= 999999 && newData.child('dislikes').val() >= 0 && newData.child('dislikes').val() <= 999999)"
       }
     }
   }

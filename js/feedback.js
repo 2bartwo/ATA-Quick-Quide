@@ -1,7 +1,5 @@
 /*
- * ATA Quick Guide — Feedback (Firebase RTDB REST) + moderasyon (Firebase Auth)
- *
- * Firebase kuralları: repo kökündeki database.rules.json
+ * ATA Quick Guide — Geri bildirim (Firebase RTDB REST, kurallar: database.rules.json)
  */
 (function () {
   "use strict";
@@ -13,15 +11,7 @@
   var MAX_NAME_LEN = 40;
   var PAGE_SIZE = 30;
   var FETCH_TIMEOUT_MS = 18000;
-
-  var ALLOWED_CATEGORIES = {
-    app_in_app: true,
-    app_advice: true,
-    app_user_fb: true,
-    site_general: true,
-    site_complaint: true,
-    site_user_fb: true,
-  };
+  var VOTE_STORAGE_PREFIX = "ata-fb-vote-";
 
   var DISALLOWED_NAME_PARTS = {
     test: true,
@@ -62,7 +52,6 @@
 
   var form = document.getElementById("fb-form");
   var nameInput = document.getElementById("fb-name");
-  var categorySelect = document.getElementById("fb-category");
   var msgInput = document.getElementById("fb-msg");
   var charCount = document.getElementById("fb-char-count");
   var submitBtn = document.getElementById("fb-submit");
@@ -72,22 +61,10 @@
   var errorEl = document.getElementById("fb-error");
   var moreBtn = document.getElementById("fb-more");
 
-  var modPanel = document.getElementById("fb-mod-panel");
-  var modNeedConfig = document.getElementById("fb-mod-need-config");
-  var modForm = document.getElementById("fb-mod-form");
-  var modSigned = document.getElementById("fb-mod-signed");
-  var modEmailLabel = document.getElementById("fb-mod-email-label");
-  var modStatus = document.getElementById("fb-mod-status");
-  var modEmailIn = document.getElementById("fb-mod-email");
-  var modPassIn = document.getElementById("fb-mod-password");
-  var modSignInBtn = document.getElementById("fb-mod-signin");
-  var modSignOutBtn = document.getElementById("fb-mod-signout");
-
   if (!form || !listEl) return;
 
   var allItems = [];
   var visibleCount = PAGE_SIZE;
-  var isMod = false;
 
   function getLang() {
     return document.documentElement.getAttribute("data-lang") || "tr";
@@ -125,60 +102,6 @@
 
   function escapeAttr(str) {
     return String(str).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
-  }
-
-  function firebaseReady() {
-    return typeof firebase !== "undefined" && firebase.apps && firebase.apps.length > 0;
-  }
-
-  function authCfgOk() {
-    var c = window.__FIREBASE_CONFIG__;
-    return c && typeof c.apiKey === "string" && c.apiKey.length > 0;
-  }
-
-  function showModStatus(htmlOrText, isHtml) {
-    if (!modStatus) return;
-    if (htmlOrText) {
-      modStatus.hidden = false;
-      if (isHtml) modStatus.innerHTML = htmlOrText;
-      else modStatus.textContent = htmlOrText;
-    } else {
-      modStatus.hidden = true;
-      modStatus.textContent = "";
-    }
-  }
-
-  function syncModPanel() {
-    if (!modPanel) return;
-    var ready = firebaseReady() && authCfgOk();
-    if (!ready) {
-      if (modNeedConfig) modNeedConfig.hidden = false;
-      if (modForm) modForm.hidden = true;
-      if (modSigned) modSigned.hidden = true;
-      return;
-    }
-    if (modNeedConfig) modNeedConfig.hidden = true;
-    var u = firebase.auth().currentUser;
-    if (u && isMod) {
-      if (modForm) modForm.hidden = true;
-      if (modSigned) modSigned.hidden = false;
-      if (modEmailLabel) modEmailLabel.textContent = u.email || u.uid;
-    } else {
-      if (modForm) modForm.hidden = false;
-      if (modSigned) modSigned.hidden = true;
-    }
-  }
-
-  function checkModerator(user) {
-    if (!user) return Promise.resolve(false);
-    return user.getIdToken().then(function (token) {
-      return fetch(
-        FIREBASE_DB_URL + "/moderators/" + user.uid + ".json?auth=" + encodeURIComponent(token)
-      ).then(function (r) {
-        if (!r.ok) return false;
-        return r.json().then(function (v) { return v === true; });
-      });
-    });
   }
 
   function normalizeForProfanity(s) {
@@ -224,74 +147,69 @@
     return true;
   }
 
-  function categoryLabel(key) {
-    if (!key || !ALLOWED_CATEGORIES[key]) return dict("catUnknown", "Diğer", "Other");
-    return dict("cat_" + key, key, key);
+  function authorThumbHtml(item) {
+    var sent = item.sentiment;
+    if (sent !== "like" && sent !== "dislike") return "";
+    var label =
+      sent === "like"
+        ? dict("authorLikeAria", "Genel değerlendirme: olumlu", "Overall: positive")
+        : dict("authorDislikeAria", "Genel değerlendirme: olumsuz", "Overall: negative");
+    var icon = sent === "like" ? "👍" : "👎";
+    return (
+      '<span class="fb-card__author-thumb" role="img" aria-label="' +
+      escapeAttr(label) +
+      '"><span aria-hidden="true">' +
+      icon +
+      "</span></span>"
+    );
   }
 
-  function metaPillsHtml(item) {
-    var cat = item.category;
-    var sent = item.sentiment;
-    var parts = [];
-    if (cat && ALLOWED_CATEGORIES[cat]) {
-      parts.push(
-        '<span class="fb-card__pill">' + escapeHtml(categoryLabel(cat)) + "</span>"
-      );
-    }
-    if (sent === "like") {
-      parts.push(
-        '<span class="fb-card__pill fb-card__pill--like">' +
-          escapeHtml(dict("like", "Beğendim", "Like")) +
-          "</span>"
-      );
-    } else if (sent === "dislike") {
-      parts.push(
-        '<span class="fb-card__pill fb-card__pill--dislike">' +
-          escapeHtml(dict("dislike", "Beğenmedim", "Dislike")) +
-          "</span>"
-      );
-    }
-    if (!parts.length) return "";
-    return '<div class="fb-card__meta">' + parts.join("") + "</div>";
+  function voteRowHtml(item) {
+    var key = item._key;
+    if (!key) return "";
+    var likes = Math.max(0, Math.floor(Number(item.likes) || 0));
+    var dislikes = Math.max(0, Math.floor(Number(item.dislikes) || 0));
+    var prev = localStorage.getItem(VOTE_STORAGE_PREFIX + key) || "";
+    var upPressed = prev === "up" ? " is-pressed" : "";
+    var downPressed = prev === "down" ? " is-pressed" : "";
+    return (
+      '<div class="fb-card__votes">' +
+      '<button type="button" class="fb-vote' +
+      upPressed +
+      '" data-fb-vote="up" data-fb-key="' +
+      escapeAttr(key) +
+      '" aria-label="' +
+      escapeAttr(dict("voteUpAria", "Beğen", "Like")) +
+      '">' +
+      '<span class="fb-vote__icon" aria-hidden="true">👍</span>' +
+      '<span class="fb-vote__count">' +
+      likes +
+      "</span></button>" +
+      '<button type="button" class="fb-vote' +
+      downPressed +
+      '" data-fb-vote="down" data-fb-key="' +
+      escapeAttr(key) +
+      '" aria-label="' +
+      escapeAttr(dict("voteDownAria", "Beğenme", "Dislike")) +
+      '">' +
+      '<span class="fb-vote__icon" aria-hidden="true">👎</span>' +
+      '<span class="fb-vote__count">' +
+      dislikes +
+      "</span></button></div>"
+    );
   }
 
   function renderCard(item) {
     var card = document.createElement("div");
-    card.className = "fb-card" + (isMod && item.hidden ? " fb-card--hidden" : "");
-    var badge =
-      isMod && item.hidden
-        ? '<span class="fb-card__badge">' + escapeHtml(dict("modHiddenBadge", "Gizli", "Hidden")) + "</span>"
-        : "";
-    var actions = "";
-    if (isMod) {
-      var key = item._key;
-      var hid = !!item.hidden;
-      actions =
-        '<div class="fb-card__actions">' +
-        (hid
-          ? '<button type="button" data-fb-action="show" data-fb-key="' +
-            escapeAttr(key) +
-            '">' +
-            escapeHtml(dict("modShow", "Göster", "Show")) +
-            "</button>"
-          : '<button type="button" data-fb-action="hide" data-fb-key="' +
-            escapeAttr(key) +
-            '">' +
-            escapeHtml(dict("modHide", "Gizle", "Hide")) +
-            "</button>") +
-        '<button type="button" class="fb-card__btn--danger" data-fb-action="delete" data-fb-key="' +
-        escapeAttr(key) +
-        '">' +
-        escapeHtml(dict("modDelete", "Sil", "Delete")) +
-        "</button></div>";
-    }
+    card.className = "fb-card";
+    var thumb = authorThumbHtml(item);
     card.innerHTML =
-      metaPillsHtml(item) +
       '<div class="fb-card__head">' +
+      '<span class="fb-card__head-main">' +
+      thumb +
       '<span class="fb-card__name">' +
       escapeHtml(item.name || dict("anon", "Anonim", "Anonymous")) +
-      badge +
-      "</span>" +
+      "</span></span>" +
       '<time class="fb-card__time">' +
       timeAgo(item.timestamp) +
       "</time>" +
@@ -299,7 +217,7 @@
       '<p class="fb-card__msg">' +
       escapeHtml(item.message) +
       "</p>" +
-      actions;
+      voteRowHtml(item);
     return card;
   }
 
@@ -334,13 +252,17 @@
     if (errorEl) {
       errorEl.textContent = msg;
       errorEl.hidden = false;
-      setTimeout(function () { errorEl.hidden = true; }, 6000);
+      setTimeout(function () {
+        errorEl.hidden = true;
+      }, 6000);
     }
   }
 
   function fetchWithTimeout(url, options) {
     var ctrl = new AbortController();
-    var tid = setTimeout(function () { ctrl.abort(); }, FETCH_TIMEOUT_MS);
+    var tid = setTimeout(function () {
+      ctrl.abort();
+    }, FETCH_TIMEOUT_MS);
     var opts = options || {};
     opts.signal = ctrl.signal;
     return fetch(url, opts).finally(function () {
@@ -352,30 +274,7 @@
     setLoading(true);
     if (errorEl) errorEl.hidden = true;
 
-    var authPart;
-    if (isMod && firebaseReady()) {
-      var u = firebase.auth().currentUser;
-      if (u) {
-        authPart = u
-          .getIdToken()
-          .then(function (t) {
-            return "?auth=" + encodeURIComponent(t);
-          })
-          .catch(function () {
-            return "";
-          });
-      } else {
-        authPart = Promise.resolve("");
-      }
-    } else {
-      authPart = Promise.resolve("");
-    }
-
-    authPart
-      .then(function (q) {
-        var suffix = typeof q === "string" ? q : "";
-        return fetchWithTimeout(FIREBASE_DB_URL + "/feedback.json" + suffix);
-      })
+    fetchWithTimeout(FIREBASE_DB_URL + "/feedback.json")
       .then(function (r) {
         if (!r.ok) throw new Error(r.status);
         return r.json();
@@ -385,17 +284,25 @@
         if (data) {
           Object.keys(data).forEach(function (key) {
             var item = data[key];
-            if (item && item.message) {
+            if (item && item.message && item.hidden !== true) {
               item._key = key;
               allItems.push(item);
             }
           });
         }
-        allItems.sort(function (a, b) { return b.timestamp - a.timestamp; });
+        allItems.sort(function (a, b) {
+          return b.timestamp - a.timestamp;
+        });
         renderList();
       })
       .catch(function () {
-        showError(dict("loadErr", "Geri bildirimler yüklenemedi. Lütfen sayfayı yenileyin.", "Could not load feedback. Please refresh."));
+        showError(
+          dict(
+            "loadErr",
+            "Geri bildirimler yüklenemedi. Lütfen sayfayı yenileyin.",
+            "Could not load feedback. Please refresh."
+          )
+        );
       })
       .finally(function () {
         setLoading(false);
@@ -425,21 +332,22 @@
 
     var name = (nameInput ? nameInput.value.trim() : "").substring(0, MAX_NAME_LEN);
     var message = (msgInput ? msgInput.value.trim() : "");
-    var category = categorySelect ? categorySelect.value : "";
     var sentInput = form.querySelector('input[name="fb-sentiment"]:checked');
     var sentiment = sentInput ? sentInput.value : "";
 
     if (!validateFullName(name)) {
-      showError(dict("errName", "Geçerli bir ad soyad girin (en az iki kelime, yalnızca harf).", "Enter a valid first and last name (at least two words, letters only)."));
+      showError(
+        dict(
+          "errName",
+          "Geçerli bir ad soyad girin (en az iki kelime, yalnızca harf).",
+          "Enter a valid first and last name (at least two words, letters only)."
+        )
+      );
       if (nameInput) nameInput.focus();
       return;
     }
-    if (!category || !ALLOWED_CATEGORIES[category]) {
-      showError(dict("errCategory", "Lütfen bir kategori seçin.", "Please choose a category."));
-      return;
-    }
     if (sentiment !== "like" && sentiment !== "dislike") {
-      showError(dict("errSentiment", "Beğendim veya beğenmedim seçin.", "Choose like or dislike."));
+      showError(dict("errSentiment", "Olumlu veya olumsuz seçin.", "Choose thumbs up or down."));
       return;
     }
     if (!message) {
@@ -455,7 +363,13 @@
       return;
     }
     if (!canSubmit()) {
-      showError(dict("rateLimit", "Lütfen biraz bekleyin, çok sık gönderim yapılamaz.", "Please wait a moment before submitting again."));
+      showError(
+        dict(
+          "rateLimit",
+          "Lütfen biraz bekleyin, çok sık gönderim yapılamaz.",
+          "Please wait a moment before submitting again."
+        )
+      );
       return;
     }
 
@@ -467,7 +381,8 @@
       message: message,
       timestamp: Date.now(),
       sentiment: sentiment,
-      category: category,
+      likes: 0,
+      dislikes: 0,
     };
 
     fetch(FIREBASE_DB_URL + "/feedback.json", {
@@ -483,14 +398,19 @@
         localStorage.setItem("ata-fb-last", String(Date.now()));
         if (msgInput) msgInput.value = "";
         if (nameInput) nameInput.value = "";
-        if (categorySelect) categorySelect.value = "";
         var radios = form.querySelectorAll('input[name="fb-sentiment"]');
         for (var ri = 0; ri < radios.length; ri++) radios[ri].checked = false;
         updateCharCount();
         loadFeedback();
       })
       .catch(function () {
-        showError(dict("sendErr", "Gönderilemedi. Kuralları veya alanları kontrol edin.", "Could not send. Check fields or database rules."));
+        showError(
+          dict(
+            "sendErr",
+            "Gönderilemedi. Kuralları veya alanları kontrol edin.",
+            "Could not send. Check fields or database rules."
+          )
+        );
       })
       .finally(function () {
         submitBtn.disabled = false;
@@ -505,129 +425,84 @@
     });
   }
 
-  listEl.addEventListener("click", function (e) {
-    var btn = e.target && e.target.closest ? e.target.closest("[data-fb-action]") : null;
-    if (!btn || !isMod || !firebaseReady()) return;
-    var key = btn.getAttribute("data-fb-key");
-    var action = btn.getAttribute("data-fb-action");
-    if (!key || !action) return;
+  function applyPublicVote(key, direction) {
+    var storageKey = VOTE_STORAGE_PREFIX + key;
+    var prev = localStorage.getItem(storageKey) || "";
 
-    var u = firebase.auth().currentUser;
-    if (!u) return;
+    if (direction === "up" && prev === "up") return Promise.resolve();
+    if (direction === "down" && prev === "down") return Promise.resolve();
 
-    u.getIdToken()
-      .then(function (token) {
-        var url = FIREBASE_DB_URL + "/feedback/" + encodeURIComponent(key) + ".json?auth=" + encodeURIComponent(token);
-        if (action === "delete") {
-          return fetch(url, { method: "DELETE" }).then(function (r) {
-            if (!r.ok) throw new Error(String(r.status));
-          });
-        }
-        if (action === "hide") {
-          return fetch(url, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ hidden: true }),
-          }).then(function (r) {
-            if (!r.ok) throw new Error(String(r.status));
-          });
-        }
-        if (action === "show") {
-          return fetch(url, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ hidden: false }),
-          }).then(function (r) {
-            if (!r.ok) throw new Error(String(r.status));
-          });
-        }
+    var url = FIREBASE_DB_URL + "/feedback/" + encodeURIComponent(key) + ".json";
+
+    return fetchWithTimeout(url)
+      .then(function (r) {
+        if (!r.ok) throw new Error(String(r.status));
+        return r.json();
       })
+      .then(function (data) {
+        if (!data || typeof data.message !== "string") throw new Error("missing");
+        var likes = Math.max(0, Math.floor(Number(data.likes) || 0));
+        var dislikes = Math.max(0, Math.floor(Number(data.dislikes) || 0));
+        var next = prev;
+        if (direction === "up") {
+          if (prev === "down") {
+            likes++;
+            dislikes = Math.max(0, dislikes - 1);
+          } else {
+            likes++;
+          }
+          next = "up";
+        } else {
+          if (prev === "up") {
+            likes = Math.max(0, likes - 1);
+            dislikes++;
+          } else {
+            dislikes++;
+          }
+          next = "down";
+        }
+        return fetchWithTimeout(url, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ likes: likes, dislikes: dislikes }),
+        }).then(function (patchR) {
+          if (!patchR.ok) throw new Error(String(patchR.status));
+          localStorage.setItem(storageKey, next);
+        });
+      });
+  }
+
+  listEl.addEventListener("click", function (e) {
+    var btn = e.target && e.target.closest ? e.target.closest("[data-fb-vote]") : null;
+    if (!btn || btn.disabled) return;
+    var key = btn.getAttribute("data-fb-key");
+    var direction = btn.getAttribute("data-fb-vote");
+    if (!key || (direction !== "up" && direction !== "down")) return;
+
+    btn.disabled = true;
+    var row = btn.closest(".fb-card__votes");
+    if (row) row.classList.add("is-busy");
+
+    applyPublicVote(key, direction)
       .then(function () {
-        if (action === "hide") showModStatus(dict("modOkHide", "Yorum gizlendi.", "Comment hidden."), false);
-        else if (action === "show") showModStatus(dict("modOkShow", "Yorum tekrar görünür.", "Comment is visible again."), false);
-        else if (action === "delete") showModStatus(dict("modOkDelete", "Yorum silindi.", "Comment deleted."), false);
         loadFeedback();
       })
       .catch(function () {
-        showModStatus(dict("modActionError", "İşlem yapılamadı.", "Action failed."), false);
+        showError(dict("voteErr", "Oy kaydedilemedi. Bağlantıyı deneyin.", "Could not save your vote. Try again."));
+      })
+      .finally(function () {
+        btn.disabled = false;
+        if (row) row.classList.remove("is-busy");
       });
   });
 
-  if (modForm) {
-    modForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-      if (!firebaseReady()) return;
-      showModStatus("", false);
-      var email = modEmailIn ? modEmailIn.value.trim() : "";
-      var pass = modPassIn ? modPassIn.value : "";
-      firebase
-        .auth()
-        .signInWithEmailAndPassword(email, pass)
-        .catch(function () {
-          showModStatus(dict("modAuthError", "Giriş başarısız.", "Sign-in failed."), false);
-        });
-    });
-  }
-
-  if (modSignOutBtn) {
-    modSignOutBtn.addEventListener("click", function () {
-      if (firebaseReady()) firebase.auth().signOut();
-      showModStatus("", false);
-    });
-  }
-
-  function onAuth(user) {
-    if (!user) {
-      isMod = false;
-      syncModPanel();
-      loadFeedback();
-      return;
-    }
-    checkModerator(user).then(function (mod) {
-      isMod = mod;
-      if (!mod) {
-        firebase
-          .auth()
-          .signOut()
-          .then(function () {
-            isMod = false;
-            syncModPanel();
-            showModStatus(dict("modNotInList", "Bu hesap moderatör değil.", "This account is not a moderator."), false);
-            loadFeedback();
-          });
-      } else {
-        syncModPanel();
-        loadFeedback();
-      }
-    });
-  }
-
-  if (firebaseReady()) {
-    firebase.auth().onAuthStateChanged(onAuth);
-  } else {
-    syncModPanel();
-  }
-
-  function translateCategoryGroups() {
-    var sel = document.getElementById("fb-category");
-    if (!sel) return;
-    var ogs = sel.getElementsByTagName("optgroup");
-    if (ogs[0]) ogs[0].label = dict("catGroupApp", "Uygulama", "App");
-    if (ogs[1]) ogs[1].label = dict("catGroupSite", "Site", "Website");
-  }
-
   window.addEventListener("ata-ready", function () {
-    translateCategoryGroups();
     if (submitBtn) submitBtn.textContent = dict("send", "Gönder", "Send");
     if (nameInput) nameInput.placeholder = dict("phName", "Örn. Ayşe Yılmaz", "e.g. Jane Doe");
     if (msgInput) msgInput.placeholder = dict("phMsg", "Geri bildiriminizi yazın…", "Write your feedback…");
-    if (modSignInBtn) modSignInBtn.textContent = dict("modSignIn", "Giriş yap", "Sign in");
-    if (modSignOutBtn) modSignOutBtn.textContent = dict("modSignOut", "Çıkış", "Sign out");
-    syncModPanel();
     renderList();
   });
 
   setMoreVisible(false);
-  syncModPanel();
   loadFeedback();
 })();

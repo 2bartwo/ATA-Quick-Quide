@@ -38,7 +38,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/app-site.css?v=99">
+  <link rel="stylesheet" href="../css/app-site.css?v=100">
 </head>
 <body data-page="index" data-site-root="../">
   <a class="visually-hidden" href="#icerik" data-i18n="skip">İçeriğe geç</a>
@@ -218,32 +218,18 @@
               <span class="fb-form__label" data-i18n="feedback.fullName">Ad Soyad</span>
               <input id="fb-name" class="fb-form__input" type="text" maxlength="40" required autocomplete="name" placeholder="Örn. Ayşe Yılmaz">
             </label>
-            <label class="fb-form__field fb-form__field--full">
-              <span class="fb-form__label" data-i18n="feedback.category">Kategori</span>
-              <select id="fb-category" class="fb-form__select" required>
-                <option value="" data-i18n="feedback.catPlaceholder">Kategori seçin…</option>
-                <optgroup label="Uygulama">
-                  <option value="app_in_app" data-i18n="feedback.cat_app_in_app">Uygulama içi</option>
-                  <option value="app_advice" data-i18n="feedback.cat_app_advice">Tavsiye</option>
-                  <option value="app_user_fb" data-i18n="feedback.cat_app_user_fb">Kullanıcı geri bildirimi</option>
-                </optgroup>
-                <optgroup label="Site">
-                  <option value="site_general" data-i18n="feedback.cat_site_general">Site</option>
-                  <option value="site_complaint" data-i18n="feedback.cat_site_complaint">Şikayet</option>
-                  <option value="site_user_fb" data-i18n="feedback.cat_site_user_fb">Kullanıcı geri bildirimi</option>
-                </optgroup>
-              </select>
-            </label>
             <fieldset class="fb-form__field fb-form__field--full fb-sentiment">
               <legend class="fb-form__label" data-i18n="feedback.sentimentLegend">Genel değerlendirme</legend>
-              <div class="fb-sentiment__opts">
-                <label class="fb-sentiment__opt">
+              <div class="fb-sentiment__opts fb-sentiment__opts--thumbs">
+                <label class="fb-sentiment__opt fb-sentiment__opt--thumb">
                   <input type="radio" name="fb-sentiment" value="like" required>
-                  <span data-i18n="feedback.like">Beğendim</span>
+                  <span class="fb-thumb" aria-hidden="true">👍</span>
+                  <span class="visually-hidden" data-i18n="feedback.like">Beğendim</span>
                 </label>
-                <label class="fb-sentiment__opt">
+                <label class="fb-sentiment__opt fb-sentiment__opt--thumb">
                   <input type="radio" name="fb-sentiment" value="dislike">
-                  <span data-i18n="feedback.dislike">Beğenmedim</span>
+                  <span class="fb-thumb" aria-hidden="true">👎</span>
+                  <span class="visually-hidden" data-i18n="feedback.dislike">Beğenmedim</span>
                 </label>
               </div>
             </fieldset>
@@ -259,29 +245,6 @@
         </form>
 
         <p id="fb-error" class="fb-error" hidden></p>
-
-        <details class="fb-mod" id="fb-mod-panel">
-          <summary class="fb-mod__summary" data-i18n="feedback.modSummary">Moderatör</summary>
-          <div class="fb-mod__body">
-            <p id="fb-mod-need-config" class="fb-mod__need-config" hidden data-i18n-html="feedback.modNeedConfig"></p>
-            <form id="fb-mod-form" class="fb-mod-form" autocomplete="on" hidden>
-              <label class="fb-mod-form__label"><span data-i18n="feedback.modEmail">E-posta</span>
-                <input id="fb-mod-email" class="fb-form__input" type="email" autocomplete="username" required>
-              </label>
-              <label class="fb-mod-form__label"><span data-i18n="feedback.modPassword">Şifre</span>
-                <input id="fb-mod-password" class="fb-form__input" type="password" autocomplete="current-password" required>
-              </label>
-              <button id="fb-mod-signin" class="btn btn--primary fb-mod-form__btn" type="submit" data-i18n="feedback.modSignIn">Giriş</button>
-            </form>
-            <div id="fb-mod-signed" class="fb-mod-signed" hidden>
-              <p class="fb-mod-signed__text"><span data-i18n="feedback.modSignedIn">Moderatör oturumu açık.</span> <span id="fb-mod-email-label" class="fb-mod-signed__email"></span></p>
-              <div class="fb-mod-signed__actions">
-                <button id="fb-mod-signout" type="button" class="btn btn--outline" data-i18n="feedback.modSignOut">Çıkış</button>
-              </div>
-            </div>
-            <p id="fb-mod-status" class="fb-mod-status" role="status" hidden></p>
-          </div>
-        </details>
 
         <div id="fb-loading" class="fb-loading" aria-live="polite">
           <span class="fb-spinner" aria-hidden="true"></span>
@@ -299,12 +262,9 @@
     </footer>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-  <script src="../js/firebase-config.js?v=2"></script>
   <script src="../js/site-ui.js?v=34" defer></script>
   <script src="../js/app-motion.js?v=28" defer></script>
   <script src="../js/landing-page.js?v=30" defer></script>
-  <script src="../js/feedback.js?v=5" defer></script>
+  <script src="../js/feedback.js?v=6" defer></script>
 </body>
 </html>
