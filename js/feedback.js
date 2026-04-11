@@ -1,63 +1,40 @@
 /*
- * ATA Quick Guide — Geri bildirim (Firebase RTDB REST, kurallar: database.rules.json)
+ * ATA Quick Guide — Geri bildirim (Firebase RTDB REST)
  */
 (function () {
   "use strict";
 
   var FIREBASE_DB_URL = "https://ata-quick-guide-538b0-default-rtdb.europe-west1.firebasedatabase.app";
-
   var RATE_LIMIT_MS = 30000;
   var MAX_MSG_LEN = 500;
   var MIN_MSG_LEN = 3;
   var MAX_NAME_LEN = 40;
   var PAGE_SIZE = 30;
   var FETCH_TIMEOUT_MS = 18000;
-  var VOTE_STORAGE_PREFIX = "ata-fb-vote-";
+  var VOTE_KEY = "ata-fb-vote-";
+  var OWN_KEY = "ata-fb-own";
 
-  var STAR_PATH_D =
-    "M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 0 0 .95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 0 0-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 0 0-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 0 0-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 0 0 .951-.69l1.07-3.292z";
-
+  var SVG_STAR_EMPTY =
+    '<svg class="fb-star-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>';
+  var SVG_STAR_FULL =
+    '<svg class="fb-star-svg" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>';
   var SVG_THUMB_UP =
-    '<svg xmlns="http://www.w3.org/2000/svg" class="fb-vote__svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z"/></svg>';
-
+    '<svg class="fb-vote__svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 10v12"/><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z"/></svg>';
   var SVG_THUMB_DOWN =
-    '<svg xmlns="http://www.w3.org/2000/svg" class="fb-vote__svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22h0a3.13 3.13 0 0 1-3-3.88Z"/></svg>';
+    '<svg class="fb-vote__svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 14V2"/><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22h0a3.13 3.13 0 0 1-3-3.88Z"/></svg>';
+  var SVG_EDIT =
+    '<svg class="fb-act__svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+  var SVG_TRASH =
+    '<svg class="fb-act__svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>';
 
   var DISALLOWED_NAME_PARTS = {
-    test: true,
-    deneme: true,
-    asd: true,
-    xxx: true,
-    aaa: true,
-    abc: true,
-    admin: true,
-    user: true,
-    isim: true,
-    soyisim: true,
-    ad: true,
-    soyad: true,
-    yarrak: true,
-    siktir: true,
+    test:1,deneme:1,asd:1,xxx:1,aaa:1,abc:1,admin:1,user:1,
+    isim:1,soyisim:1,ad:1,soyad:1,yarrak:1,siktir:1
   };
-
   var PROFANITY_SUBSTRINGS = [
-    "siktir",
-    "sikerim",
-    "orospu",
-    "pezevenk",
-    "kahpe",
-    "yarrak",
-    "amk",
-    "piç",
-    "göt",
-    "fuck",
-    "shit",
-    "bitch",
-    "asshole",
-    "bastard",
-    "motherfucker",
-    "cunt",
-    "dickhead",
+    "siktir","sikerim","orospu","pezevenk","kahpe","yarrak",
+    "amk","piç","göt","fuck","shit","bitch","asshole",
+    "bastard","motherfucker","cunt","dickhead"
   ];
 
   var form = document.getElementById("fb-form");
@@ -77,21 +54,17 @@
 
   var allItems = [];
   var visibleCount = PAGE_SIZE;
-  var hoverPreviewRating = null;
+  var hoverStar = null;
+  var editingKey = null;
 
-  function getLang() {
-    return document.documentElement.getAttribute("data-lang") || "tr";
-  }
-
-  function dict(key, fallbackTr, fallbackEn) {
+  function getLang() { return document.documentElement.getAttribute("data-lang") || "tr"; }
+  function dict(k, tr, en) {
     var d = window.__ATA_I18N_DICT__;
-    if (d && d.feedback && d.feedback[key] != null) return d.feedback[key];
-    return getLang() === "en" ? fallbackEn : fallbackTr;
+    if (d && d.feedback && d.feedback[k] != null) return d.feedback[k];
+    return getLang() === "en" ? en : tr;
   }
-
   function timeAgo(ts) {
-    var diff = Date.now() - ts;
-    var s = Math.floor(diff / 1000);
+    var diff = Date.now() - ts, s = Math.floor(diff / 1000);
     if (s < 60) return dict("timeJust", "az önce", "just now");
     var m = Math.floor(s / 60);
     if (m < 60) return m + " " + dict("timeMin", "dk önce", "min ago");
@@ -99,74 +72,52 @@
     if (h < 24) return h + " " + dict("timeHr", "saat önce", "hr ago");
     var d = Math.floor(h / 24);
     if (d < 30) return d + " " + dict("timeDay", "gün önce", "days ago");
-    var date = new Date(ts);
-    return date.toLocaleDateString(getLang() === "en" ? "en-GB" : "tr-TR", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
+    return new Date(ts).toLocaleDateString(getLang() === "en" ? "en-GB" : "tr-TR", { day: "numeric", month: "short", year: "numeric" });
   }
-
-  function escapeHtml(str) {
-    var div = document.createElement("div");
-    div.textContent = str == null ? "" : String(str);
-    return div.innerHTML;
-  }
-
-  function escapeAttr(str) {
-    return String(str).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
-  }
-
+  function escapeHtml(s) { var d = document.createElement("div"); d.textContent = s == null ? "" : String(s); return d.innerHTML; }
+  function escapeAttr(s) { return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;"); }
   function normalizeForProfanity(s) {
-    return String(s)
-      .toLowerCase()
-      .replace(/ı/g, "i")
-      .replace(/ğ/g, "g")
-      .replace(/ü/g, "u")
-      .replace(/ş/g, "s")
-      .replace(/ö/g, "o")
-      .replace(/ç/g, "c")
-      .replace(/0/g, "o")
-      .replace(/1/g, "i")
-      .replace(/3/g, "e")
-      .replace(/4/g, "a")
-      .replace(/@/g, "a");
+    return String(s).toLowerCase().replace(/ı/g,"i").replace(/ğ/g,"g").replace(/ü/g,"u")
+      .replace(/ş/g,"s").replace(/ö/g,"o").replace(/ç/g,"c").replace(/0/g,"o")
+      .replace(/1/g,"i").replace(/3/g,"e").replace(/4/g,"a").replace(/@/g,"a");
   }
-
-  function hasProfanity(text) {
-    var n = normalizeForProfanity(text);
-    for (var i = 0; i < PROFANITY_SUBSTRINGS.length; i++) {
-      if (n.indexOf(PROFANITY_SUBSTRINGS[i]) !== -1) return true;
-    }
+  function hasProfanity(t) {
+    var n = normalizeForProfanity(t);
+    for (var i = 0; i < PROFANITY_SUBSTRINGS.length; i++) if (n.indexOf(PROFANITY_SUBSTRINGS[i]) !== -1) return true;
     return false;
   }
-
   function validateFullName(raw) {
-    var s = String(raw || "")
-      .trim()
-      .replace(/\s+/g, " ");
+    var s = String(raw || "").trim().replace(/\s+/g, " ");
     if (s.length < 5 || s.length > MAX_NAME_LEN) return false;
     var parts = s.split(" ").filter(function (p) { return p.length > 0; });
     if (parts.length < 2) return false;
-    var nameRe = /^[a-zA-ZğüşıöçĞÜŞİÖÇâêîôûÂÊÎÔÛ'\-]+$/;
+    var re = /^[a-zA-ZğüşıöçĞÜŞİÖÇâêîôûÂÊÎÔÛ'\-]+$/;
     for (var j = 0; j < parts.length; j++) {
       var p = parts[j];
-      if (p.length < 2 || p.length > 22) return false;
-      if (!nameRe.test(p)) return false;
-      if (/(.)\1{3,}/.test(p)) return false;
-      var low = p.toLocaleLowerCase("tr-TR");
-      if (DISALLOWED_NAME_PARTS[low]) return false;
+      if (p.length < 2 || p.length > 22 || !re.test(p) || /(.)\1{3,}/.test(p)) return false;
+      if (DISALLOWED_NAME_PARTS[p.toLocaleLowerCase("tr-TR")]) return false;
     }
     return true;
   }
 
+  function getOwnKeys() {
+    try { return JSON.parse(localStorage.getItem(OWN_KEY) || "[]"); } catch (e) { return []; }
+  }
+  function saveOwnKey(key) {
+    var arr = getOwnKeys();
+    if (arr.indexOf(key) === -1) { arr.push(key); localStorage.setItem(OWN_KEY, JSON.stringify(arr)); }
+  }
+  function removeOwnKey(key) {
+    var arr = getOwnKeys().filter(function (k) { return k !== key; });
+    localStorage.setItem(OWN_KEY, JSON.stringify(arr));
+  }
+  function isOwn(key) { return getOwnKeys().indexOf(key) !== -1; }
+
   function clampRating(n) {
     var x = Number(n);
-    if (!isFinite(x)) return null;
-    if (x < 0.5 || x > 5) return null;
+    if (!isFinite(x) || x < 0.5 || x > 5) return null;
     return Math.round(x * 2) / 2;
   }
-
   function getDisplayRating(item) {
     var r = clampRating(item.rating);
     if (r != null) return r;
@@ -175,517 +126,279 @@
     return null;
   }
 
-  function tierFromRating(r) {
-    if (r == null || !isFinite(r)) return 0;
-    var t = Math.round(r * 2);
-    if (t < 1) return 0;
-    if (t > 10) return 10;
-    return t;
-  }
+  /* ─── 10 yıldız sistemi ─── */
+  function starVal(index) { return (index + 1) * 0.5; }
 
-  function starSvgHtml() {
-    return (
-      '<svg xmlns="http://www.w3.org/2000/svg" class="fb-star-svg" viewBox="0 0 20 20" aria-hidden="true">' +
-      '<path class="fb-star-path" d="' +
-      STAR_PATH_D +
-      '"/></svg>'
-    );
-  }
-
-  function getCommittedRating() {
-    return clampRating(ratingHidden ? ratingHidden.value : "");
-  }
-
-  function syncInputStarsDisplay() {
-    if (!starsInputRoot) return;
-    var value =
-      hoverPreviewRating != null && isFinite(hoverPreviewRating)
-        ? hoverPreviewRating
-        : getCommittedRating();
-    var halves = starsInputRoot.querySelectorAll("[data-fb-rate]");
-    for (var i = 0; i < halves.length; i++) {
-      var el = halves[i];
-      var r = parseFloat(el.getAttribute("data-fb-rate"));
-      var on = value != null && !isNaN(value) && value >= r;
-      el.classList.toggle("is-on", on);
-      el.classList.toggle("is-off", !on);
+  function buildStarRow(count, opts) {
+    var html = "";
+    var val = opts.value || 0;
+    for (var i = 0; i < count; i++) {
+      var sv = starVal(i);
+      var on = val >= sv;
+      var cls = "fb-star" + (on ? " is-on" : "");
+      if (opts.interactive) {
+        html += '<button type="button" class="' + cls + '" data-star="' + i + '">' +
+                (on ? SVG_STAR_FULL : SVG_STAR_EMPTY) + '</button>';
+      } else {
+        html += '<span class="' + cls + '">' + (on ? SVG_STAR_FULL : SVG_STAR_EMPTY) + '</span>';
+      }
     }
-    starsInputRoot.setAttribute("data-fb-tier", String(tierFromRating(value)));
+    return html;
   }
 
-  function setRatingInput(value) {
-    hoverPreviewRating = null;
-    var v = clampRating(value);
+  function syncInputStars() {
+    if (!starsInputRoot) return;
+    var committed = clampRating(ratingHidden ? ratingHidden.value : "");
+    var display = (hoverStar !== null) ? starVal(hoverStar) : committed;
+    var btns = starsInputRoot.querySelectorAll("[data-star]");
+    for (var i = 0; i < btns.length; i++) {
+      var sv = starVal(i);
+      var on = display != null && display >= sv;
+      btns[i].classList.toggle("is-on", on);
+      btns[i].innerHTML = on ? SVG_STAR_FULL : SVG_STAR_EMPTY;
+    }
+    starsInputRoot.classList.toggle("has-value", display != null && display > 0);
+  }
+
+  function setRating(val) {
+    hoverStar = null;
+    var v = clampRating(val);
     if (ratingHidden) ratingHidden.value = v != null ? String(v) : "";
-    syncInputStarsDisplay();
+    syncInputStars();
   }
 
   function buildStarInput() {
     if (!starsInputRoot) return;
-    starsInputRoot.innerHTML = "";
-    starsInputRoot.setAttribute(
-      "aria-label",
-      dict("ratingAria", "Mesaja puan (0,5–5 yıldız)", "Rating for your message (half stars)")
-    );
-    var row = document.createElement("div");
-    row.className = "fb-stars__row";
-    row.setAttribute("role", "group");
-    for (var si = 1; si <= 5; si++) {
-      var pair = document.createElement("span");
-      pair.className = "fb-star-pair";
-      var left = document.createElement("button");
-      left.type = "button";
-      left.className = "fb-star-half fb-star-half--left";
-      left.setAttribute("data-fb-rate", String(si - 0.5));
-      left.innerHTML = starSvgHtml();
-      left.addEventListener("mouseenter", function () {
-        var rv = parseFloat(this.getAttribute("data-fb-rate"));
-        if (!isFinite(rv)) return;
-        hoverPreviewRating = rv;
-        syncInputStarsDisplay();
-      });
-      var right = document.createElement("button");
-      right.type = "button";
-      right.className = "fb-star-half fb-star-half--right";
-      right.setAttribute("data-fb-rate", String(si));
-      right.innerHTML = starSvgHtml();
-      right.addEventListener("mouseenter", function () {
-        var rv = parseFloat(this.getAttribute("data-fb-rate"));
-        if (!isFinite(rv)) return;
-        hoverPreviewRating = rv;
-        syncInputStarsDisplay();
-      });
-      pair.appendChild(left);
-      pair.appendChild(right);
-      row.appendChild(pair);
-    }
-    starsInputRoot.appendChild(row);
-    starsInputRoot.addEventListener("mouseleave", function () {
-      hoverPreviewRating = null;
-      syncInputStarsDisplay();
-    });
-    syncInputStarsDisplay();
-  }
-
-  if (starsInputRoot) {
-    buildStarInput();
+    starsInputRoot.innerHTML = buildStarRow(10, { value: 0, interactive: true });
     starsInputRoot.addEventListener("click", function (e) {
-      var b = e.target && e.target.closest ? e.target.closest("[data-fb-rate]") : null;
-      if (!b || b.disabled) return;
-      var v = parseFloat(b.getAttribute("data-fb-rate"));
-      if (!isFinite(v)) return;
-      setRatingInput(v);
+      var btn = e.target.closest ? e.target.closest("[data-star]") : null;
+      if (!btn) return;
+      setRating(starVal(parseInt(btn.getAttribute("data-star"), 10)));
+    });
+    starsInputRoot.addEventListener("mouseover", function (e) {
+      var btn = e.target.closest ? e.target.closest("[data-star]") : null;
+      if (!btn) return;
+      hoverStar = parseInt(btn.getAttribute("data-star"), 10);
+      syncInputStars();
+    });
+    starsInputRoot.addEventListener("mouseleave", function () {
+      hoverStar = null;
+      syncInputStars();
     });
   }
+  buildStarInput();
 
-  function authorStarsHtml(item) {
-    var r = getDisplayRating(item);
-    if (r == null) return "";
-    var tier = tierFromRating(r);
-    var label = dict("ratingScoreAria", r + " / 5", r + " out of 5");
-    var parts = [];
-    for (var si = 1; si <= 5; si++) {
-      var leftOn = r >= si - 0.5;
-      var rightOn = r >= si;
-      parts.push(
-        '<span class="fb-star-pair fb-star-pair--readonly">' +
-        '<span class="fb-star-half fb-star-half--left' +
-        (leftOn ? " is-on" : " is-off") +
-        '">' +
-        starSvgHtml() +
-        "</span>" +
-        '<span class="fb-star-half fb-star-half--right' +
-        (rightOn ? " is-on" : " is-off") +
-        '">' +
-        starSvgHtml() +
-        "</span></span>"
-      );
-    }
-    return (
-      '<span class="fb-stars fb-stars--readonly fb-card__author-stars" data-fb-tier="' +
-      tier +
-      '" role="img" aria-label="' +
-      escapeAttr(label) +
-      '">' +
-      '<span class="fb-stars__row">' +
-      parts.join("") +
-      "</span></span>"
-    );
+  function readonlyStarsHtml(rating) {
+    if (rating == null) return "";
+    return '<span class="fb-stars-ro">' + buildStarRow(10, { value: rating, interactive: false }) + '</span>';
   }
 
+  /* ─── Kart render ─── */
   function voteRowHtml(item) {
     var key = item._key;
     if (!key) return "";
     var likes = Math.max(0, Math.floor(Number(item.likes) || 0));
     var dislikes = Math.max(0, Math.floor(Number(item.dislikes) || 0));
-    var prev = localStorage.getItem(VOTE_STORAGE_PREFIX + key) || "";
-    var upPressed = prev === "up" ? " is-pressed" : "";
-    var downPressed = prev === "down" ? " is-pressed" : "";
+    var prev = localStorage.getItem(VOTE_KEY + key) || "";
     return (
       '<div class="fb-card__votes">' +
-      '<button type="button" class="fb-vote' +
-      upPressed +
-      '" data-fb-vote="up" data-fb-key="' +
-      escapeAttr(key) +
-      '" aria-label="' +
-      escapeAttr(dict("voteUpAria", "Beğen", "Like")) +
-      '">' +
-      SVG_THUMB_UP +
-      '<span class="fb-vote__count">' +
-      likes +
-      "</span></button>" +
-      '<button type="button" class="fb-vote' +
-      downPressed +
-      '" data-fb-vote="down" data-fb-key="' +
-      escapeAttr(key) +
-      '" aria-label="' +
-      escapeAttr(dict("voteDownAria", "Beğenme", "Dislike")) +
-      '">' +
-      SVG_THUMB_DOWN +
-      '<span class="fb-vote__count">' +
-      dislikes +
-      "</span></button></div>"
+      '<button type="button" class="fb-vote' + (prev === "up" ? " is-pressed" : "") +
+        '" data-fb-vote="up" data-fb-key="' + escapeAttr(key) + '">' +
+        SVG_THUMB_UP + '<span class="fb-vote__count">' + likes + '</span></button>' +
+      '<button type="button" class="fb-vote' + (prev === "down" ? " is-pressed" : "") +
+        '" data-fb-vote="down" data-fb-key="' + escapeAttr(key) + '">' +
+        SVG_THUMB_DOWN + '<span class="fb-vote__count">' + dislikes + '</span></button>' +
+      '</div>'
+    );
+  }
+
+  function ownerActionsHtml(key) {
+    if (!isOwn(key)) return "";
+    return (
+      '<div class="fb-card__owner">' +
+      '<button type="button" class="fb-act fb-act--edit" data-fb-edit="' + escapeAttr(key) + '">' +
+        SVG_EDIT + '<span>' + dict("edit", "Düzenle", "Edit") + '</span></button>' +
+      '<button type="button" class="fb-act fb-act--del" data-fb-del="' + escapeAttr(key) + '">' +
+        SVG_TRASH + '<span>' + dict("delete", "Sil", "Delete") + '</span></button>' +
+      '</div>'
     );
   }
 
   function renderCard(item) {
     var card = document.createElement("div");
-    card.className = "fb-card";
-    var stars = authorStarsHtml(item);
+    card.className = "fb-card" + (isOwn(item._key) ? " fb-card--own" : "");
+    var r = getDisplayRating(item);
     card.innerHTML =
       '<div class="fb-card__head">' +
-      '<span class="fb-card__head-main">' +
-      stars +
-      '<span class="fb-card__name">' +
-      escapeHtml(item.name || dict("anon", "Anonim", "Anonymous")) +
-      "</span></span>" +
-      '<time class="fb-card__time">' +
-      timeAgo(item.timestamp) +
-      "</time>" +
-      "</div>" +
-      '<p class="fb-card__msg">' +
-      escapeHtml(item.message) +
-      "</p>" +
-      voteRowHtml(item);
+        '<span class="fb-card__head-main">' +
+          readonlyStarsHtml(r) +
+          '<span class="fb-card__name">' + escapeHtml(item.name || dict("anon","Anonim","Anonymous")) + '</span>' +
+        '</span>' +
+        '<time class="fb-card__time">' + timeAgo(item.timestamp) + '</time>' +
+      '</div>' +
+      '<p class="fb-card__msg">' + escapeHtml(item.message) + '</p>' +
+      '<div class="fb-card__bottom">' + voteRowHtml(item) + ownerActionsHtml(item._key) + '</div>';
     return card;
   }
 
-  function setMoreVisible(show) {
-    if (!moreBtn) return;
-    moreBtn.classList.toggle("is-hidden", !show);
-  }
-
+  function setMoreVisible(show) { if (moreBtn) moreBtn.classList.toggle("is-hidden", !show); }
   function renderList() {
     listEl.innerHTML = "";
-    if (allItems.length === 0) {
-      if (emptyEl) emptyEl.hidden = false;
-      setMoreVisible(false);
-      visibleCount = PAGE_SIZE;
-      return;
-    }
+    if (!allItems.length) { if (emptyEl) emptyEl.hidden = false; setMoreVisible(false); visibleCount = PAGE_SIZE; return; }
     if (emptyEl) emptyEl.hidden = true;
     var end = Math.min(visibleCount, allItems.length);
-    for (var i = 0; i < end; i++) {
-      listEl.appendChild(renderCard(allItems[i]));
-    }
+    for (var i = 0; i < end; i++) listEl.appendChild(renderCard(allItems[i]));
     setMoreVisible(end < allItems.length);
   }
-
-  function setLoading(on) {
-    if (!loadingEl) return;
-    loadingEl.classList.toggle("is-busy", !!on);
-    loadingEl.setAttribute("aria-busy", on ? "true" : "false");
-  }
-
+  function setLoading(on) { if (!loadingEl) return; loadingEl.classList.toggle("is-busy", !!on); loadingEl.setAttribute("aria-busy", on ? "true" : "false"); }
   function showError(msg) {
-    if (errorEl) {
-      errorEl.textContent = msg;
-      errorEl.hidden = false;
-      setTimeout(function () {
-        errorEl.hidden = true;
-      }, 6000);
-    }
+    if (!errorEl) return;
+    errorEl.textContent = msg; errorEl.hidden = false;
+    setTimeout(function () { errorEl.hidden = true; }, 6000);
   }
-
-  function fetchWithTimeout(url, options) {
+  function fetchT(url, opts) {
     var ctrl = new AbortController();
-    var tid = setTimeout(function () {
-      ctrl.abort();
-    }, FETCH_TIMEOUT_MS);
-    var opts = options || {};
-    opts.signal = ctrl.signal;
-    return fetch(url, opts).finally(function () {
-      clearTimeout(tid);
-    });
+    var tid = setTimeout(function () { ctrl.abort(); }, FETCH_TIMEOUT_MS);
+    var o = opts || {}; o.signal = ctrl.signal;
+    return fetch(url, o).finally(function () { clearTimeout(tid); });
   }
 
   function loadFeedback() {
-    setLoading(true);
-    if (errorEl) errorEl.hidden = true;
-
-    fetchWithTimeout(FIREBASE_DB_URL + "/feedback.json")
-      .then(function (r) {
-        if (r.ok) return r.json();
-        return r.text().then(function (t) {
-          var err = new Error(String(r.status));
-          err.responseText = t;
-          throw err;
-        });
-      })
+    setLoading(true); if (errorEl) errorEl.hidden = true;
+    fetchT(FIREBASE_DB_URL + "/feedback.json")
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (data) {
         allItems = [];
-        if (data) {
-          Object.keys(data).forEach(function (key) {
-            var item = data[key];
-            if (item && item.message && item.hidden !== true) {
-              item._key = key;
-              allItems.push(item);
-            }
-          });
-        }
-        allItems.sort(function (a, b) {
-          return b.timestamp - a.timestamp;
+        if (data) Object.keys(data).forEach(function (k) {
+          var it = data[k]; if (it && it.message && it.hidden !== true) { it._key = k; allItems.push(it); }
         });
+        allItems.sort(function (a, b) { return b.timestamp - a.timestamp; });
         renderList();
       })
-      .catch(function (err) {
-        var fallback = dict(
-          "loadErr",
-          "Geri bildirimler yüklenemedi. Lütfen sayfayı yenileyin.",
-          "Could not load feedback. Please refresh."
-        );
-        var msg = fallback;
-        try {
-          if (err && err.responseText) {
-            var j = JSON.parse(err.responseText);
-            if (j && j.error) msg = String(j.error);
-          }
-        } catch (e1) {
-          if (err && err.responseText && err.responseText.length < 220) {
-            msg = err.responseText;
-          }
-        }
-        showError(msg);
-      })
-      .finally(function () {
-        setLoading(false);
-      });
+      .catch(function () { showError(dict("loadErr","Geri bildirimler yüklenemedi.","Could not load feedback.")); })
+      .finally(function () { setLoading(false); });
   }
 
-  function canSubmit() {
-    var last = parseInt(localStorage.getItem("ata-fb-last") || "0", 10);
-    return Date.now() - last >= RATE_LIMIT_MS;
-  }
-
+  function canSubmit() { return Date.now() - parseInt(localStorage.getItem("ata-fb-last") || "0", 10) >= RATE_LIMIT_MS; }
   function updateCharCount() {
     if (!charCount || !msgInput) return;
-    var remaining = MAX_MSG_LEN - msgInput.value.length;
-    charCount.textContent = remaining;
-    charCount.classList.toggle("is-warn", remaining < 50);
-    charCount.classList.toggle("is-over", remaining < 0);
+    var rem = MAX_MSG_LEN - msgInput.value.length;
+    charCount.textContent = rem;
+    charCount.classList.toggle("is-warn", rem < 50);
+    charCount.classList.toggle("is-over", rem < 0);
   }
-
-  if (msgInput) {
-    msgInput.addEventListener("input", updateCharCount);
-    updateCharCount();
-  }
+  if (msgInput) { msgInput.addEventListener("input", updateCharCount); updateCharCount(); }
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
-
     var name = (nameInput ? nameInput.value.trim() : "").substring(0, MAX_NAME_LEN);
     var message = (msgInput ? msgInput.value.trim() : "");
     var rating = clampRating(ratingHidden ? ratingHidden.value : "");
 
-    if (!validateFullName(name)) {
-      showError(
-        dict(
-          "errName",
-          "Geçerli bir ad soyad girin (en az iki kelime, yalnızca harf).",
-          "Enter a valid first and last name (at least two words, letters only)."
-        )
-      );
-      if (nameInput) nameInput.focus();
-      return;
-    }
-    if (rating == null) {
-      showError(dict("errRating", "Yıldız puanı seçin (0,5–5).", "Pick a star rating (0.5–5)."));
-      return;
-    }
-    if (!message) {
-      msgInput.focus();
-      return;
-    }
-    if (message.length < MIN_MSG_LEN) {
-      showError(dict("errMsgShort", "Mesaj en az 3 karakter olmalı.", "Message must be at least 3 characters."));
-      if (msgInput) msgInput.focus();
-      return;
-    }
-    if (message.length > MAX_MSG_LEN) {
-      showError(dict("msgTooLong", "Mesaj en fazla 500 karakter olabilir.", "Message cannot exceed 500 characters."));
-      return;
-    }
-    if (hasProfanity(message) || hasProfanity(name)) {
-      showError(dict("errProfanity", "Mesaj veya isim uygun değil.", "Message or name contains disallowed language."));
-      return;
-    }
-    if (!canSubmit()) {
-      showError(
-        dict(
-          "rateLimit",
-          "Lütfen biraz bekleyin, çok sık gönderim yapılamaz.",
-          "Please wait a moment before submitting again."
-        )
-      );
-      return;
-    }
+    if (!validateFullName(name)) { showError(dict("errName","Geçerli ad soyad girin.","Enter a valid name.")); if (nameInput) nameInput.focus(); return; }
+    if (rating == null) { showError(dict("errRating","Yıldız puanı seçin.","Pick a star rating.")); return; }
+    if (!message) { msgInput.focus(); return; }
+    if (message.length < MIN_MSG_LEN) { showError(dict("errMsgShort","Mesaj en az 3 karakter.","At least 3 chars.")); msgInput.focus(); return; }
+    if (message.length > MAX_MSG_LEN) { showError(dict("msgTooLong","Mesaj en fazla 500 karakter.","Max 500 chars.")); return; }
+    if (hasProfanity(message) || hasProfanity(name)) { showError(dict("errProfanity","Uygunsuz içerik.","Disallowed language.")); return; }
+    if (!canSubmit()) { showError(dict("rateLimit","Biraz bekleyin.","Please wait.")); return; }
 
     submitBtn.disabled = true;
     submitBtn.textContent = dict("sending", "Gönderiliyor…", "Sending…");
 
-    var payload = {
-      name: name,
-      message: message,
-      timestamp: Date.now(),
-      rating: Number(rating),
-      likes: 0,
-      dislikes: 0,
-    };
+    if (editingKey) {
+      fetchT(FIREBASE_DB_URL + "/feedback/" + encodeURIComponent(editingKey) + ".json", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: name, message: message, rating: Number(rating) }),
+      })
+        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .then(function () {
+          editingKey = null;
+          form.reset(); setRating(null); updateCharCount(); loadFeedback();
+          if (submitBtn) submitBtn.textContent = dict("send", "Gönder", "Send");
+        })
+        .catch(function () { showError(dict("sendErr","Düzenleme başarısız.","Edit failed.")); })
+        .finally(function () { submitBtn.disabled = false; submitBtn.textContent = dict("send", "Gönder", "Send"); });
+      return;
+    }
 
+    var payload = { name: name, message: message, timestamp: Date.now(), rating: Number(rating), likes: 0, dislikes: 0 };
     fetch(FIREBASE_DB_URL + "/feedback.json", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     })
-      .then(function (r) {
-        if (r.ok) return r.json();
-        return r.text().then(function (t) {
-          var err = new Error(String(r.status));
-          err.responseText = t;
-          throw err;
-        });
-      })
-      .then(function () {
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (res) {
+        if (res && res.name) saveOwnKey(res.name);
         localStorage.setItem("ata-fb-last", String(Date.now()));
-        if (msgInput) msgInput.value = "";
-        if (nameInput) nameInput.value = "";
-        setRatingInput(null);
-        updateCharCount();
-        loadFeedback();
+        form.reset(); setRating(null); updateCharCount(); loadFeedback();
       })
-      .catch(function (err) {
-        var fallback = dict(
-          "sendErr",
-          "Gönderilemedi. Kuralları veya alanları kontrol edin.",
-          "Could not send. Check fields or database rules."
-        );
-        var msg = fallback;
-        try {
-          if (err && err.responseText) {
-            var j = JSON.parse(err.responseText);
-            if (j && j.error) msg = String(j.error);
-          }
-        } catch (e1) {
-          if (err && err.responseText && err.responseText.length < 200) {
-            msg = err.responseText;
-          }
-        }
-        showError(msg);
-      })
-      .finally(function () {
-        submitBtn.disabled = false;
-        submitBtn.textContent = dict("send", "Gönder", "Send");
-      });
+      .catch(function () { showError(dict("sendErr","Gönderilemedi.","Could not send.")); })
+      .finally(function () { submitBtn.disabled = false; submitBtn.textContent = dict("send", "Gönder", "Send"); });
   });
 
-  if (moreBtn) {
-    moreBtn.addEventListener("click", function () {
-      visibleCount += PAGE_SIZE;
-      renderList();
-    });
-  }
+  if (moreBtn) moreBtn.addEventListener("click", function () { visibleCount += PAGE_SIZE; renderList(); });
 
-  function applyPublicVote(key, direction) {
-    var storageKey = VOTE_STORAGE_PREFIX + key;
-    var prev = localStorage.getItem(storageKey) || "";
-
-    if (direction === "up" && prev === "up") return Promise.resolve();
-    if (direction === "down" && prev === "down") return Promise.resolve();
-
+  function applyVote(key, dir) {
+    var sk = VOTE_KEY + key, prev = localStorage.getItem(sk) || "";
+    if (dir === prev) return Promise.resolve();
     var url = FIREBASE_DB_URL + "/feedback/" + encodeURIComponent(key) + ".json";
-
-    return fetchWithTimeout(url)
-      .then(function (r) {
-        if (!r.ok) throw new Error(String(r.status));
-        return r.json();
-      })
-      .then(function (data) {
-        if (!data || typeof data.message !== "string") throw new Error("missing");
-        var likes = Math.max(0, Math.floor(Number(data.likes) || 0));
-        var dislikes = Math.max(0, Math.floor(Number(data.dislikes) || 0));
-        var next = prev;
-        if (direction === "up") {
-          if (prev === "down") {
-            likes++;
-            dislikes = Math.max(0, dislikes - 1);
-          } else {
-            likes++;
-          }
-          next = "up";
-        } else {
-          if (prev === "up") {
-            likes = Math.max(0, likes - 1);
-            dislikes++;
-          } else {
-            dislikes++;
-          }
-          next = "down";
-        }
-        return fetchWithTimeout(url, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ likes: likes, dislikes: dislikes }),
-        }).then(function (patchR) {
-          if (!patchR.ok) throw new Error(String(patchR.status));
-          localStorage.setItem(storageKey, next);
-        });
+    return fetchT(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (d) {
+        if (!d) throw new Error("x");
+        var l = Math.max(0, Math.floor(Number(d.likes)||0)), dl = Math.max(0, Math.floor(Number(d.dislikes)||0));
+        if (dir === "up") { if (prev === "down") dl = Math.max(0, dl - 1); l++; }
+        else { if (prev === "up") l = Math.max(0, l - 1); dl++; }
+        return fetchT(url, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ likes: l, dislikes: dl }) })
+          .then(function (r2) { if (!r2.ok) throw new Error(r2.status); localStorage.setItem(sk, dir); });
       });
   }
 
   listEl.addEventListener("click", function (e) {
-    var btn = e.target && e.target.closest ? e.target.closest("[data-fb-vote]") : null;
-    if (!btn || btn.disabled) return;
-    var key = btn.getAttribute("data-fb-key");
-    var direction = btn.getAttribute("data-fb-vote");
-    if (!key || (direction !== "up" && direction !== "down")) return;
+    var voteBtn = e.target.closest ? e.target.closest("[data-fb-vote]") : null;
+    if (voteBtn && !voteBtn.disabled) {
+      var key = voteBtn.getAttribute("data-fb-key"), dir = voteBtn.getAttribute("data-fb-vote");
+      if (!key || (dir !== "up" && dir !== "down")) return;
+      voteBtn.disabled = true;
+      applyVote(key, dir).then(loadFeedback)
+        .catch(function () { showError(dict("voteErr","Oy kaydedilemedi.","Vote failed.")); })
+        .finally(function () { voteBtn.disabled = false; });
+      return;
+    }
 
-    btn.disabled = true;
-    var row = btn.closest(".fb-card__votes");
-    if (row) row.classList.add("is-busy");
+    var delBtn = e.target.closest ? e.target.closest("[data-fb-del]") : null;
+    if (delBtn) {
+      var dk = delBtn.getAttribute("data-fb-del");
+      if (!dk || !isOwn(dk)) return;
+      if (!confirm(dict("confirmDel","Yorumu silmek istediğinize emin misiniz?","Delete this comment?"))) return;
+      fetchT(FIREBASE_DB_URL + "/feedback/" + encodeURIComponent(dk) + ".json", { method: "DELETE" })
+        .then(function (r) { if (!r.ok) throw new Error(r.status); removeOwnKey(dk); loadFeedback(); })
+        .catch(function () { showError(dict("delErr","Silinemedi.","Could not delete.")); });
+      return;
+    }
 
-    applyPublicVote(key, direction)
-      .then(function () {
-        loadFeedback();
-      })
-      .catch(function () {
-        showError(dict("voteErr", "Oy kaydedilemedi. Bağlantıyı deneyin.", "Could not save your vote. Try again."));
-      })
-      .finally(function () {
-        btn.disabled = false;
-        if (row) row.classList.remove("is-busy");
-      });
+    var editBtn = e.target.closest ? e.target.closest("[data-fb-edit]") : null;
+    if (editBtn) {
+      var ek = editBtn.getAttribute("data-fb-edit");
+      if (!ek || !isOwn(ek)) return;
+      var item = allItems.filter(function (it) { return it._key === ek; })[0];
+      if (!item) return;
+      editingKey = ek;
+      if (nameInput) nameInput.value = item.name || "";
+      if (msgInput) msgInput.value = item.message || "";
+      setRating(getDisplayRating(item));
+      updateCharCount();
+      submitBtn.textContent = dict("save","Kaydet","Save");
+      form.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
   });
 
   window.addEventListener("ata-ready", function () {
-    if (submitBtn) submitBtn.textContent = dict("send", "Gönder", "Send");
-    if (nameInput) nameInput.placeholder = dict("phName", "Örn. Ayşe Yılmaz", "e.g. Jane Doe");
-    if (msgInput) msgInput.placeholder = dict("phMsg", "Geri bildiriminizi yazın…", "Write your feedback…");
-    if (starsInputRoot) {
-      starsInputRoot.setAttribute(
-        "aria-label",
-        dict("ratingAria", "Mesaja puan (0,5–5 yıldız)", "Rating for your message (half stars)")
-      );
-    }
+    if (submitBtn) submitBtn.textContent = dict("send","Gönder","Send");
+    if (nameInput) nameInput.placeholder = dict("phName","Örn. Ayşe Yılmaz","e.g. Jane Doe");
+    if (msgInput) msgInput.placeholder = dict("phMsg","Geri bildiriminizi yazın…","Write your feedback…");
     renderList();
   });
 

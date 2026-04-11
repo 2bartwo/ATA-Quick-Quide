@@ -98,14 +98,19 @@
     "more": "Daha fazla göster",
     "fullName": "Ad Soyad",
     "messageLabel": "Mesajınız",
-    "ratingAria": "Mesajınıza 0,5 ile 5 arası yıldız puanı",
-    "errName": "Geçerli bir ad soyad girin: en az iki kelime, yalnızca harf ve kısa tire; sahte veya anlamsız isimler kabul edilmez.",
-    "errRating": "Yıldız puanı seçin (0,5–5, yarım yıldız seçilebilir).",
-    "errMsgShort": "Mesaj en az 3 karakter olmalı (Firebase kuralı).",
+    "ratingAria": "Mesajınıza puan verin (10 yıldız = 5 puan)",
+    "errName": "Geçerli bir ad soyad girin.",
+    "errRating": "Yıldız puanı seçin.",
+    "errMsgShort": "Mesaj en az 3 karakter olmalı.",
     "errProfanity": "Mesaj veya isim uygunsuz kelimeler içeriyor.",
     "voteUpAria": "Bu yorumu beğen",
     "voteDownAria": "Bu yorumu beğenme",
-    "voteErr": "Oy kaydedilemedi. Bağlantıyı deneyin."
+    "voteErr": "Oy kaydedilemedi.",
+    "edit": "Düzenle",
+    "delete": "Sil",
+    "save": "Kaydet",
+    "confirmDel": "Yorumu silmek istediğinize emin misiniz?",
+    "delErr": "Silinemedi."
   },
   "footer": {
     "html": "© __YEAR__ ATA Quick Guide · <a href=\"../nasil-yuklenir.html\">Kurulum</a> · <a href=\"../indir.html\">Sürümler</a> · <a href=\"#credits\">Ekip</a>"

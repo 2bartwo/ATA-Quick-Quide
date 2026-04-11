@@ -98,14 +98,19 @@
     "more": "Show more",
     "fullName": "Full name",
     "messageLabel": "Your message",
-    "ratingAria": "Half-star rating from 0.5 to 5 for your message",
-    "errName": "Enter a valid first and last name: at least two words, letters only; nonsense or placeholder names are not accepted.",
-    "errRating": "Pick a star rating (0.5–5, half stars allowed).",
-    "errMsgShort": "Message must be at least 3 characters (database rule).",
+    "ratingAria": "Rate your message (10 stars = 5 points)",
+    "errName": "Enter a valid full name.",
+    "errRating": "Pick a star rating.",
+    "errMsgShort": "Message must be at least 3 characters.",
     "errProfanity": "Your message or name contains disallowed language.",
     "voteUpAria": "Like this comment",
     "voteDownAria": "Dislike this comment",
-    "voteErr": "Could not save your vote. Try again."
+    "voteErr": "Could not save your vote.",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "confirmDel": "Delete this comment?",
+    "delErr": "Could not delete."
   },
   "footer": {
     "html": "© __YEAR__ ATA Quick Guide · <a href=\"../nasil-yuklenir.html\">Install</a> · <a href=\"../indir.html\">Releases</a> · <a href=\"#credits\">Team</a>"
