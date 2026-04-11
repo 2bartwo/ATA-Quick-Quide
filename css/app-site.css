@@ -2035,16 +2035,22 @@ button.fb-star:hover {
 }
 
 .fb-card {
+  position: relative;
   padding: 0.85rem 1rem;
   background: var(--bg-card);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(59, 130, 246, 0.15);
   border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-soft);
-  transition: border-color 0.2s ease;
+  box-shadow:
+    0 0 8px rgba(59, 130, 246, 0.08),
+    0 0 20px rgba(59, 130, 246, 0.05);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .fb-card:hover {
-  border-color: var(--border-strong);
+  border-color: rgba(59, 130, 246, 0.35);
+  box-shadow:
+    0 0 10px rgba(59, 130, 246, 0.15),
+    0 0 30px rgba(59, 130, 246, 0.08);
 }
 
 .fb-card__head {
@@ -2087,11 +2093,19 @@ button.fb-star:hover {
 
 [data-theme="dark"] .fb-card {
   background: var(--bg-elevated);
-  border-color: rgba(255, 255, 255, 0.06);
+  border-color: rgba(96, 165, 250, 0.18);
+  box-shadow:
+    0 0 10px rgba(96, 165, 250, 0.1),
+    0 0 25px rgba(96, 165, 250, 0.06),
+    inset 0 0 12px rgba(96, 165, 250, 0.03);
 }
 
 [data-theme="dark"] .fb-card:hover {
-  border-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(96, 165, 250, 0.4);
+  box-shadow:
+    0 0 12px rgba(96, 165, 250, 0.2),
+    0 0 35px rgba(96, 165, 250, 0.1),
+    inset 0 0 15px rgba(96, 165, 250, 0.05);
 }
 
 .fb-more {
