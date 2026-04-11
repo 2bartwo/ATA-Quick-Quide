@@ -13,7 +13,7 @@ window.__FIREBASE_CONFIG__ = {
   measurementId: "G-RR5BTB4FQ9",
 };
 
-window.__ATA_FB_OWNER_UID = "";
+window.__ATA_FB_OWNER_UID = "Utzc1cGvuPhzSBismyiTQ28pvYf2";
 
 (function () {
   if (typeof firebase === "undefined") return;
