@@ -425,8 +425,12 @@
 
     fetchWithTimeout(FIREBASE_DB_URL + "/feedback.json")
       .then(function (r) {
-        if (!r.ok) throw new Error(r.status);
-        return r.json();
+        if (r.ok) return r.json();
+        return r.text().then(function (t) {
+          var err = new Error(String(r.status));
+          err.responseText = t;
+          throw err;
+        });
       })
       .then(function (data) {
         allItems = [];
@@ -444,14 +448,24 @@
         });
         renderList();
       })
-      .catch(function () {
-        showError(
-          dict(
-            "loadErr",
-            "Geri bildirimler yüklenemedi. Lütfen sayfayı yenileyin.",
-            "Could not load feedback. Please refresh."
-          )
+      .catch(function (err) {
+        var fallback = dict(
+          "loadErr",
+          "Geri bildirimler yüklenemedi. Lütfen sayfayı yenileyin.",
+          "Could not load feedback. Please refresh."
         );
+        var msg = fallback;
+        try {
+          if (err && err.responseText) {
+            var j = JSON.parse(err.responseText);
+            if (j && j.error) msg = String(j.error);
+          }
+        } catch (e1) {
+          if (err && err.responseText && err.responseText.length < 220) {
+            msg = err.responseText;
+          }
+        }
+        showError(msg);
       })
       .finally(function () {
         setLoading(false);
