@@ -274,7 +274,7 @@
   function notifyTelegram(name, rating, message) {
     var stars = "";
     for (var i = 0; i < rating; i++) stars += "⭐";
-    var text = "📩 *Yeni Geri Bildirim*\n\n" +
+    var text = "📩 *Ata Chapters — Yeni geri bildirim*\n\n" +
       "👤 *İsim:* " + name + "\n" +
       stars + " (" + rating + "/5)\n\n" +
       "💬 " + message;
