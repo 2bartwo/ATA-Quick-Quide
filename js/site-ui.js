@@ -218,6 +218,11 @@
       const v = resolveKey(dict, key);
       if (v != null) el.setAttribute("src", String(v));
     });
+    document.querySelectorAll("[data-i18n-aria-label]").forEach((el) => {
+      const key = el.getAttribute("data-i18n-aria-label");
+      const v = resolveKey(dict, key);
+      if (v != null) el.setAttribute("aria-label", String(v));
+    });
     const p = document.body.getAttribute("data-page");
     if (p === "index" && dict.meta) {
       if (dict.meta.title) document.title = dict.meta.title;

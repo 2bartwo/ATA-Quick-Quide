@@ -16,6 +16,11 @@
   "beta": {
     "pill": "Early access"
   },
+  "home": {
+    "releaseTipLabel": "New version",
+    "releaseTipBody": "<strong>New version soon</strong> — targeting this weekend (UI improvements and fixes). Details are at the top of the <a href=\"../indir.html\">Download &amp; releases</a> page.",
+    "releaseTipClose": "Dismiss (don’t show again)"
+  },
   "hero": {
     "headline": "ATA Chapters In Your Pocket",
     "title": "ATA Chapters In Your Pocket",
@@ -109,6 +114,8 @@
     "footerInstall": "© __YEAR__ ATA Quick Guide · <a href=\"indir.html\">Download</a> · <a href=\"anasayfa/#credits\">Team</a>"
   },
   "releases": {
+    "upcomingTipLabel": "Release note",
+    "upcomingBanner": "<strong>New version coming soon.</strong> We're aiming for this weekend: UI pass, bug fixes, and a smoother experience. When it's live, the latest release card and APK download link above will update.",
     "badgeLatest": "Latest release",
     "versionWord": "Version",
     "downloadApk": "Download APK",

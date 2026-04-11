@@ -24,42 +24,46 @@
 
   const io = new IntersectionObserver(
     (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
+      for (let i = 0; i < entries.length; i++) {
+        const entry = entries[i];
+        if (!entry.isIntersecting) continue;
         entry.target.classList.add("is-inview");
         io.unobserve(entry.target);
-      });
+      }
     },
     {
       root: null,
-      rootMargin: "0px 0px 12% 0px",
-      threshold: [0, 0.02, 0.06],
+      rootMargin: "0px 0px 8% 0px",
+      threshold: 0.06,
     }
   );
 
   reveals.forEach((el) => io.observe(el));
 
-  /* Geniş ekranda IO bazen geç tetiklenir; içerik görünmez kalmasın */
-  window.setTimeout(() => {
-    reveals.forEach((el) => {
-      if (!el.classList.contains("is-inview")) {
+  /* IO gecikirse (bayraklı tarayıcılar) tek raf ile yedek */
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      reveals.forEach((el) => {
+        if (el.classList.contains("is-inview")) return;
         const r = el.getBoundingClientRect();
-        if (r.top < window.innerHeight + 120 && r.bottom > -120) {
+        if (r.top < window.innerHeight + 100 && r.bottom > -80) {
           el.classList.add("is-inview");
-          io.unobserve(el);
+          try {
+            io.unobserve(el);
+          } catch (e) {}
         }
-      }
+      });
     });
-  }, 100);
+  });
 
+  /* Çok geç kalırsa erişilebilirlik için kısa sürede göster (3.2s yerine) */
   window.setTimeout(() => {
     reveals.forEach((el) => {
-      if (!el.classList.contains("is-inview")) {
-        el.classList.add("is-inview");
-        try {
-          io.unobserve(el);
-        } catch (e) {}
-      }
+      if (el.classList.contains("is-inview")) return;
+      el.classList.add("is-inview");
+      try {
+        io.unobserve(el);
+      } catch (e) {}
     });
-  }, 3200);
+  }, 900);
 })();

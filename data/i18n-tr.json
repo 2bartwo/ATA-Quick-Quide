@@ -16,6 +16,11 @@
   "beta": {
     "pill": "Erken erişim"
   },
+  "home": {
+    "releaseTipLabel": "Yeni sürüm duyurusu",
+    "releaseTipBody": "<strong>Yeni sürüm yakında</strong> — bu hafta sonu hedefliyoruz (arayüz iyileştirmeleri ve düzeltmeler). Ayrıntınlar <a href=\"../indir.html\">İndir &amp; sürümler</a> sayfasının üstünde.",
+    "releaseTipClose": "Bildirimi kapat (bir daha gösterme)"
+  },
   "hero": {
     "headline": "ATA Chapters Artık Cebinizde",
     "title": "ATA chapter referansı, cepte",
@@ -109,6 +114,8 @@
     "footerInstall": "© __YEAR__ ATA Quick Guide · <a href=\"indir.html\">İndir</a> · <a href=\"anasayfa/#credits\">Ekip</a>"
   },
   "releases": {
+    "upcomingTipLabel": "Yeni sürüm notu",
+    "upcomingBanner": "<strong>Yeni sürüm yakında.</strong> Bu hafta sonu çıkarmayı hedefliyoruz: arayüz baştan sona elden geçecek, hatalar giderilecek ve kullanım daha akıcı hale getirilecek. Yayınlandığında yukarıdaki güncel sürüm kartı ve APK indir bağlantısı güncellenecek.",
     "badgeLatest": "Güncel sürüm",
     "versionWord": "Sürüm",
     "downloadApk": "APK indir",
