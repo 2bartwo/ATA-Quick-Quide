@@ -11,7 +11,9 @@
     "how": "Kurulum",
     "team": "Ekip",
     "feedback": "Geri bildirim",
-    "home": "Ana sayfa"
+    "home": "Ana sayfa",
+    "menuOpen": "Menüyü aç",
+    "menuClose": "Menüyü kapat"
   },
   "beta": {
     "pill": "Erken erişim"

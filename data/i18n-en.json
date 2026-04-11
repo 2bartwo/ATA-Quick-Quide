@@ -11,7 +11,9 @@
     "how": "Install",
     "team": "Team",
     "feedback": "Feedback",
-    "home": "Home"
+    "home": "Home",
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu"
   },
   "beta": {
     "pill": "Early access"

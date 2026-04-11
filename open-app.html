@@ -30,7 +30,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/app-site.css?v=97">
+  <link rel="stylesheet" href="css/app-site.css?v=114">
   <style>
     .sync-page { max-width: 32rem; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
     .sync-page h1 { font-size: 1.35rem; margin: 0 0 0.75rem; }
@@ -47,24 +47,32 @@
           <span class="app-brand__mark"><img src="images/app-icon.png" width="32" height="32" alt=""></span>
           Ata Chapters
         </a>
-        <nav class="app-menu" aria-label="Site">
-          <a href="anasayfa/" data-i18n="nav.home">Ana sayfa</a>
-        </nav>
-        <div class="app-controls" role="toolbar" aria-label="Dil ve tema">
-          <div class="lang-seg" role="group" aria-label="Dil">
-            <button type="button" data-lang-btn="tr" aria-pressed="false">TR</button>
-            <button type="button" data-lang-btn="en" aria-pressed="true">EN</button>
-          </div>
-          <button type="button" class="theme-toggle" data-theme-toggle aria-label="Tema">
-            <span class="theme-toggle__moon" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-            </span>
-            <span class="theme-toggle__sun" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-            </span>
+        <div class="app-nav-panel">
+          <nav id="site-primary-nav" class="app-menu" aria-label="Site">
+            <a href="anasayfa/" data-i18n="nav.home">Ana sayfa</a>
+          </nav>
+        </div>
+        <div class="app-top__end">
+          <button type="button" class="app-nav-toggle" aria-expanded="false" aria-controls="site-primary-nav" data-i18n-aria-label="nav.menuOpen">
+            <span class="app-nav-toggle__bars" aria-hidden="true"></span>
           </button>
+          <div class="app-controls" role="toolbar" aria-label="Dil ve tema">
+            <div class="lang-seg" role="group" aria-label="Dil">
+              <button type="button" data-lang-btn="tr" aria-pressed="false">TR</button>
+              <button type="button" data-lang-btn="en" aria-pressed="true">EN</button>
+            </div>
+            <button type="button" class="theme-toggle" data-theme-toggle aria-label="Tema">
+              <span class="theme-toggle__moon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+              </span>
+              <span class="theme-toggle__sun" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+              </span>
+            </button>
+          </div>
         </div>
       </div>
+      <div class="app-nav-backdrop" data-app-nav-backdrop hidden aria-hidden="true"></div>
     </header>
     <main class="app-content container sync-page">
       <h1 data-i18n="appsync.h">Uygulama ile senkron</h1>
@@ -86,7 +94,7 @@
       </div>
     </footer>
   </div>
-  <script src="js/site-ui.js?v=35" defer></script>
+  <script src="js/site-ui.js?v=36" defer></script>
   <script src="js/app-sync-page.js" defer></script>
 </body>
 </html>

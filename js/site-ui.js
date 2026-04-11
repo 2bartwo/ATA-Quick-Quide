@@ -228,6 +228,61 @@
     }
   }
 
+  function dictLookup(dict, key) {
+    if (!dict || !key) return null;
+    return key.split(".").reduce((o, k) => (o && o[k] !== undefined ? o[k] : null), dict);
+  }
+
+  function syncNavToggleAria(btn, isOpen) {
+    const d = window.__ATA_I18N_DICT__;
+    const key = isOpen ? "nav.menuClose" : "nav.menuOpen";
+    const v = dictLookup(d, key);
+    if (v != null) btn.setAttribute("aria-label", String(v));
+  }
+
+  function setAppNavOpen(top, open) {
+    if (!top) return;
+    top.classList.toggle("is-nav-open", !!open);
+    document.body.classList.toggle("is-app-nav-open", !!open);
+    const btn = top.querySelector(".app-nav-toggle");
+    const bd = top.querySelector("[data-app-nav-backdrop]");
+    if (btn) {
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      syncNavToggleAria(btn, !!open);
+    }
+    if (bd) {
+      bd.hidden = !open;
+      bd.setAttribute("aria-hidden", open ? "false" : "true");
+    }
+  }
+
+  function closeAllAppNavs() {
+    document.querySelectorAll(".app-top.is-nav-open").forEach((top) => setAppNavOpen(top, false));
+  }
+
+  function initMobileNav() {
+    document.querySelectorAll(".app-top").forEach((top) => {
+      const btn = top.querySelector(".app-nav-toggle");
+      const menu = top.querySelector("#site-primary-nav");
+      const bd = top.querySelector("[data-app-nav-backdrop]");
+      if (!btn || !menu) return;
+
+      btn.addEventListener("click", () => setAppNavOpen(top, !top.classList.contains("is-nav-open")));
+      if (bd) bd.addEventListener("click", () => setAppNavOpen(top, false));
+      menu.querySelectorAll("a").forEach((a) => {
+        a.addEventListener("click", () => setAppNavOpen(top, false));
+      });
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeAllAppNavs();
+    });
+
+    window.addEventListener("resize", () => {
+      if (window.matchMedia("(min-width: 901px)").matches) closeAllAppNavs();
+    });
+  }
+
   function langSwapTargets() {
     const shell = document.querySelector(".app-shell");
     if (!shell) {
@@ -258,6 +313,8 @@
   async function applyLangWithTransition(lang) {
     const cur = document.documentElement.getAttribute("data-lang");
     if (cur === lang) return;
+
+    closeAllAppNavs();
 
     const els = langSwapTargets();
     if (!els.length || prefersReducedMotion()) {
@@ -332,5 +389,6 @@
       });
     });
 
+    initMobileNav();
   });
 })();
