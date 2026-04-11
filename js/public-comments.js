@@ -15,7 +15,8 @@
   }
 
   function lang() {
-    return document.documentElement.getAttribute("data-lang") === "en" ? "en" : "tr";
+    const a = document.documentElement.getAttribute("data-lang");
+    return a === "en" || a === "tr" ? a : "en";
   }
 
   function formatTs(ms) {

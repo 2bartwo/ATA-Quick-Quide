@@ -5,12 +5,13 @@
   function getStoredTheme() {
     const s = localStorage.getItem(THEME_KEY);
     if (s === "light" || s === "dark") return s;
-    return "light";
+    return "dark";
   }
 
   function getStoredLang() {
     const s = localStorage.getItem(LANG_KEY);
-    return s === "en" ? "en" : "tr";
+    if (s === "en" || s === "tr") return s;
+    return "en";
   }
 
   const COOKIE_MAX_AGE = 31536000;
@@ -121,7 +122,7 @@
     if (meta) {
       meta.setAttribute("content", theme === "dark" ? "#0a0a0a" : "#e4eef8");
     }
-    const lang = document.documentElement.getAttribute("data-lang") || "tr";
+    const lang = document.documentElement.getAttribute("data-lang") || "en";
     const tgl = document.querySelector("[data-theme-toggle]");
     if (tgl) {
       tgl.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");

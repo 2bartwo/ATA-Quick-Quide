@@ -12,7 +12,7 @@
   }
 
   function lang() {
-    return document.documentElement.getAttribute("data-lang") || "tr";
+    return document.documentElement.getAttribute("data-lang") || "en";
   }
 
   function t(k, fallback) {

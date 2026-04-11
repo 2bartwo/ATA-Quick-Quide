@@ -68,7 +68,7 @@
   var hoverStar = null;
   var editingKey = null;
 
-  function getLang() { return document.documentElement.getAttribute("data-lang") || "tr"; }
+  function getLang() { return document.documentElement.getAttribute("data-lang") || "en"; }
   function dict(k, tr, en) {
     var d = window.__ATA_I18N_DICT__;
     if (d && d.feedback && d.feedback[k] != null) return d.feedback[k];

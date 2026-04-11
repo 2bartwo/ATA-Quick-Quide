@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,16 +13,17 @@
         var th = q.get("theme");
         if (lq === "en" || lq === "tr") localStorage.setItem("ata-lang", lq);
         if (th === "light" || th === "dark") localStorage.setItem("ata-theme", th);
-        var t = localStorage.getItem("ata-theme");
-        document.documentElement.setAttribute("data-theme", t === "dark" ? "dark" : "light");
-        var l = localStorage.getItem("ata-lang");
-        var en = l === "en";
-        document.documentElement.setAttribute("data-lang", en ? "en" : "tr");
-        document.documentElement.setAttribute("lang", en ? "en" : "tr");
+        var tRaw = localStorage.getItem("ata-theme");
+        var t = tRaw === "light" || tRaw === "dark" ? tRaw : "dark";
+        document.documentElement.setAttribute("data-theme", t);
+        var lRaw = localStorage.getItem("ata-lang");
+        var lang = lRaw === "en" || lRaw === "tr" ? lRaw : "en";
+        document.documentElement.setAttribute("data-lang", lang);
+        document.documentElement.setAttribute("lang", lang === "en" ? "en" : "tr");
       } catch (e) {
-        document.documentElement.setAttribute("data-theme", "light");
-        document.documentElement.setAttribute("data-lang", "tr");
-        document.documentElement.setAttribute("lang", "tr");
+        document.documentElement.setAttribute("data-theme", "dark");
+        document.documentElement.setAttribute("data-lang", "en");
+        document.documentElement.setAttribute("lang", "en");
       }
     })();
   </script>
@@ -51,8 +52,8 @@
         </nav>
         <div class="app-controls" role="toolbar" aria-label="Dil ve tema">
           <div class="lang-seg" role="group" aria-label="Dil">
-            <button type="button" data-lang-btn="tr" aria-pressed="true">TR</button>
-            <button type="button" data-lang-btn="en" aria-pressed="false">EN</button>
+            <button type="button" data-lang-btn="tr" aria-pressed="false">TR</button>
+            <button type="button" data-lang-btn="en" aria-pressed="true">EN</button>
           </div>
           <button type="button" class="theme-toggle" data-theme-toggle aria-label="Tema">
             <span class="theme-toggle__moon" aria-hidden="true">
@@ -85,7 +86,7 @@
       </div>
     </footer>
   </div>
-  <script src="js/site-ui.js?v=34" defer></script>
+  <script src="js/site-ui.js?v=35" defer></script>
   <script src="js/app-sync-page.js" defer></script>
 </body>
 </html>

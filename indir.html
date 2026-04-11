@@ -1,24 +1,27 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Ata Chapters — APK indir, sürümler ve yama notları">
-  <meta name="theme-color" content="#e4eef8">
+  <meta name="theme-color" content="#0a0a0a">
   <title>İndir — Ata Chapters</title>
   <script>
     (function () {
       try {
-        var t = localStorage.getItem("ata-theme");
-        document.documentElement.setAttribute("data-theme", t === "dark" ? "dark" : "light");
-        var l = localStorage.getItem("ata-lang");
-        var en = l === "en";
-        document.documentElement.setAttribute("data-lang", en ? "en" : "tr");
-        document.documentElement.setAttribute("lang", en ? "en" : "tr");
+        var tRaw = localStorage.getItem("ata-theme");
+        var t = tRaw === "light" || tRaw === "dark" ? tRaw : "dark";
+        document.documentElement.setAttribute("data-theme", t);
+        var lRaw = localStorage.getItem("ata-lang");
+        var lang = lRaw === "en" || lRaw === "tr" ? lRaw : "en";
+        document.documentElement.setAttribute("data-lang", lang);
+        document.documentElement.setAttribute("lang", lang === "en" ? "en" : "tr");
+        var metaTc = document.querySelector('meta[name="theme-color"]');
+        if (metaTc) metaTc.setAttribute("content", t === "dark" ? "#0a0a0a" : "#e4eef8");
       } catch (e) {
-        document.documentElement.setAttribute("data-theme", "light");
-        document.documentElement.setAttribute("data-lang", "tr");
-        document.documentElement.setAttribute("lang", "tr");
+        document.documentElement.setAttribute("data-theme", "dark");
+        document.documentElement.setAttribute("data-lang", "en");
+        document.documentElement.setAttribute("lang", "en");
       }
     })();
   </script>
@@ -47,8 +50,8 @@
         </nav>
         <div class="app-controls" role="toolbar" aria-label="Dil ve tema">
           <div class="lang-seg" role="group" aria-label="Dil">
-            <button type="button" data-lang-btn="tr" aria-pressed="true">TR</button>
-            <button type="button" data-lang-btn="en" aria-pressed="false">EN</button>
+            <button type="button" data-lang-btn="tr" aria-pressed="false">TR</button>
+            <button type="button" data-lang-btn="en" aria-pressed="true">EN</button>
           </div>
           <button type="button" class="theme-toggle" data-theme-toggle aria-label="Tema">
             <span class="theme-toggle__moon" aria-hidden="true">
@@ -102,7 +105,7 @@
     </footer>
   </div>
 
-  <script src="js/site-ui.js?v=34" defer></script>
+  <script src="js/site-ui.js?v=35" defer></script>
   <script src="js/app-motion.js?v=26" defer></script>
   <script src="js/releases-page.js" defer></script>
 </body>

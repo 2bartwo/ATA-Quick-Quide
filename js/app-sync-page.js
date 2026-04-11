@@ -1,7 +1,7 @@
 (function () {
   function prefs() {
-    const lang = document.documentElement.getAttribute("data-lang") || localStorage.getItem("ata-lang") || "tr";
-    const theme = document.documentElement.getAttribute("data-theme") || localStorage.getItem("ata-theme") || "light";
+    const lang = document.documentElement.getAttribute("data-lang") || localStorage.getItem("ata-lang") || "en";
+    const theme = document.documentElement.getAttribute("data-theme") || localStorage.getItem("ata-theme") || "dark";
     return { lang, theme };
   }
 
