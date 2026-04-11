@@ -131,7 +131,7 @@
     "adminDelErr": "Could not delete. Check sign-in and database rules.",
     "adminSignInErr": "Sign-in failed.",
     "teamProfileTitle": "Your display name and rank",
-    "teamProfileHint": "When signed in, feedback you send shows this name and a neon rank badge. Save first, then post.",
+    "teamProfileHint": "The name and rank you save are copied into each site reply when you publish it and stay there permanently (even after sign-out). Save your profile first.",
     "teamBadgeName": "Display name (full name)",
     "teamRankLabel": "Rank",
     "teamProfileSave": "Save profile",

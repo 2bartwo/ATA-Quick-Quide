@@ -2490,13 +2490,40 @@ button.fb-star:hover {
   background: linear-gradient(135deg, rgba(59, 130, 246, 0.06) 0%, transparent 100%);
 }
 
+.fb-reply__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.65rem;
+  margin-bottom: 0.35rem;
+}
+
+.fb-reply__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.55rem;
+}
+
+.fb-reply__by {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+  max-width: 100%;
+}
+
+.fb-team-badge--reply {
+  font-size: 0.58rem;
+  padding: 0.14rem 0.48rem 0.18rem;
+}
+
 .fb-reply__badge {
   font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: #3b82f6;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0;
 }
 
 [data-theme="dark"] .fb-reply__badge {

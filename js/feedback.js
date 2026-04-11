@@ -411,6 +411,30 @@
     return '<span class="fb-stars-ro">' + buildStarRow(5, { value: rating, interactive: false }) + '</span>';
   }
 
+  function replyRankRowHtml(rp) {
+    if (!rp) return "";
+    var rk = rp.rank ? String(rp.rank) : "";
+    var m = rk ? getRankMeta(rk) : null;
+    var badge = "";
+    if (m) {
+      var label = getLang() === "en" ? m.labelEn : m.labelTr;
+      badge =
+        '<span class="fb-team-badge fb-team-badge--reply" style="--fb-rank-color:' +
+        escapeAttr(m.color) +
+        ";--fb-rank-glow:" +
+        escapeAttr(m.glow) +
+        '">' +
+        escapeHtml(label) +
+        "</span>";
+    }
+    var bn = rp.badgeName && String(rp.badgeName).trim() ? String(rp.badgeName).trim() : "";
+    var nameEl = bn
+      ? '<span class="fb-reply__by">' + escapeHtml(bn.substring(0, 42)) + "</span>"
+      : "";
+    if (!badge && !nameEl) return "";
+    return '<div class="fb-reply__meta">' + nameEl + badge + "</div>";
+  }
+
   function replyBlockHtml(item) {
     var rp = item.reply;
     if (!rp || typeof rp.text !== "string" || !String(rp.text).trim()) return "";
@@ -418,8 +442,10 @@
     return (
       '<aside class="fb-reply" aria-label="' +
       escapeAttr(dict("replyLabel", "Yanıt (site)", "Site reply")) +
-      '"><div class="fb-reply__badge">' +
+      '"><div class="fb-reply__head"><div class="fb-reply__badge">' +
       escapeHtml(dict("replyLabel", "Yanıt (site)", "Site reply")) +
+      "</div>" +
+      replyRankRowHtml(rp) +
       '</div><p class="fb-reply__text">' +
       escapeHtml(rp.text) +
       "</p>" +
@@ -494,30 +520,6 @@
     );
   }
 
-  function displayNameForCard(item) {
-    var uid = item.authorUid;
-    if (uid && teamProfiles[uid] && teamProfiles[uid].badgeName) return teamProfiles[uid].badgeName;
-    return item.name || dict("anon", "Anonim", "Anonymous");
-  }
-
-  function rankBadgeForCard(item) {
-    var uid = item.authorUid;
-    if (!uid) return "";
-    var rk = (teamProfiles[uid] && teamProfiles[uid].rank) || getDefaultRankForUid(uid);
-    var m = getRankMeta(rk);
-    if (!m) return "";
-    var label = getLang() === "en" ? m.labelEn : m.labelTr;
-    return (
-      '<span class="fb-team-badge" style="--fb-rank-color:' +
-      escapeAttr(m.color) +
-      ";--fb-rank-glow:" +
-      escapeAttr(m.glow) +
-      '">' +
-      escapeHtml(label) +
-      "</span>"
-    );
-  }
-
   function renderCard(item) {
     var card = document.createElement("div");
     card.className = "fb-card" + (isOwn(item._key) ? " fb-card--own" : "");
@@ -526,9 +528,8 @@
       '<div class="fb-card__head">' +
         '<span class="fb-card__head-main">' +
           readonlyStarsHtml(r) +
-          '<span class="fb-card__name-wrap">' +
-          '<span class="fb-card__name">' + escapeHtml(displayNameForCard(item)) + "</span>" +
-          rankBadgeForCard(item) +
+          '<span class="fb-card__name">' +
+          escapeHtml(item.name || dict("anon", "Anonim", "Anonymous")) +
           "</span>" +
         '</span>' +
         '<time class="fb-card__time">' + timeAgo(item.timestamp) + '</time>' +
@@ -575,8 +576,10 @@
     }
     if (text.length > MAX_REPLY_LEN) return Promise.resolve();
     if (!isFirebaseReady()) return Promise.resolve();
-    return firebase.auth()
-      .currentUser.getIdToken(false)
+    return loadTeamProfiles()
+      .then(function () {
+        return firebase.auth().currentUser.getIdToken(false);
+      })
       .then(function (token) {
         var url =
           FIREBASE_DB_URL +
@@ -584,10 +587,17 @@
           encodeURIComponent(key) +
           ".json?auth=" +
           encodeURIComponent(token);
+        var uid = firebase.auth().currentUser.uid;
+        var prof = teamProfiles[uid] || {};
+        var rk = prof.rank || getDefaultRankForUid(uid);
+        var bn = prof.badgeName ? String(prof.badgeName).trim() : "";
+        var replyPayload = { text: text, timestamp: Date.now() };
+        if (getRankMeta(rk)) replyPayload.rank = rk;
+        if (bn && validateFullName(bn)) replyPayload.badgeName = bn.substring(0, 42);
         return fetchT(url, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ reply: { text: text, timestamp: Date.now() } }),
+          body: JSON.stringify({ reply: replyPayload }),
         }).then(function (r) {
           if (!r.ok) throw new Error(String(r.status));
           ta.value = "";
@@ -705,49 +715,23 @@
       });
     }
 
-    if (isSiteAdmin() && isFirebaseReady() && firebase.auth().currentUser) {
-      firebase.auth()
-        .currentUser.getIdToken(false)
-        .then(function (token) {
-          payload.authorUid = firebase.auth().currentUser.uid;
-          var url = FIREBASE_DB_URL + "/feedback.json?auth=" + encodeURIComponent(token);
-          return postFeedback(url, payload);
-        })
-        .then(function (res) {
-          if (res && res.name) saveOwnKey(res.name);
-          localStorage.setItem("ata-fb-last", String(Date.now()));
-          notifyTelegram(name, rating, message);
-          form.reset();
-          setRating(null);
-          updateCharCount();
-          loadFeedback();
-        })
-        .catch(function () {
-          showError(dict("sendErr", "Gönderilemedi.", "Could not send."));
-        })
-        .finally(function () {
-          submitBtn.disabled = false;
-          submitBtn.textContent = dict("send", "Gönder", "Send");
-        });
-    } else {
-      postFeedback(FIREBASE_DB_URL + "/feedback.json", payload)
-        .then(function (res) {
-          if (res && res.name) saveOwnKey(res.name);
-          localStorage.setItem("ata-fb-last", String(Date.now()));
-          notifyTelegram(name, rating, message);
-          form.reset();
-          setRating(null);
-          updateCharCount();
-          loadFeedback();
-        })
-        .catch(function () {
-          showError(dict("sendErr", "Gönderilemedi.", "Could not send."));
-        })
-        .finally(function () {
-          submitBtn.disabled = false;
-          submitBtn.textContent = dict("send", "Gönder", "Send");
-        });
-    }
+    postFeedback(FIREBASE_DB_URL + "/feedback.json", payload)
+      .then(function (res) {
+        if (res && res.name) saveOwnKey(res.name);
+        localStorage.setItem("ata-fb-last", String(Date.now()));
+        notifyTelegram(name, rating, message);
+        form.reset();
+        setRating(null);
+        updateCharCount();
+        loadFeedback();
+      })
+      .catch(function () {
+        showError(dict("sendErr", "Gönderilemedi.", "Could not send."));
+      })
+      .finally(function () {
+        submitBtn.disabled = false;
+        submitBtn.textContent = dict("send", "Gönder", "Send");
+      });
   });
 
   if (moreBtn) moreBtn.addEventListener("click", function () { visibleCount += PAGE_SIZE; renderList(); });

@@ -131,7 +131,7 @@
     "adminDelErr": "Silinemedi. Giriş veya veritabanı kurallarını kontrol edin.",
     "adminSignInErr": "Giriş başarısız.",
     "teamProfileTitle": "Kendi adın ve rütben",
-    "teamProfileHint": "Girişliyken gönderdiğin yorumlarda bu ad ve neon rütbe görünür. Önce kaydet, sonra yorum yaz.",
+    "teamProfileHint": "Kaydettiğin ad ve rütbe, site yanıtı yayınladığında yanıtla birlikte kalıcı olarak saklanır (sonradan çıkış yapsan da aynı kalır). Önce profili kaydet.",
     "teamBadgeName": "Görünen ad (ad soyad)",
     "teamRankLabel": "Rütbe",
     "teamProfileSave": "Profili kaydet",
