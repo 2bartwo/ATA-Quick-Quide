@@ -1261,12 +1261,14 @@ html:not([data-theme="dark"]) main.app-content.container:has(.landing-hero) {
  * Hero: birleşik mockup PNG (484×1024), çerçeve+ekran tek dosyada — images/app-preview-*.png
  */
 .hero-photo-mockup {
+  --phone-rot-y: -14deg;
+  --phone-rot-x: 4deg;
   position: relative;
   line-height: 0;
   width: var(--hero-phone-width);
   max-width: 100%;
   transform-style: preserve-3d;
-  transform: translateX(var(--hero-mockup-shift-x)) rotateY(-8deg) rotateX(3deg) translateZ(0);
+  transform: translateX(var(--hero-mockup-shift-x)) rotateY(var(--phone-rot-y)) rotateX(var(--phone-rot-x)) translateZ(0);
   backface-visibility: hidden;
   filter: drop-shadow(0 16px 32px rgba(15, 53, 80, 0.17)) drop-shadow(0 6px 14px rgba(0, 0, 0, 0.1));
 }
@@ -1503,7 +1505,18 @@ html:not([data-theme="dark"]) main.app-content.container:has(.landing-hero) {
   }
 
   .landing-hero .landing-hero__visual {
-    animation: motion-fade-up 0.48s var(--ease-out) 0.08s backwards;
+    animation: hero-phone-enter 0.7s var(--ease-out) 0.12s backwards;
+  }
+}
+
+@keyframes hero-phone-enter {
+  from {
+    opacity: 0;
+    transform: translateX(clamp(120px, 22vw, 320px)) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
   }
 }
 
@@ -1634,7 +1647,7 @@ html:not([data-theme="dark"]) main.app-content.container:has(.landing-hero) {
 }
 
 .landing-phones .hero-photo-mockup:hover {
-  transform: translateX(var(--hero-mockup-shift-x)) rotateY(-4deg) rotateX(2deg) scale(1.04) translateY(-10px);
+  transform: translateX(var(--hero-mockup-shift-x)) rotateY(var(--phone-rot-y)) rotateX(var(--phone-rot-x)) scale(1.04) translateY(-10px);
   filter: drop-shadow(0 18px 36px rgba(15, 53, 80, 0.2)) drop-shadow(0 8px 18px rgba(13, 110, 253, 0.12));
 }
 
@@ -1644,7 +1657,7 @@ html:not([data-theme="dark"]) main.app-content.container:has(.landing-hero) {
 
 @media (max-width: 959px) {
   .landing-phones .hero-photo-mockup:hover {
-    transform: translateX(var(--hero-mockup-shift-x)) rotateY(-4deg) rotateX(2deg) scale(1.03) translateY(-8px);
+    transform: translateX(var(--hero-mockup-shift-x)) rotateY(var(--phone-rot-y)) rotateX(var(--phone-rot-x)) scale(1.03) translateY(-8px);
   }
 }
 

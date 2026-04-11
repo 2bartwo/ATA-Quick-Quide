@@ -66,4 +66,27 @@
       } catch (e) {}
     });
   }, 900);
+
+  /* Hero telefon: scroll ilerledikçe sola yatık (-14deg) → sağa yatık (+14deg) */
+  const phone = document.querySelector(".landing-phones .hero-photo-mockup");
+  const hero = document.querySelector(".landing-hero");
+  if (phone && hero) {
+    let raf = 0;
+    function onPhoneScroll() {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        const rect = hero.getBoundingClientRect();
+        const heroH = rect.height || 1;
+        const scrolled = -rect.top;
+        const t = Math.max(0, Math.min(1, scrolled / (heroH * 0.75)));
+
+        phone.style.setProperty("--phone-rot-y", (-14 + t * 28).toFixed(1) + "deg");
+        phone.style.setProperty("--phone-rot-x", (4 - t * 4).toFixed(1) + "deg");
+      });
+    }
+
+    window.addEventListener("scroll", onPhoneScroll, { passive: true });
+    onPhoneScroll();
+  }
 })();
