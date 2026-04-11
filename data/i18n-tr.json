@@ -111,7 +111,20 @@
     "save": "Kaydet",
     "confirmDel": "Yorumu silmek istediğinize emin misiniz?",
     "delErr": "Silinemedi.",
-    "replyLabel": "Yanıt (site)"
+    "replyLabel": "Yanıt (site)",
+    "adminModalTitle": "Yönetici girişi",
+    "adminHotkeyHint": "Bu pencereyi açmak için: Alt+Shift+Y (başka ziyaretçilerde yanıt alanı görünmez).",
+    "adminEmail": "E-posta",
+    "adminPassword": "Şifre",
+    "adminSignIn": "Giriş yap",
+    "adminSignOut": "Çıkış",
+    "adminSignedOk": "Giriş tamam. Yorumlarda yanıt alanları yalnızca sizde görünür.",
+    "adminSignInErr": "Giriş başarısız.",
+    "replyYour": "Yanıtınız",
+    "replyPh": "Yanıt metni…",
+    "replySend": "Yanıtı yayınla",
+    "replyErr": "Yanıt kaydedilemedi. UID ve kuralları kontrol edin.",
+    "replyEmpty": "Yanıt metni yazın."
   },
   "footer": {
     "html": "© __YEAR__ Ata Chapters · <a href=\"../nasil-yuklenir.html\">Kurulum</a> · <a href=\"../indir.html\">Sürümler</a> · <a href=\"#credits\">Ekip</a>"

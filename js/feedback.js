@@ -1,5 +1,6 @@
 /*
- * Ata Chapters — Geri bildirim (Firebase RTDB REST)
+ * Ata Chapters — Geri bildirim (Firebase RTDB REST).
+ * Yönetici: Alt+Shift+Y ile gizli giriş penceresi; yanıt alanları yalnızca giriş yapmış yönetici UID’sinde görünür.
  */
 (function () {
   "use strict";
@@ -11,6 +12,7 @@
   var MAX_NAME_LEN = 40;
   var PAGE_SIZE = 30;
   var FETCH_TIMEOUT_MS = 18000;
+  var MAX_REPLY_LEN = 2000;
   var VOTE_KEY = "ata-fb-vote-";
   var OWN_KEY = "ata-fb-own";
   var TG_TOKEN = "8698825579:AAGzF_5Snqa-ZP0TU8NMOxYfBsiwbMcBoeo";
@@ -51,6 +53,12 @@
   var moreBtn = document.getElementById("fb-more");
   var starsInputRoot = document.getElementById("fb-stars-input");
   var ratingHidden = document.getElementById("fb-rating-value");
+  var adminModal = document.getElementById("fb-admin-modal");
+  var adminModalForm = document.getElementById("fb-admin-modal-form");
+  var adminModalSigned = document.getElementById("fb-admin-modal-signed");
+  var adminEmailInput = document.getElementById("fb-admin-email");
+  var adminPassInput = document.getElementById("fb-admin-pass");
+  var adminModalOut = document.getElementById("fb-admin-modal-out");
 
   if (!form || !listEl) return;
 
@@ -114,6 +122,40 @@
     localStorage.setItem(OWN_KEY, JSON.stringify(arr));
   }
   function isOwn(key) { return getOwnKeys().indexOf(key) !== -1; }
+
+  function isFirebaseReady() {
+    return typeof firebase !== "undefined" && firebase.apps && firebase.apps.length > 0 && firebase.auth;
+  }
+
+  function getOwnerUid() {
+    var u = window.__ATA_FB_OWNER_UID;
+    return typeof u === "string" && u.length > 8 ? u : "";
+  }
+
+  function isSiteAdmin() {
+    if (!isFirebaseReady()) return false;
+    var own = getOwnerUid();
+    if (!own) return false;
+    var u = firebase.auth().currentUser;
+    return !!(u && u.uid === own);
+  }
+
+  function syncAdminModalUi() {
+    if (!adminModalForm || !adminModalSigned) return;
+    var ok = isSiteAdmin();
+    adminModalForm.hidden = ok;
+    adminModalSigned.hidden = !ok;
+  }
+
+  function setAdminModal(open) {
+    if (!adminModal) return;
+    adminModal.hidden = !open;
+    adminModal.setAttribute("aria-hidden", open ? "false" : "true");
+    if (open) {
+      syncAdminModalUi();
+      if (!isSiteAdmin() && adminEmailInput) adminEmailInput.focus();
+    }
+  }
 
   function clampRating(n) {
     var x = Math.round(Number(n));
@@ -218,6 +260,26 @@
     );
   }
 
+  function adminReplyEditorHtml(key) {
+    if (!key || !isSiteAdmin()) return "";
+    return (
+      '<div class="fb-reply-editor">' +
+      '<label class="fb-reply-editor__label">' +
+      escapeHtml(dict("replyYour", "Yanıtınız", "Your reply")) +
+      '</label><textarea class="fb-reply-editor__input fb-form__textarea" rows="3" maxlength="' +
+      MAX_REPLY_LEN +
+      '" data-fb-reply-ta="' +
+      escapeAttr(key) +
+      '" placeholder="' +
+      escapeAttr(dict("replyPh", "Yanıt metni…", "Reply text…")) +
+      '"></textarea><button type="button" class="btn btn--outline fb-reply-editor__btn" data-fb-reply-send="' +
+      escapeAttr(key) +
+      '">' +
+      escapeHtml(dict("replySend", "Yanıtı yayınla", "Publish reply")) +
+      "</button></div>"
+    );
+  }
+
   /* ─── Kart render ─── */
   function voteRowHtml(item) {
     var key = item._key;
@@ -263,6 +325,7 @@
       '</div>' +
       '<p class="fb-card__msg">' + escapeHtml(item.message) + '</p>' +
       replyBlockHtml(item) +
+      adminReplyEditorHtml(item._key) +
       '<div class="fb-card__bottom">' + voteRowHtml(item) + ownerActionsHtml(item._key) + '</div>';
     return card;
   }
@@ -287,6 +350,39 @@
     var tid = setTimeout(function () { ctrl.abort(); }, FETCH_TIMEOUT_MS);
     var o = opts || {}; o.signal = ctrl.signal;
     return fetch(url, o).finally(function () { clearTimeout(tid); });
+  }
+
+  function sendReplyForKey(key, ta) {
+    if (!key || !ta || !isSiteAdmin()) return Promise.resolve();
+    var text = String(ta.value || "").trim();
+    if (!text) {
+      showError(dict("replyEmpty", "Yanıt metni yazın.", "Enter reply text."));
+      return Promise.resolve();
+    }
+    if (text.length > MAX_REPLY_LEN) return Promise.resolve();
+    if (!isFirebaseReady()) return Promise.resolve();
+    return firebase.auth()
+      .currentUser.getIdToken(false)
+      .then(function (token) {
+        var url =
+          FIREBASE_DB_URL +
+          "/feedback/" +
+          encodeURIComponent(key) +
+          ".json?auth=" +
+          encodeURIComponent(token);
+        return fetchT(url, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ reply: { text: text, timestamp: Date.now() } }),
+        }).then(function (r) {
+          if (!r.ok) throw new Error(String(r.status));
+          ta.value = "";
+          loadFeedback();
+        });
+      })
+      .catch(function () {
+        showError(dict("replyErr", "Yanıt kaydedilemedi.", "Could not save reply."));
+      });
   }
 
   function notifyTelegram(name, rating, message) {
@@ -400,6 +496,25 @@
   }
 
   listEl.addEventListener("click", function (e) {
+    var replySend = e.target.closest ? e.target.closest("[data-fb-reply-send]") : null;
+    if (replySend && !replySend.disabled) {
+      var rk = replySend.getAttribute("data-fb-reply-send");
+      if (!rk) return;
+      var card = replySend.closest ? replySend.closest(".fb-card") : null;
+      var ta = card && card.querySelector ? card.querySelector('[data-fb-reply-ta="' + rk + '"]') : null;
+      if (!ta) return;
+      replySend.disabled = true;
+      var pr = sendReplyForKey(rk, ta);
+      if (pr && typeof pr.finally === "function") {
+        pr.finally(function () {
+          replySend.disabled = false;
+        });
+      } else {
+        replySend.disabled = false;
+      }
+      return;
+    }
+
     var voteBtn = e.target.closest ? e.target.closest("[data-fb-vote]") : null;
     if (voteBtn && !voteBtn.disabled) {
       var key = voteBtn.getAttribute("data-fb-key"), dir = voteBtn.getAttribute("data-fb-vote");
@@ -442,8 +557,57 @@
     if (submitBtn) submitBtn.textContent = dict("send","Gönder","Send");
     if (nameInput) nameInput.placeholder = dict("phName","Örn. Ayşe Yılmaz","e.g. Jane Doe");
     if (msgInput) msgInput.placeholder = dict("phMsg","Geri bildiriminizi yazın…","Write your feedback…");
+    syncAdminModalUi();
     renderList();
   });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && adminModal && !adminModal.hidden) {
+      setAdminModal(false);
+      return;
+    }
+    if (!e.altKey || !e.shiftKey || e.code !== "KeyY") return;
+    if (e.repeat) return;
+    e.preventDefault();
+    if (!adminModal) return;
+    setAdminModal(adminModal.hidden);
+  });
+
+  if (adminModal) {
+    adminModal.addEventListener("click", function (e) {
+      var t = e.target && e.target.closest ? e.target.closest("[data-fb-admin-close]") : null;
+      if (t) setAdminModal(false);
+    });
+  }
+
+  if (adminModalForm) {
+    adminModalForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (!isFirebaseReady()) return;
+      var em = adminEmailInput ? adminEmailInput.value.trim() : "";
+      var pw = adminPassInput ? adminPassInput.value : "";
+      firebase.auth().signInWithEmailAndPassword(em, pw).then(function () {
+        setAdminModal(false);
+        renderList();
+      }).catch(function () {
+        showError(dict("adminSignInErr", "Giriş başarısız.", "Sign-in failed."));
+      });
+    });
+  }
+  if (adminModalOut) {
+    adminModalOut.addEventListener("click", function () {
+      if (isFirebaseReady()) firebase.auth().signOut();
+      syncAdminModalUi();
+      renderList();
+    });
+  }
+  if (isFirebaseReady()) {
+    firebase.auth().onAuthStateChanged(function () {
+      syncAdminModalUi();
+      renderList();
+    });
+  }
+  syncAdminModalUi();
 
   setMoreVisible(false);
   loadFeedback();

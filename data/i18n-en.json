@@ -111,7 +111,20 @@
     "save": "Save",
     "confirmDel": "Delete this comment?",
     "delErr": "Could not delete.",
-    "replyLabel": "Site reply"
+    "replyLabel": "Site reply",
+    "adminModalTitle": "Admin sign-in",
+    "adminHotkeyHint": "Open this dialog with Alt+Shift+Y. Reply fields stay hidden for everyone else.",
+    "adminEmail": "Email",
+    "adminPassword": "Password",
+    "adminSignIn": "Sign in",
+    "adminSignOut": "Sign out",
+    "adminSignedOk": "Signed in. Reply fields appear only for you.",
+    "adminSignInErr": "Sign-in failed.",
+    "replyYour": "Your reply",
+    "replyPh": "Reply text…",
+    "replySend": "Publish reply",
+    "replyErr": "Could not save reply. Check UID and database rules.",
+    "replyEmpty": "Enter reply text."
   },
   "footer": {
     "html": "© __YEAR__ Ata Chapters · <a href=\"../nasil-yuklenir.html\">Install</a> · <a href=\"../indir.html\">Releases</a> · <a href=\"#credits\">Team</a>"

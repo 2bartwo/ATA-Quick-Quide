@@ -38,7 +38,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/app-site.css?v=111">
+  <link rel="stylesheet" href="../css/app-site.css?v=112">
 </head>
 <body data-page="index" data-site-root="../">
   <a class="visually-hidden" href="#icerik" data-i18n="skip">İçeriğe geç</a>
@@ -235,6 +235,24 @@
 
         <p id="fb-error" class="fb-error" hidden></p>
 
+        <div id="fb-admin-modal" class="fb-admin-modal" hidden aria-hidden="true">
+          <div class="fb-admin-modal__backdrop" tabindex="-1" data-fb-admin-close></div>
+          <div class="fb-admin-modal__panel" role="dialog" aria-modal="true" aria-labelledby="fb-admin-modal-title">
+            <button type="button" class="fb-admin-modal__x" data-fb-admin-close aria-label="Kapat">×</button>
+            <h2 id="fb-admin-modal-title" class="fb-admin-modal__title" data-i18n="feedback.adminModalTitle">Yönetici girişi</h2>
+            <p class="fb-admin-modal__hint" data-i18n="feedback.adminHotkeyHint">Kısayol: Alt+Shift+Y — bu pencereyi yalnızca siz açarsınız.</p>
+            <form id="fb-admin-modal-form" class="fb-admin-modal__form" autocomplete="on">
+              <label class="fb-admin-modal__field"><span data-i18n="feedback.adminEmail">E-posta</span><input id="fb-admin-email" class="fb-form__input" type="email" autocomplete="username"></label>
+              <label class="fb-admin-modal__field"><span data-i18n="feedback.adminPassword">Şifre</span><input id="fb-admin-pass" class="fb-form__input" type="password" autocomplete="current-password"></label>
+              <button type="submit" class="btn btn--primary" data-i18n="feedback.adminSignIn">Giriş yap</button>
+            </form>
+            <div id="fb-admin-modal-signed" class="fb-admin-modal__signed" hidden>
+              <p data-i18n="feedback.adminSignedOk">Giriş tamam. Aşağıdaki yorumlarda yanıt alanları görünür.</p>
+              <button type="button" id="fb-admin-modal-out" class="btn btn--outline" data-i18n="feedback.adminSignOut">Çıkış</button>
+            </div>
+          </div>
+        </div>
+
         <div id="fb-loading" class="fb-loading" aria-live="polite">
           <span class="fb-spinner" aria-hidden="true"></span>
         </div>
@@ -251,9 +269,12 @@
     </footer>
   </div>
 
+  <script defer src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="../js/firebase-config.js?v=4" defer></script>
   <script src="../js/site-ui.js?v=34" defer></script>
   <script src="../js/app-motion.js?v=28" defer></script>
   <script src="../js/landing-page.js?v=30" defer></script>
-  <script src="../js/feedback.js?v=17" defer></script>
+  <script src="../js/feedback.js?v=18" defer></script>
 </body>
 </html>
