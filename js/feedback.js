@@ -60,10 +60,16 @@
   var adminPassInput = document.getElementById("fb-admin-pass");
   var adminModalOut = document.getElementById("fb-admin-modal-out");
   var adminListEl = document.getElementById("fb-admin-list");
+  var profileNameInput = document.getElementById("fb-profile-name");
+  var profileRankSelect = document.getElementById("fb-profile-rank");
+  var profileSaveBtn = document.getElementById("fb-profile-save");
+  var profileStatusEl = document.getElementById("fb-profile-status");
+  var rankLegendEl = document.getElementById("fb-rank-legend");
 
   if (!form || !listEl) return;
 
   var allItems = [];
+  var teamProfiles = {};
   var visibleCount = PAGE_SIZE;
   var hoverStar = null;
   var editingKey = null;
@@ -160,10 +166,135 @@
 
   function getAdminListForDisplay() {
     var list = window.__ATA_FB_ADMIN_LIST;
-    if (list && list.length) return list;
+    if (list && list.length) {
+      var f = list.filter(function (it) {
+        return it && it.uid;
+      });
+      if (f.length) return f;
+    }
     var ou = getOwnerUid();
     if (!ou) return [];
-    return [{ uid: ou, name: dict("adminDefaultName", "Site yöneticisi", "Site administrator") }];
+    return [
+      {
+        uid: ou,
+        name: dict("adminDefaultName", "Site yöneticisi", "Site administrator"),
+        defaultRank: "developer",
+      },
+    ];
+  }
+
+  function getTeamRanks() {
+    return window.__ATA_FB_TEAM_RANKS || {};
+  }
+
+  function getRankMeta(rankKey) {
+    var R = getTeamRanks();
+    return R[rankKey] || null;
+  }
+
+  function getDefaultRankForUid(uid) {
+    var list = window.__ATA_FB_ADMIN_LIST;
+    if (!list || !uid) return "developer";
+    for (var i = 0; i < list.length; i++) {
+      if (list[i] && list[i].uid === uid && list[i].defaultRank) return list[i].defaultRank;
+    }
+    return "developer";
+  }
+
+  function loadTeamProfiles() {
+    return fetchT(FIREBASE_DB_URL + "/teamProfiles.json")
+      .then(function (r) {
+        if (!r.ok) throw new Error(String(r.status));
+        return r.json();
+      })
+      .then(function (data) {
+        teamProfiles = data && typeof data === "object" && !Array.isArray(data) ? data : {};
+      })
+      .catch(function () {
+        teamProfiles = {};
+      });
+  }
+
+  function ensureRankSelectOptions() {
+    if (!profileRankSelect || profileRankSelect.options.length) return;
+    var R = getTeamRanks();
+    Object.keys(R).forEach(function (k) {
+      var o = document.createElement("option");
+      o.value = k;
+      o.textContent = getLang() === "en" ? R[k].labelEn : R[k].labelTr;
+      profileRankSelect.appendChild(o);
+    });
+  }
+
+  function renderRankLegend() {
+    if (!rankLegendEl) return;
+    var R = getTeamRanks();
+    var lng = getLang() === "en" ? "labelEn" : "labelTr";
+    rankLegendEl.innerHTML = Object.keys(R)
+      .map(function (k) {
+        var m = R[k];
+        return (
+          '<span class="fb-rank-legend__chip" style="--fb-rank-c:' +
+          escapeAttr(m.color) +
+          ";--fb-rank-g:" +
+          escapeAttr(m.glow) +
+          '">' +
+          escapeHtml(m[lng]) +
+          "</span>"
+        );
+      })
+      .join("");
+  }
+
+  function syncTeamProfileForm() {
+    if (!profileNameInput || !profileRankSelect) return;
+    if (!isFirebaseReady() || !firebase.auth().currentUser) return;
+    var uid = firebase.auth().currentUser.uid;
+    var p = teamProfiles[uid] || {};
+    profileNameInput.value = p.badgeName || "";
+    var defR = getDefaultRankForUid(uid);
+    profileRankSelect.value = p.rank && getRankMeta(p.rank) ? p.rank : defR;
+  }
+
+  function renderAdminListHtml() {
+    if (!adminListEl || !isSiteAdmin()) return;
+    var rows = getAdminListForDisplay();
+    adminListEl.innerHTML = rows
+      .map(function (it) {
+        var uid = it.uid ? String(it.uid) : "";
+        var prof = uid ? teamProfiles[uid] : null;
+        var displayName = escapeHtml(
+          (prof && prof.badgeName) || it.name || it.note || dict("adminNoName", "Yönetici", "Admin")
+        );
+        var chip = "";
+        if (prof && prof.rank && getRankMeta(prof.rank)) {
+          var m = getRankMeta(prof.rank);
+          var lbl = getLang() === "en" ? m.labelEn : m.labelTr;
+          chip =
+            '<span class="fb-admin-list__rank" style="--fb-rank-c:' +
+            escapeAttr(m.color) +
+            ";--fb-rank-g:" +
+            escapeAttr(m.glow) +
+            '">' +
+            escapeHtml(lbl) +
+            "</span>";
+        }
+        var uidHtml =
+          '<code class="fb-admin-list__uid" title="' +
+          escapeAttr(dict("adminUidTitle", "Firebase kullanıcı UID", "Firebase user UID")) +
+          '">' +
+          escapeHtml(uid) +
+          "</code>";
+        return (
+          '<li class="fb-admin-list__item"><span class="fb-admin-list__name">' +
+          displayName +
+          "</span>" +
+          chip +
+          uidHtml +
+          "</li>"
+        );
+      })
+      .join("");
   }
 
   function syncAdminModalUi() {
@@ -171,26 +302,17 @@
     var ok = isSiteAdmin();
     adminModalForm.hidden = ok;
     adminModalSigned.hidden = !ok;
-    if (adminListEl) {
-      if (!ok) adminListEl.innerHTML = "";
-      else {
-        var rows = getAdminListForDisplay();
-        adminListEl.innerHTML = rows
-          .map(function (it) {
-            var name = escapeHtml(it.name || it.note || dict("adminNoName", "Yönetici", "Admin"));
-            var uid = it.uid ? String(it.uid) : "";
-            var uidHtml = uid
-              ? '<code class="fb-admin-list__uid" title="' +
-                escapeAttr(dict("adminUidTitle", "Firebase kullanıcı UID", "Firebase user UID")) +
-                '">' +
-                escapeHtml(uid) +
-                "</code>"
-              : "";
-            return '<li class="fb-admin-list__item"><span class="fb-admin-list__name">' + name + "</span>" + uidHtml + "</li>";
-          })
-          .join("");
-      }
+    if (!ok) {
+      if (adminListEl) adminListEl.innerHTML = "";
+      if (profileStatusEl) profileStatusEl.hidden = true;
+      return;
     }
+    ensureRankSelectOptions();
+    loadTeamProfiles().then(function () {
+      renderRankLegend();
+      syncTeamProfileForm();
+      renderAdminListHtml();
+    });
   }
 
   function setAdminModal(open) {
@@ -372,6 +494,30 @@
     );
   }
 
+  function displayNameForCard(item) {
+    var uid = item.authorUid;
+    if (uid && teamProfiles[uid] && teamProfiles[uid].badgeName) return teamProfiles[uid].badgeName;
+    return item.name || dict("anon", "Anonim", "Anonymous");
+  }
+
+  function rankBadgeForCard(item) {
+    var uid = item.authorUid;
+    if (!uid) return "";
+    var rk = (teamProfiles[uid] && teamProfiles[uid].rank) || getDefaultRankForUid(uid);
+    var m = getRankMeta(rk);
+    if (!m) return "";
+    var label = getLang() === "en" ? m.labelEn : m.labelTr;
+    return (
+      '<span class="fb-team-badge" style="--fb-rank-color:' +
+      escapeAttr(m.color) +
+      ";--fb-rank-glow:" +
+      escapeAttr(m.glow) +
+      '">' +
+      escapeHtml(label) +
+      "</span>"
+    );
+  }
+
   function renderCard(item) {
     var card = document.createElement("div");
     card.className = "fb-card" + (isOwn(item._key) ? " fb-card--own" : "");
@@ -380,7 +526,10 @@
       '<div class="fb-card__head">' +
         '<span class="fb-card__head-main">' +
           readonlyStarsHtml(r) +
-          '<span class="fb-card__name">' + escapeHtml(item.name || dict("anon","Anonim","Anonymous")) + '</span>' +
+          '<span class="fb-card__name-wrap">' +
+          '<span class="fb-card__name">' + escapeHtml(displayNameForCard(item)) + "</span>" +
+          rankBadgeForCard(item) +
+          "</span>" +
         '</span>' +
         '<time class="fb-card__time">' + timeAgo(item.timestamp) + '</time>' +
       '</div>' +
@@ -467,19 +616,36 @@
   }
 
   function loadFeedback() {
-    setLoading(true); if (errorEl) errorEl.hidden = true;
-    fetchT(FIREBASE_DB_URL + "/feedback.json")
-      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    setLoading(true);
+    if (errorEl) errorEl.hidden = true;
+    Promise.all([fetchT(FIREBASE_DB_URL + "/feedback.json"), loadTeamProfiles()])
+      .then(function (results) {
+        var r = results[0];
+        if (!r.ok) throw new Error(String(r.status));
+        return r.json();
+      })
       .then(function (data) {
         allItems = [];
-        if (data) Object.keys(data).forEach(function (k) {
-          var it = data[k]; if (it && it.message && it.hidden !== true) { it._key = k; allItems.push(it); }
+        if (data) {
+          Object.keys(data).forEach(function (k) {
+            var it = data[k];
+            if (it && it.message && it.hidden !== true) {
+              it._key = k;
+              allItems.push(it);
+            }
+          });
+        }
+        allItems.sort(function (a, b) {
+          return b.timestamp - a.timestamp;
         });
-        allItems.sort(function (a, b) { return b.timestamp - a.timestamp; });
         renderList();
       })
-      .catch(function () { showError(dict("loadErr","Geri bildirimler yüklenemedi.","Could not load feedback.")); })
-      .finally(function () { setLoading(false); });
+      .catch(function () {
+        showError(dict("loadErr", "Geri bildirimler yüklenemedi.", "Could not load feedback."));
+      })
+      .finally(function () {
+        setLoading(false);
+      });
   }
 
   function canSubmit() { return Date.now() - parseInt(localStorage.getItem("ata-fb-last") || "0", 10) >= RATE_LIMIT_MS; }
@@ -527,20 +693,61 @@
     }
 
     var payload = { name: name, message: message, timestamp: Date.now(), rating: Number(rating), likes: 0, dislikes: 0 };
-    fetch(FIREBASE_DB_URL + "/feedback.json", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    })
-      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-      .then(function (res) {
-        if (res && res.name) saveOwnKey(res.name);
-        localStorage.setItem("ata-fb-last", String(Date.now()));
-        notifyTelegram(name, rating, message);
-        form.reset(); setRating(null); updateCharCount(); loadFeedback();
-      })
-      .catch(function () { showError(dict("sendErr","Gönderilemedi.","Could not send.")); })
-      .finally(function () { submitBtn.disabled = false; submitBtn.textContent = dict("send", "Gönder", "Send"); });
+
+    function postFeedback(url, body) {
+      return fetchT(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      }).then(function (r) {
+        if (!r.ok) throw new Error(String(r.status));
+        return r.json();
+      });
+    }
+
+    if (isSiteAdmin() && isFirebaseReady() && firebase.auth().currentUser) {
+      firebase.auth()
+        .currentUser.getIdToken(false)
+        .then(function (token) {
+          payload.authorUid = firebase.auth().currentUser.uid;
+          var url = FIREBASE_DB_URL + "/feedback.json?auth=" + encodeURIComponent(token);
+          return postFeedback(url, payload);
+        })
+        .then(function (res) {
+          if (res && res.name) saveOwnKey(res.name);
+          localStorage.setItem("ata-fb-last", String(Date.now()));
+          notifyTelegram(name, rating, message);
+          form.reset();
+          setRating(null);
+          updateCharCount();
+          loadFeedback();
+        })
+        .catch(function () {
+          showError(dict("sendErr", "Gönderilemedi.", "Could not send."));
+        })
+        .finally(function () {
+          submitBtn.disabled = false;
+          submitBtn.textContent = dict("send", "Gönder", "Send");
+        });
+    } else {
+      postFeedback(FIREBASE_DB_URL + "/feedback.json", payload)
+        .then(function (res) {
+          if (res && res.name) saveOwnKey(res.name);
+          localStorage.setItem("ata-fb-last", String(Date.now()));
+          notifyTelegram(name, rating, message);
+          form.reset();
+          setRating(null);
+          updateCharCount();
+          loadFeedback();
+        })
+        .catch(function () {
+          showError(dict("sendErr", "Gönderilemedi.", "Could not send."));
+        })
+        .finally(function () {
+          submitBtn.disabled = false;
+          submitBtn.textContent = dict("send", "Gönder", "Send");
+        });
+    }
   });
 
   if (moreBtn) moreBtn.addEventListener("click", function () { visibleCount += PAGE_SIZE; renderList(); });
@@ -639,11 +846,19 @@
   });
 
   window.addEventListener("ata-ready", function () {
-    if (submitBtn) submitBtn.textContent = dict("send","Gönder","Send");
-    if (nameInput) nameInput.placeholder = dict("phName","Örn. Ayşe Yılmaz","e.g. Jane Doe");
-    if (msgInput) msgInput.placeholder = dict("phMsg","Geri bildiriminizi yazın…","Write your feedback…");
-    syncAdminModalUi();
-    renderList();
+    if (submitBtn) submitBtn.textContent = dict("send", "Gönder", "Send");
+    if (nameInput) nameInput.placeholder = dict("phName", "Örn. Ayşe Yılmaz", "e.g. Jane Doe");
+    if (msgInput) msgInput.placeholder = dict("phMsg", "Geri bildiriminizi yazın…", "Write your feedback…");
+    if (profileRankSelect) {
+      while (profileRankSelect.options.length) profileRankSelect.remove(0);
+    }
+    ensureRankSelectOptions();
+    renderRankLegend();
+    loadTeamProfiles().finally(function () {
+      syncTeamProfileForm();
+      renderAdminListHtml();
+      renderList();
+    });
   });
 
   document.addEventListener("keydown", function (e) {
@@ -686,10 +901,64 @@
       renderList();
     });
   }
+
+  if (profileSaveBtn) {
+    profileSaveBtn.addEventListener("click", function () {
+      if (!isSiteAdmin() || !isFirebaseReady()) return;
+      var nm = profileNameInput ? profileNameInput.value.trim() : "";
+      var rk = profileRankSelect ? profileRankSelect.value : "";
+      if (!validateFullName(nm)) {
+        showError(dict("errName", "Geçerli bir ad soyad girin.", "Enter a valid name."));
+        return;
+      }
+      if (!getRankMeta(rk)) {
+        showError(dict("teamProfileRankErr", "Geçerli bir rütbe seçin.", "Pick a valid rank."));
+        return;
+      }
+      profileSaveBtn.disabled = true;
+      firebase.auth()
+        .currentUser.getIdToken(false)
+        .then(function (token) {
+          var uid = firebase.auth().currentUser.uid;
+          var url =
+            FIREBASE_DB_URL +
+            "/teamProfiles/" +
+            encodeURIComponent(uid) +
+            ".json?auth=" +
+            encodeURIComponent(token);
+          return fetchT(url, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ rank: rk, badgeName: nm }),
+          }).then(function (r) {
+            if (!r.ok) throw new Error(String(r.status));
+            teamProfiles[uid] = { rank: rk, badgeName: nm };
+            if (profileStatusEl) {
+              profileStatusEl.textContent = dict("teamProfileSaved", "Profil kaydedildi.", "Profile saved.");
+              profileStatusEl.hidden = false;
+              setTimeout(function () {
+                if (profileStatusEl) profileStatusEl.hidden = true;
+              }, 4000);
+            }
+            renderAdminListHtml();
+            renderList();
+          });
+        })
+        .catch(function () {
+          showError(dict("teamProfileErr", "Profil kaydedilemedi. Kuralları kontrol edin.", "Could not save profile. Check rules."));
+        })
+        .finally(function () {
+          profileSaveBtn.disabled = false;
+        });
+    });
+  }
+
   if (isFirebaseReady()) {
     firebase.auth().onAuthStateChanged(function () {
-      syncAdminModalUi();
-      renderList();
+      loadTeamProfiles().finally(function () {
+        syncAdminModalUi();
+        renderList();
+      });
     });
   }
   syncAdminModalUi();

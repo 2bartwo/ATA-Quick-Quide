@@ -2263,6 +2263,101 @@ button.fb-star:hover {
   min-width: 0;
 }
 
+.fb-card__name-wrap {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+  min-width: 0;
+}
+
+.fb-team-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.18rem 0.55rem 0.22rem;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--fb-rank-color, #64748b);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow:
+    0 0 10px var(--fb-rank-glow, rgba(255, 255, 255, 0.35)),
+    0 0 22px var(--fb-rank-glow, rgba(255, 255, 255, 0.2)),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.45);
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .fb-team-badge {
+    animation: fb-rank-neon 2.4s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes fb-rank-neon {
+  from {
+    filter: brightness(1) drop-shadow(0 0 4px var(--fb-rank-glow));
+  }
+  to {
+    filter: brightness(1.12) drop-shadow(0 0 10px var(--fb-rank-glow));
+  }
+}
+
+.fb-rank-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0 0 0.85rem;
+}
+
+.fb-rank-legend__chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.55rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--fb-rank-c, #64748b);
+  box-shadow: 0 0 12px var(--fb-rank-g, rgba(255, 255, 255, 0.25));
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.fb-team-profile {
+  margin: 0 0 0.85rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px dashed var(--border);
+}
+
+.fb-team-profile .btn {
+  margin-top: 0.35rem;
+  width: 100%;
+}
+
+.fb-team-profile__status {
+  margin: 0.45rem 0 0;
+  font-size: 0.78rem;
+  color: var(--accent);
+}
+
+.fb-admin-list__rank {
+  display: inline-block;
+  margin: 0.2rem 0 0;
+  padding: 0.12rem 0.45rem;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--fb-rank-c);
+  box-shadow: 0 0 10px var(--fb-rank-g);
+}
 
 .fb-card__name {
   font-weight: 600;
@@ -2472,7 +2567,9 @@ button.fb-star:hover {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 22rem;
+  max-width: min(22rem, calc(100vw - 2rem));
+  max-height: min(90vh, 36rem);
+  overflow-y: auto;
   padding: 1.1rem 1.15rem;
   border-radius: var(--radius-sm);
   background: var(--bg-elevated);

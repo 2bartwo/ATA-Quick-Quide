@@ -41,7 +41,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/app-site.css?v=114">
+  <link rel="stylesheet" href="../css/app-site.css?v=115">
 </head>
 <body data-page="index" data-site-root="../">
   <a class="visually-hidden" href="#icerik" data-i18n="skip">İçeriğe geç</a>
@@ -253,6 +253,16 @@
             </form>
             <div id="fb-admin-modal-signed" class="fb-admin-modal__signed" hidden>
               <p data-i18n="feedback.adminSignedOk">Giriş tamam. Aşağıdaki yorumlarda yanıt alanları görünür.</p>
+              <div id="fb-team-profile" class="fb-team-profile">
+                <h3 class="fb-admin-modal__admins-h" data-i18n="feedback.teamProfileTitle">Kendi adın ve rütben</h3>
+                <p class="fb-admin-modal__hint" data-i18n="feedback.teamProfileHint">Girişliyken gönderdiğin yorumlarda bu ad ve neon rütbe görünür.</p>
+                <label class="fb-admin-modal__field"><span data-i18n="feedback.teamBadgeName">Görünen ad (ad soyad)</span><input id="fb-profile-name" class="fb-form__input" type="text" maxlength="42" autocomplete="name"></label>
+                <label class="fb-admin-modal__field"><span data-i18n="feedback.teamRankLabel">Rütbe</span><select id="fb-profile-rank" class="fb-form__input"></select></label>
+                <button type="button" id="fb-profile-save" class="btn btn--primary" data-i18n="feedback.teamProfileSave">Kaydet</button>
+                <p id="fb-profile-status" class="fb-team-profile__status" hidden role="status"></p>
+              </div>
+              <h3 class="fb-admin-modal__admins-h" data-i18n="feedback.rankLegendTitle">Ekip rolleri ve renkler</h3>
+              <div id="fb-rank-legend" class="fb-rank-legend"></div>
               <div class="fb-admin-modal__admins">
                 <h3 class="fb-admin-modal__admins-h" data-i18n="feedback.adminListTitle">Yöneticiler</h3>
                 <ul id="fb-admin-list" class="fb-admin-list" aria-label="Yöneticiler"></ul>
@@ -280,10 +290,10 @@
 
   <script defer src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-  <script src="../js/firebase-config.js?v=6" defer></script>
+  <script src="../js/firebase-config.js?v=7" defer></script>
   <script src="../js/site-ui.js?v=36" defer></script>
   <script src="../js/app-motion.js?v=28" defer></script>
   <script src="../js/landing-page.js?v=30" defer></script>
-  <script src="../js/feedback.js?v=20" defer></script>
+  <script src="../js/feedback.js?v=21" defer></script>
 </body>
 </html>
