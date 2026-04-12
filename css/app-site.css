@@ -3136,6 +3136,16 @@ button.fb-star:hover {
   color: var(--accent-hover);
 }
 
+.older-item__dl-off {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: not-allowed;
+  user-select: none;
+}
+
 .muted {
   color: var(--muted);
   font-size: 0.875rem;

@@ -1,16 +1,31 @@
 {
   "appName": "Ata Chapters",
-  "latest": {
-    "version": "2",
-    "versionLabel": "v2",
-    "date": "2026-04-04",
-    "sizeBytes": 48875607,
-    "apkFile": "releases/ATA-Quick-Guide-v2.apk",
-    "apkDisplayName": "ATA-Quick-Guide-v2.apk",
-    "notes": [
-      "Erken erişim sürümü: ATA chapter listesi, arama ve genişletilebilir bölümler.",
-      "Arayüz ve kararlılık iyileştirmeleri."
-    ]
+  "releaseBanner": {
+    "start": "2026-04-11",
+    "days": 5
   },
-  "older": []
+  "latest": {
+    "version": "3",
+    "versionLabel": "v3",
+    "date": "2026-04-11",
+    "sizeBytes": 48990515,
+    "apkFile": "releases/Ata-Chapters-v3.apk",
+    "apkDisplayName": "Ata-Chapters-v3.apk",
+    "notes": []
+  },
+  "older": [
+    {
+      "version": "2",
+      "versionLabel": "v2",
+      "date": "2026-04-04",
+      "sizeBytes": 48875607,
+      "apkFile": "releases/ATA-Quick-Guide-v2.apk",
+      "apkDisplayName": "ATA-Quick-Guide-v2.apk",
+      "downloadDisabled": true,
+      "notes": [
+        "Erken erişim sürümü: ATA chapter listesi, arama ve genişletilebilir bölümler.",
+        "Arayüz ve kararlılık iyileştirmeleri."
+      ]
+    }
+  ]
 }

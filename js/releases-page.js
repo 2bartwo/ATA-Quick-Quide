@@ -20,6 +20,16 @@
     return b[k] || fallback;
   }
 
+  function isReleaseBannerActive(rb) {
+    if (!rb || !rb.start) return false;
+    const start = Date.parse(String(rb.start).trim() + "T00:00:00Z");
+    if (Number.isNaN(start)) return false;
+    const days = Number(rb.days);
+    const n = Number.isFinite(days) && days > 0 ? days : 5;
+    const end = start + n * 864e5;
+    return Date.now() < end;
+  }
+
   function formatDate(iso) {
     if (!iso) return "";
     const d = new Date(iso + (iso.length === 10 ? "T12:00:00" : ""));
@@ -56,6 +66,12 @@
       const data = await res.json();
       const L = data.latest;
       if (!L) throw new Error("latest yok");
+
+      const bannerEl = document.getElementById("new-release-banner");
+      if (bannerEl) {
+        if (isReleaseBannerActive(data.releaseBanner)) bannerEl.removeAttribute("hidden");
+        else bannerEl.setAttribute("hidden", "");
+      }
 
       latestRoot.innerHTML = "";
       const card = document.createElement("div");
@@ -130,12 +146,20 @@
           const sizeO = item.sizeBytes != null ? ` · ${formatBytes(item.sizeBytes)}` : "";
           const vw3 = t("versionWord", "Sürüm");
           label.textContent = `${vw3} ${item.versionLabel || item.version} · ${formatDate(item.date)}${sizeO}`;
-          const a = document.createElement("a");
-          a.href = item.apkFile;
-          a.setAttribute("download", item.apkDisplayName || "");
-          a.textContent = t("download", "İndir");
-          top.appendChild(label);
-          top.appendChild(a);
+          if (item.downloadDisabled) {
+            const span = document.createElement("span");
+            span.className = "older-item__dl-off";
+            span.textContent = t("downloadUnavailable", "İndirilemez");
+            top.appendChild(label);
+            top.appendChild(span);
+          } else {
+            const a = document.createElement("a");
+            a.href = item.apkFile;
+            a.setAttribute("download", item.apkDisplayName || "");
+            a.textContent = t("download", "İndir");
+            top.appendChild(label);
+            top.appendChild(a);
+          }
           li.appendChild(top);
           if (item.notes && item.notes.length) li.appendChild(elNotesList(item.notes));
           ul.appendChild(li);

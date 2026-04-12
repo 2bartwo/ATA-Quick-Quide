@@ -3,6 +3,15 @@
 
   const HOME_RELEASE_DISMISS_KEY = "ata-home-release-dismissed";
 
+  function isReleaseBannerActive(rb) {
+    if (!rb || !rb.start) return false;
+    const start = Date.parse(String(rb.start).trim() + "T00:00:00Z");
+    if (Number.isNaN(start)) return false;
+    const days = Number(rb.days);
+    const n = Number.isFinite(days) && days > 0 ? days : 5;
+    return Date.now() < start + n * 864e5;
+  }
+
   function prefersReducedMotion() {
     try {
       return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -203,20 +212,27 @@
       if (localStorage.getItem(HOME_RELEASE_DISMISS_KEY) === "1") return;
     } catch (e) {}
 
-    box.removeAttribute("hidden");
-    box.setAttribute("data-init", "1");
-    const btn = box.querySelector("[data-home-release-close]");
-    if (!btn) return;
-    btn.addEventListener(
-      "click",
-      () => {
-        box.setAttribute("hidden", "");
-        try {
-          localStorage.setItem(HOME_RELEASE_DISMISS_KEY, "1");
-        } catch (e) {}
-      },
-      { once: true }
-    );
+    fetch("../data/changelog.json", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!data || !isReleaseBannerActive(data.releaseBanner)) return;
+        if (box.getAttribute("data-init") === "1") return;
+        box.removeAttribute("hidden");
+        box.setAttribute("data-init", "1");
+        const btn = box.querySelector("[data-home-release-close]");
+        if (!btn) return;
+        btn.addEventListener(
+          "click",
+          () => {
+            box.setAttribute("hidden", "");
+            try {
+              localStorage.setItem(HOME_RELEASE_DISMISS_KEY, "1");
+            } catch (e) {}
+          },
+          { once: true }
+        );
+      })
+      .catch(() => {});
   }
 
   window.addEventListener("ata-ready", initHomeReleaseCallout, { once: true });

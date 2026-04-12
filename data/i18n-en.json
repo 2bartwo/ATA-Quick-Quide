@@ -20,7 +20,7 @@
   },
   "home": {
     "releaseTipLabel": "New version",
-    "releaseTipBody": "<strong>New version soon</strong> — targeting this weekend (UI improvements and fixes). Details are at the top of the <a href=\"../indir.html\">Download &amp; releases</a> page.",
+    "releaseTipBody": "<strong>New version is live.</strong> Get the latest APK on the <a href=\"../indir.html\">Download &amp; releases</a> page.",
     "releaseTipClose": "Dismiss (don’t show again)"
   },
   "hero": {
@@ -161,13 +161,14 @@
     "footerInstall": "© __YEAR__ Ata Chapters · <a href=\"indir.html\">Download</a> · <a href=\"anasayfa/#credits\">Team</a>"
   },
   "releases": {
-    "upcomingTipLabel": "Release note",
-    "upcomingBanner": "<strong>New version coming soon.</strong> We're aiming for this weekend: UI pass, bug fixes, and a smoother experience. When it's live, the latest release card and APK download link above will update.",
+    "upcomingTipLabel": "New version",
+    "upcomingBanner": "<strong>New version is live.</strong> Download the current APK from the card above.",
     "badgeLatest": "Latest release",
     "versionWord": "Version",
     "downloadApk": "Download APK",
     "notesTitle": "Release notes",
     "download": "Download",
+    "downloadUnavailable": "Unavailable",
     "errLoad": "Could not load releases. Refresh or try again later.",
     "sectionLatest": "Current app version",
     "sectionOlder": "Older versions",
