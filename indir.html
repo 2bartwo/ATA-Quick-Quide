@@ -30,7 +30,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/app-site.css?v=115">
+  <link rel="stylesheet" href="css/app-site.css?v=116">
 </head>
 <body data-page="download">
   <div class="app-shell">
@@ -81,25 +81,12 @@
         </p>
       </div>
 
-      <div id="release-download-hero" class="release-download-hero reveal" role="region" data-i18n-aria-label="releases.downloadHeroAria" aria-label=""></div>
-
       <p id="releases-error" class="alert-soft" role="alert" hidden></p>
 
-      <section class="section-block reveal" aria-labelledby="latest-h">
-        <h2 id="latest-h" data-i18n="releases.sectionLatest">Güncel uygulama sürümü</h2>
-        <div id="latest-root"></div>
-      </section>
-
-      <section class="section-block reveal" id="older-section" aria-labelledby="older-h">
-        <h2 id="older-h" data-i18n="releases.sectionOlder">Eski sürümler</h2>
-        <div id="older-root"></div>
-      </section>
-
-      <section class="section-block reveal" id="history-section" aria-labelledby="history-h">
-        <h2 id="history-h" data-i18n="releases.sectionHistory">Önceki güncellemelerin yama notları</h2>
-        <p class="muted" data-i18n="releases.historyMuted">Sadece arşivlenmiş sürümler; güncelin notları yukarıdaki kartta.</p>
-        <div id="history-root"></div>
-      </section>
+      <div class="releases-two-stack reveal">
+        <div id="release-box-latest" class="releases-two-stack__slot"></div>
+        <div id="release-box-older" class="releases-two-stack__slot" hidden></div>
+      </div>
 
     </main>
 
@@ -112,6 +99,6 @@
 
   <script src="js/site-ui.js?v=36" defer></script>
   <script src="js/app-motion.js?v=26" defer></script>
-  <script src="js/releases-page.js?v=3" defer></script>
+  <script src="js/releases-page.js?v=4" defer></script>
 </body>
 </html>

@@ -20,16 +20,6 @@
     return b[k] || fallback;
   }
 
-  function isReleaseBannerActive(rb) {
-    if (!rb || !rb.start) return false;
-    const start = Date.parse(String(rb.start).trim() + "T00:00:00Z");
-    if (Number.isNaN(start)) return false;
-    const days = Number(rb.days);
-    const n = Number.isFinite(days) && days > 0 ? days : 5;
-    const end = start + n * 864e5;
-    return Date.now() < end;
-  }
-
   function formatDate(iso) {
     if (!iso) return "";
     const d = new Date(iso + (iso.length === 10 ? "T12:00:00" : ""));
@@ -52,13 +42,18 @@
     return ul;
   }
 
+  function buildMetaLine(ver) {
+    const sizePart = ver.sizeBytes != null ? ` · ${formatBytes(ver.sizeBytes)}` : "";
+    const vw = t("versionWord", "Sürüm");
+    return `${vw} ${ver.versionLabel || ver.version} · ${formatDate(ver.date)}${sizePart}`;
+  }
+
   async function init() {
-    const latestRoot = document.getElementById("latest-root");
-    if (!latestRoot) return;
+    const latestSlot = document.getElementById("release-box-latest");
+    if (!latestSlot) return;
 
     const errEl = document.getElementById("releases-error");
-    const olderRoot = document.getElementById("older-root");
-    const olderSection = document.getElementById("older-section");
+    const olderSlot = document.getElementById("release-box-older");
 
     try {
       const res = await fetch("data/changelog.json", { cache: "no-store" });
@@ -67,116 +62,72 @@
       const L = data.latest;
       if (!L) throw new Error("latest yok");
 
-      const heroRoot = document.getElementById("release-download-hero");
-      if (heroRoot) {
-        heroRoot.innerHTML = "";
-        const hero = document.createElement("div");
-        hero.className = "release-download-hero__inner";
-        const heroTitle = document.createElement("p");
-        heroTitle.className = "release-download-hero__eyebrow";
-        heroTitle.textContent = t("downloadHeroEyebrow", "Güncel paket");
-        const rowH = document.createElement("div");
-        rowH.className = "version-card__row release-download-hero__row";
-        const badgeH = document.createElement("span");
-        badgeH.className = "version-badge";
-        badgeH.textContent = t("badgeLatest", "Güncel sürüm");
-        const metaH = document.createElement("span");
-        metaH.className = "version-meta";
-        const sizeH = L.sizeBytes != null ? ` · ${formatBytes(L.sizeBytes)}` : "";
-        const vw0 = t("versionWord", "Sürüm");
-        metaH.textContent = `${vw0} ${L.versionLabel || L.version} · ${formatDate(L.date)}${sizeH}`;
-        rowH.appendChild(badgeH);
-        rowH.appendChild(metaH);
-        const dlHero = document.createElement("a");
-        dlHero.className = "btn-dl release-download-hero__btn";
-        dlHero.href = L.apkFile;
-        dlHero.setAttribute("download", L.apkDisplayName || "");
-        dlHero.textContent = t("downloadApk", "APK indir");
-        hero.appendChild(heroTitle);
-        hero.appendChild(rowH);
-        hero.appendChild(dlHero);
-        if (isReleaseBannerActive(data.releaseBanner)) {
-          const tip = document.createElement("p");
-          tip.className = "release-download-hero__tip";
-          tip.innerHTML = t(
-            "upcomingBanner",
-            "<strong>Yeni sürüm yayında.</strong> Güncel APK’yı bu kutudan indirebilirsin."
-          );
-          hero.appendChild(tip);
-        }
-        heroRoot.appendChild(hero);
-      }
-
-      latestRoot.innerHTML = "";
-      const card = document.createElement("div");
-      card.className = "version-card version-card--latest";
+      latestSlot.innerHTML = "";
+      const current = document.createElement("div");
+      current.className = "version-card version-card--latest";
+      const row = document.createElement("div");
+      row.className = "version-card__row";
+      const badge = document.createElement("span");
+      badge.className = "version-badge";
+      badge.textContent = t("badgeLatest", "Güncel sürüm");
+      const meta = document.createElement("span");
+      meta.className = "version-meta";
+      meta.textContent = buildMetaLine(L);
+      row.appendChild(badge);
+      row.appendChild(meta);
+      const dl = document.createElement("a");
+      dl.className = "btn-dl";
+      dl.href = L.apkFile;
+      dl.setAttribute("download", L.apkDisplayName || "");
+      dl.textContent = t("downloadApk", "APK indir");
+      current.appendChild(row);
+      current.appendChild(dl);
       if (L.notes && L.notes.length) {
         const h3 = document.createElement("h3");
         h3.className = "subhead-ch";
         h3.textContent = t("notesTitle", "Yama notları (bu sürüm)");
-        card.appendChild(h3);
-        card.appendChild(elNotesList(L.notes));
+        current.appendChild(h3);
+        current.appendChild(elNotesList(L.notes));
       }
-      latestRoot.appendChild(card);
-
-      const historyRoot = document.getElementById("history-root");
-      const historySection = document.getElementById("history-section");
-      if (historyRoot && historySection) {
-        historyRoot.innerHTML = "";
-        const past = (data.older || []).slice().reverse();
-        past.forEach((ver) => {
-          if (!ver.notes || !ver.notes.length) return;
-          const block = document.createElement("div");
-          block.className = "history-block";
-          const ht = document.createElement("h3");
-          ht.className = "history-block__title";
-          const sizeH = ver.sizeBytes != null ? ` · ${formatBytes(ver.sizeBytes)}` : "";
-          const vw2 = t("versionWord", "Sürüm");
-          ht.textContent = `${vw2} ${ver.versionLabel || ver.version} (${formatDate(ver.date)})${sizeH}`;
-          block.appendChild(ht);
-          block.appendChild(elNotesList(ver.notes));
-          historyRoot.appendChild(block);
-        });
-        historySection.style.display = historyRoot.children.length ? "" : "none";
-      }
+      latestSlot.appendChild(current);
 
       const older = data.older || [];
-      if (!older.length) {
-        if (olderSection) olderSection.style.display = "none";
+      if (!olderSlot) {
+        /* no-op */
+      } else if (!older.length) {
+        olderSlot.setAttribute("hidden", "");
+        olderSlot.innerHTML = "";
       } else {
-        if (olderSection) olderSection.style.display = "";
-        olderRoot.innerHTML = "";
-        const ul = document.createElement("ul");
-        ul.className = "older-list";
+        olderSlot.removeAttribute("hidden");
+        olderSlot.innerHTML = "";
         older.forEach((item) => {
-          const li = document.createElement("li");
-          li.className = "older-item";
-          const top = document.createElement("div");
-          top.className = "older-item__top";
-          const label = document.createElement("span");
-          label.className = "version-meta";
-          const sizeO = item.sizeBytes != null ? ` · ${formatBytes(item.sizeBytes)}` : "";
-          const vw3 = t("versionWord", "Sürüm");
-          label.textContent = `${vw3} ${item.versionLabel || item.version} · ${formatDate(item.date)}${sizeO}`;
-          if (item.downloadDisabled) {
-            const span = document.createElement("span");
-            span.className = "older-item__dl-off";
-            span.textContent = t("downloadUnavailable", "İndirilemez");
-            top.appendChild(label);
-            top.appendChild(span);
-          } else {
-            const a = document.createElement("a");
-            a.href = item.apkFile;
-            a.setAttribute("download", item.apkDisplayName || "");
-            a.textContent = t("download", "İndir");
-            top.appendChild(label);
-            top.appendChild(a);
+          const archived = document.createElement("div");
+          archived.className = "version-card version-card--archived";
+          const rowO = document.createElement("div");
+          rowO.className = "version-card__row";
+          const badgeO = document.createElement("span");
+          badgeO.className = "version-badge version-badge--muted";
+          badgeO.textContent = t("badgeArchived", "Eski sürüm");
+          const metaO = document.createElement("span");
+          metaO.className = "version-meta";
+          metaO.textContent = buildMetaLine(item);
+          rowO.appendChild(badgeO);
+          rowO.appendChild(metaO);
+          const off = document.createElement("span");
+          off.className = "btn-dl btn-dl--disabled";
+          off.setAttribute("aria-disabled", "true");
+          off.textContent = t("downloadUnavailable", "İndirilemez");
+          archived.appendChild(rowO);
+          archived.appendChild(off);
+          if (item.notes && item.notes.length) {
+            const h3o = document.createElement("h3");
+            h3o.className = "subhead-ch";
+            h3o.textContent = t("notesTitle", "Yama notları (bu sürüm)");
+            archived.appendChild(h3o);
+            archived.appendChild(elNotesList(item.notes));
           }
-          li.appendChild(top);
-          if (item.notes && item.notes.length) li.appendChild(elNotesList(item.notes));
-          ul.appendChild(li);
+          olderSlot.appendChild(archived);
         });
-        olderRoot.appendChild(ul);
       }
 
       if (errEl) errEl.hidden = true;
@@ -189,6 +140,6 @@
   }
 
   window.addEventListener("ata-ready", () => {
-    if (document.getElementById("latest-root")) init();
+    if (document.getElementById("release-box-latest")) init();
   });
 })();

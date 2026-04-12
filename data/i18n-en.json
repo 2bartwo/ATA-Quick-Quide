@@ -163,8 +163,7 @@
   "releases": {
     "upcomingTipLabel": "New version",
     "upcomingBanner": "<strong>New version is live.</strong> Download the current APK from this box.",
-    "downloadHeroEyebrow": "Current build",
-    "downloadHeroAria": "Current version — download APK",
+    "badgeArchived": "Older release",
     "badgeLatest": "Latest release",
     "versionWord": "Version",
     "downloadApk": "Download APK",
