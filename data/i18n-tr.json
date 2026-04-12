@@ -162,7 +162,9 @@
   },
   "releases": {
     "upcomingTipLabel": "Yeni sürüm",
-    "upcomingBanner": "<strong>Yeni sürüm yayında.</strong> Güncel APK’yı yukarıdaki karttan indirebilirsin.",
+    "upcomingBanner": "<strong>Yeni sürüm yayında.</strong> Güncel APK’yı bu kutudan indirebilirsin.",
+    "downloadHeroEyebrow": "Güncel paket",
+    "downloadHeroAria": "Güncel sürüm — APK indir",
     "badgeLatest": "Güncel sürüm",
     "versionWord": "Sürüm",
     "downloadApk": "APK indir",

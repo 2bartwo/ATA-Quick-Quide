@@ -67,37 +67,49 @@
       const L = data.latest;
       if (!L) throw new Error("latest yok");
 
-      const bannerEl = document.getElementById("new-release-banner");
-      if (bannerEl) {
-        if (isReleaseBannerActive(data.releaseBanner)) bannerEl.removeAttribute("hidden");
-        else bannerEl.setAttribute("hidden", "");
+      const heroRoot = document.getElementById("release-download-hero");
+      if (heroRoot) {
+        heroRoot.innerHTML = "";
+        const hero = document.createElement("div");
+        hero.className = "release-download-hero__inner";
+        const heroTitle = document.createElement("p");
+        heroTitle.className = "release-download-hero__eyebrow";
+        heroTitle.textContent = t("downloadHeroEyebrow", "Güncel paket");
+        const rowH = document.createElement("div");
+        rowH.className = "version-card__row release-download-hero__row";
+        const badgeH = document.createElement("span");
+        badgeH.className = "version-badge";
+        badgeH.textContent = t("badgeLatest", "Güncel sürüm");
+        const metaH = document.createElement("span");
+        metaH.className = "version-meta";
+        const sizeH = L.sizeBytes != null ? ` · ${formatBytes(L.sizeBytes)}` : "";
+        const vw0 = t("versionWord", "Sürüm");
+        metaH.textContent = `${vw0} ${L.versionLabel || L.version} · ${formatDate(L.date)}${sizeH}`;
+        rowH.appendChild(badgeH);
+        rowH.appendChild(metaH);
+        const dlHero = document.createElement("a");
+        dlHero.className = "btn-dl release-download-hero__btn";
+        dlHero.href = L.apkFile;
+        dlHero.setAttribute("download", L.apkDisplayName || "");
+        dlHero.textContent = t("downloadApk", "APK indir");
+        hero.appendChild(heroTitle);
+        hero.appendChild(rowH);
+        hero.appendChild(dlHero);
+        if (isReleaseBannerActive(data.releaseBanner)) {
+          const tip = document.createElement("p");
+          tip.className = "release-download-hero__tip";
+          tip.innerHTML = t(
+            "upcomingBanner",
+            "<strong>Yeni sürüm yayında.</strong> Güncel APK’yı bu kutudan indirebilirsin."
+          );
+          hero.appendChild(tip);
+        }
+        heroRoot.appendChild(hero);
       }
 
       latestRoot.innerHTML = "";
       const card = document.createElement("div");
       card.className = "version-card version-card--latest";
-
-      const row = document.createElement("div");
-      row.className = "version-card__row";
-      const badge = document.createElement("span");
-      badge.className = "version-badge";
-      badge.textContent = t("badgeLatest", "Güncel sürüm");
-      const meta = document.createElement("span");
-      meta.className = "version-meta";
-      const sizePart = L.sizeBytes != null ? ` · ${formatBytes(L.sizeBytes)}` : "";
-      const vw = t("versionWord", "Sürüm");
-      meta.textContent = `${vw} ${L.versionLabel || L.version} · ${formatDate(L.date)}${sizePart}`;
-      row.appendChild(badge);
-      row.appendChild(meta);
-
-      const dl = document.createElement("a");
-      dl.className = "btn-dl";
-      dl.href = L.apkFile;
-      dl.setAttribute("download", L.apkDisplayName || "");
-      dl.textContent = t("downloadApk", "APK indir");
-
-      card.appendChild(row);
-      card.appendChild(dl);
       if (L.notes && L.notes.length) {
         const h3 = document.createElement("h3");
         h3.className = "subhead-ch";

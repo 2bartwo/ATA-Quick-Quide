@@ -1340,7 +1340,64 @@ body.is-app-nav-open {
   color: #64a8ff;
 }
 
-/* İndir sayfası — üstte yeni sürüm kutusu */
+/* İndir sayfası — üstte güncel paket + APK indir */
+.release-download-hero {
+  margin: 0 0 1.75rem;
+}
+
+.release-download-hero__inner {
+  padding: 1.35rem 1.45rem;
+  border-radius: var(--radius);
+  border: 1px solid rgba(11, 107, 203, 0.35);
+  background: linear-gradient(165deg, rgba(11, 107, 203, 0.1) 0%, var(--bg-card) 52%);
+  box-shadow: var(--shadow-soft);
+}
+
+.release-download-hero__eyebrow {
+  margin: 0 0 0.65rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.release-download-hero__row {
+  margin-bottom: 0.85rem;
+}
+
+.release-download-hero__btn {
+  margin-top: 0;
+}
+
+.release-download-hero__tip {
+  margin: 1rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.release-download-hero__tip strong {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+[data-theme="dark"] .release-download-hero__inner {
+  border-color: rgba(10, 132, 255, 0.4);
+  background: linear-gradient(165deg, rgba(10, 132, 255, 0.16) 0%, var(--bg-card) 50%);
+}
+
+[data-theme="dark"] .release-download-hero__eyebrow,
+[data-theme="dark"] .release-download-hero__tip strong {
+  color: #64a8ff;
+}
+
+.version-card--latest > .subhead-ch:first-child {
+  margin-top: 0;
+}
+
 .upcoming-release-banner {
   margin: 0 0 1.75rem;
   padding: 1rem 1.15rem;
