@@ -24,7 +24,7 @@
     "releaseTipClose": "Bildirimi kapat (bir daha gösterme)"
   },
   "hero": {
-    "headline": "ATA Chapters Artık Cebinizde",
+    "headline": "ATA Chapter Artık Cebinizde",
     "title": "ATA chapter referansı, cepte",
     "subtitle": "Uygulama giriş sayfası tarzında net anlatım; arayüz uygulama içi koyu temayla uyumlu.",
     "lead": "Havacılıkta kullanılan <strong>ATA chapter</strong> yapısına telefondan <strong>hızlı ve doğru</strong> şekilde bakmanı sağlar. Kalın dokümanlarda uzun aramalar yapmak yerine chapter numarası ve başlıklar <span class=\"text-nobreak\">cebinde hazır olur.</span>"
@@ -146,7 +146,7 @@
     "replyEmpty": "Yanıt metni yazın."
   },
   "footer": {
-    "html": "© __YEAR__ Ata Chapters · <a href=\"../nasil-yuklenir.html\">Kurulum</a> · <a href=\"../indir.html\">Sürümler</a> · <a href=\"#credits\">Ekip</a>"
+    "html": "© __YEAR__ Ata Chapter · <a href=\"../nasil-yuklenir.html\">Kurulum</a> · <a href=\"../indir.html\">Sürümler</a> · <a href=\"#credits\">Ekip</a>"
   },
   "page": {
     "downloadTitle": "İndir — Ata Chapters",
@@ -157,8 +157,8 @@
     "installDesc": "Ata Chapters — Android’e APK ile nasıl yüklenir.",
     "installH1": "Nasıl yüklenir",
     "installLead": "Bu uygulama <strong>Google Play dışından</strong> dağıtıldığı için kurulum, herhangi bir Android uygulamasına <strong>APK dosyası ile</strong> yaptığın standart adımlarla aynıdır. Aşağıda tipik bir akış var; üretici arayüzüne göre menü isimleri biraz değişebilir.",
-    "footerDownload": "© __YEAR__ Ata Chapters · <a href=\"anasayfa/\">Ana sayfa</a> · <a href=\"anasayfa/#credits\">Ekip</a>",
-    "footerInstall": "© __YEAR__ Ata Chapters · <a href=\"indir.html\">İndir</a> · <a href=\"anasayfa/#credits\">Ekip</a>"
+    "footerDownload": "© __YEAR__ Ata Chapter · <a href=\"anasayfa/\">Ana sayfa</a> · <a href=\"anasayfa/#credits\">Ekip</a>",
+    "footerInstall": "© __YEAR__ Ata Chapter · <a href=\"indir.html\">İndir</a> · <a href=\"anasayfa/#credits\">Ekip</a>"
   },
   "releases": {
     "upcomingTipLabel": "Yeni sürüm",
@@ -183,7 +183,7 @@
     "navTestimonials": "Yorumlar",
     "navContact": "İletişim",
     "heroKicker": "Erken erişim",
-    "heroH1": "ATA Chapters Artık Cebinizde",
+    "heroH1": "ATA Chapter Artık Cebinizde",
     "heroCta1": "Uygulamayı indir",
     "heroCta2": "Daha fazla bilgi",
     "featuresEyebrow": "Özellikler",
