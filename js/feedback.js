@@ -402,6 +402,58 @@
           statTile(dict("visitorTodayUniq", "Bugün benzersiz IP", "Today unique IP"), uniqToday) +
           "</div>";
 
+        var chartEl = document.getElementById("fb-visitor-chart");
+        if (chartEl) {
+          var DAYS = 14;
+          var buckets = new Array(DAYS).fill(0);
+          var dayKeys = [];
+          for (var d = DAYS - 1; d >= 0; d--) {
+            var dt = new Date(now.getFullYear(), now.getMonth(), now.getDate() - d);
+            dayKeys.push(dt);
+          }
+          var dayStartTs = dayKeys.map(function (dt) {
+            return dt.getTime();
+          });
+          for (var j = 0; j < arr.length; j++) {
+            var ts2 = Number(arr[j].timestamp || 0);
+            if (!ts2 || ts2 < dayStartTs[0]) continue;
+            for (var k = DAYS - 1; k >= 0; k--) {
+              if (ts2 >= dayStartTs[k]) {
+                buckets[k]++;
+                break;
+              }
+            }
+          }
+          var maxV = Math.max.apply(null, buckets);
+          if (maxV < 1) maxV = 1;
+          var locale2 = getLang() === "en" ? "en-GB" : "tr-TR";
+          chartEl.innerHTML = buckets
+            .map(function (v, idx) {
+              var pct = Math.round((v / maxV) * 100);
+              var barH = v === 0 ? 2 : Math.max(4, pct);
+              var dt = dayKeys[idx];
+              var dayLbl = dt.toLocaleDateString(locale2, { day: "2-digit", month: "2-digit" });
+              return (
+                '<div class="fb-visitor-chart__col" title="' +
+                escapeAttr(
+                  dt.toLocaleDateString(locale2, { day: "2-digit", month: "long", year: "numeric" }) +
+                    ": " +
+                    v +
+                    " " +
+                    dict("visitorHits", "ziyaret", "visits")
+                ) +
+                '"><span class="fb-visitor-chart__value">' +
+                escapeHtml(String(v)) +
+                '</span><span class="fb-visitor-chart__bar" style="height:' +
+                barH +
+                '%"></span><span class="fb-visitor-chart__label">' +
+                escapeHtml(dayLbl) +
+                "</span></div>"
+              );
+            })
+            .join("");
+        }
+
         var ipRows = Object.keys(ipMap).map(function (k) {
           return ipMap[k];
         });
@@ -513,11 +565,19 @@
     var visitorPane = document.getElementById("fb-visitor-pane");
     if (visitorGate) visitorGate.hidden = ok;
     if (visitorPane) visitorPane.hidden = !ok;
+    if (adminModal) {
+      adminModal.querySelectorAll("[data-fb-only-admin]").forEach(function (el) {
+        el.hidden = !ok;
+      });
+    }
+    if (!ok) setAdminTab("login");
     if (!ok) {
       if (adminListEl) adminListEl.innerHTML = "";
       if (profileStatusEl) profileStatusEl.hidden = true;
       if (visitorStatsEl) visitorStatsEl.innerHTML = "";
       if (visitorListEl) visitorListEl.innerHTML = "";
+      var chEl = document.getElementById("fb-visitor-chart");
+      if (chEl) chEl.innerHTML = "";
       return;
     }
     ensureRankSelectOptions();

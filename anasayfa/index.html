@@ -48,7 +48,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/app-site.css?v=118">
+  <link rel="stylesheet" href="../css/app-site.css?v=119">
 </head>
 <body data-page="index" data-site-root="../">
   <a class="visually-hidden" href="#icerik" data-i18n="skip">İçeriğe geç</a>
@@ -256,7 +256,7 @@
 
             <div class="fb-admin-tabs" role="tablist" aria-label="Admin sekmeleri">
               <button type="button" class="fb-admin-tabs__btn is-active" data-fb-tab="login" role="tab" aria-selected="true" aria-controls="fb-admin-tab-login">Giriş</button>
-              <button type="button" class="fb-admin-tabs__btn" data-fb-tab="visitors" role="tab" aria-selected="false" aria-controls="fb-admin-tab-visitors">Ziyaretçiler</button>
+              <button type="button" class="fb-admin-tabs__btn" data-fb-tab="visitors" role="tab" aria-selected="false" aria-controls="fb-admin-tab-visitors" data-fb-only-admin="1" hidden>Ziyaretçiler</button>
             </div>
 
             <div id="fb-admin-tab-login" class="fb-admin-tab is-active" role="tabpanel" aria-labelledby="fb-admin-tabs-login">
@@ -282,6 +282,8 @@
               <div id="fb-visitor-pane" class="fb-admin-modal__admins" hidden>
                 <h3 class="fb-admin-modal__admins-h">Ziyaretçi istatistikleri</h3>
                 <div id="fb-visitor-stats" class="fb-visitor-stats">Yükleniyor…</div>
+                <h4 class="fb-admin-modal__admins-h fb-admin-modal__admins-h--sub">Son 14 gün — günlük ziyaret</h4>
+                <div id="fb-visitor-chart" class="fb-visitor-chart" aria-label="Günlük ziyaret grafiği"></div>
                 <h4 class="fb-admin-modal__admins-h fb-admin-modal__admins-h--sub">Ziyaret eden IP'ler (en yeni önce)</h4>
                 <ul id="fb-visitor-list" class="fb-admin-list fb-visitor-list" aria-label="Ziyaretçi IP listesi"></ul>
               </div>
@@ -311,6 +313,6 @@
   <script src="../js/site-ui.js?v=36" defer></script>
   <script src="../js/app-motion.js?v=28" defer></script>
   <script src="../js/landing-page.js?v=31" defer></script>
-  <script src="../js/feedback.js?v=24" defer></script>
+  <script src="../js/feedback.js?v=25" defer></script>
 </body>
 </html>
