@@ -52,6 +52,7 @@ window.__ATA_FB_TEAM_RANKS = {
  */
 window.__ATA_FB_ADMIN_LIST = [
   { uid: "Utzc1cGvuPhzSBismyiTQ28pvYf2", name: "Yusuf Mirza Sökmen", defaultRank: "developer" },
+  { uid: "dCemgBrqxEX1sKBU52eYHfDBNyI3", name: "Bartu Yıldız", defaultRank: "assistant" },
 ];
 
 (function () {

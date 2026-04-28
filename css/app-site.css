@@ -2770,6 +2770,101 @@ button.fb-star:hover {
   background: rgba(96, 165, 250, 0.1);
 }
 
+.fb-admin-modal__admins-h--sub {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 0.65rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.fb-visitor-stats {
+  margin: 0.4rem 0 0.6rem;
+}
+
+.fb-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.55rem;
+}
+
+.fb-stat-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+}
+
+.fb-stat-tile__label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.fb-stat-tile__value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+[data-theme="dark"] .fb-stat-tile {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.fb-visitor-list {
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.fb-visitor-list .fb-admin-list__item {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+}
+
+[data-theme="dark"] .fb-visitor-list .fb-admin-list__item {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.fb-visitor-list .fb-admin-list__name {
+  font-family: ui-monospace, monospace;
+  font-size: 0.78rem;
+}
+
+.fb-visitor-list .fb-admin-list__rank {
+  margin-left: auto;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: rgba(13, 110, 253, 0.08);
+  padding: 0.15rem 0.4rem;
+  border-radius: 999px;
+}
+
+[data-theme="dark"] .fb-visitor-list .fb-admin-list__rank {
+  color: #64a8ff;
+  background: rgba(96, 165, 250, 0.12);
+}
+
+.fb-visitor-list .fb-admin-list__uid {
+  flex-basis: 100%;
+  font-size: 0.65rem;
+}
+
 .fb-card__admin {
   display: flex;
   flex-wrap: wrap;

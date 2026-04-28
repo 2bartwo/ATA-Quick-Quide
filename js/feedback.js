@@ -60,6 +60,8 @@
   var adminPassInput = document.getElementById("fb-admin-pass");
   var adminModalOut = document.getElementById("fb-admin-modal-out");
   var adminListEl = document.getElementById("fb-admin-list");
+  var visitorStatsEl = document.getElementById("fb-visitor-stats");
+  var visitorListEl = document.getElementById("fb-visitor-list");
   var profileNameInput = document.getElementById("fb-profile-name");
   var profileRankSelect = document.getElementById("fb-profile-rank");
   var profileSaveBtn = document.getElementById("fb-profile-save");
@@ -201,6 +203,15 @@
     return "developer";
   }
 
+  function getDefaultNameForUid(uid) {
+    var list = window.__ATA_FB_ADMIN_LIST;
+    if (!list || !uid) return "";
+    for (var i = 0; i < list.length; i++) {
+      if (list[i] && list[i].uid === uid && list[i].name) return String(list[i].name);
+    }
+    return "";
+  }
+
   function loadTeamProfiles() {
     return fetchT(FIREBASE_DB_URL + "/teamProfiles.json")
       .then(function (r) {
@@ -263,12 +274,11 @@
       .map(function (it) {
         var uid = it.uid ? String(it.uid) : "";
         var prof = uid ? teamProfiles[uid] : null;
-        var displayName = escapeHtml(
-          (prof && prof.badgeName) || it.name || it.note || dict("adminNoName", "Yönetici", "Admin")
-        );
+        var displayName = escapeHtml(it.name || it.note || dict("adminNoName", "Yönetici", "Admin"));
+        var rankKey = (prof && prof.rank && getRankMeta(prof.rank) ? prof.rank : "") || it.defaultRank || "developer";
         var chip = "";
-        if (prof && prof.rank && getRankMeta(prof.rank)) {
-          var m = getRankMeta(prof.rank);
+        if (rankKey && getRankMeta(rankKey)) {
+          var m = getRankMeta(rankKey);
           var lbl = getLang() === "en" ? m.labelEn : m.labelTr;
           chip =
             '<span class="fb-admin-list__rank" style="--fb-rank-c:' +
@@ -297,6 +307,203 @@
       .join("");
   }
 
+  function loadVisitorStats() {
+    if (!visitorStatsEl || !visitorListEl || !isSiteAdmin() || !isFirebaseReady()) return Promise.resolve();
+    visitorStatsEl.innerHTML = escapeHtml(
+      dict("visitorLoading", "Ziyaretçi verileri yükleniyor...", "Loading visitor data...")
+    );
+    visitorListEl.innerHTML = "";
+    return firebase
+      .auth()
+      .currentUser.getIdToken(false)
+      .then(function (token) {
+        var url = FIREBASE_DB_URL + "/visitorLogs.json?auth=" + encodeURIComponent(token);
+        return fetchT(url).then(function (r) {
+          if (!r.ok) throw new Error(String(r.status));
+          return r.json();
+        });
+      })
+      .then(function (data) {
+        var arr = [];
+        if (data && typeof data === "object") {
+          Object.keys(data).forEach(function (k) {
+            var it = data[k];
+            if (it && typeof it === "object") arr.push(it);
+          });
+        }
+        arr.sort(function (a, b) {
+          return Number(b.timestamp || 0) - Number(a.timestamp || 0);
+        });
+
+        var now = new Date();
+        var startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+        var startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+        var monthName = now.toLocaleDateString(getLang() === "en" ? "en-US" : "tr-TR", {
+          month: "long",
+          year: "numeric",
+        });
+
+        var totalAll = arr.length;
+        var totalMonth = 0;
+        var totalToday = 0;
+        var ipMap = {};
+        var ipMonth = {};
+        var ipToday = {};
+
+        for (var i = 0; i < arr.length; i++) {
+          var it = arr[i];
+          var ts = Number(it.timestamp || 0);
+          var ip = String(it.ip || "").trim();
+          if (!ip) continue;
+          if (!ipMap[ip]) {
+            ipMap[ip] = { ip: ip, count: 0, first: ts, last: ts, lastPage: it.page || "/" };
+          }
+          var rec = ipMap[ip];
+          rec.count++;
+          if (ts > rec.last) {
+            rec.last = ts;
+            rec.lastPage = it.page || rec.lastPage;
+          }
+          if (ts < rec.first) rec.first = ts;
+          if (ts >= startOfMonth) {
+            totalMonth++;
+            ipMonth[ip] = 1;
+          }
+          if (ts >= startOfDay) {
+            totalToday++;
+            ipToday[ip] = 1;
+          }
+        }
+
+        var uniqAll = Object.keys(ipMap).length;
+        var uniqMonth = Object.keys(ipMonth).length;
+        var uniqToday = Object.keys(ipToday).length;
+
+        function statTile(label, value) {
+          return (
+            '<div class="fb-stat-tile"><span class="fb-stat-tile__label">' +
+            escapeHtml(label) +
+            '</span><span class="fb-stat-tile__value">' +
+            escapeHtml(String(value)) +
+            "</span></div>"
+          );
+        }
+
+        visitorStatsEl.innerHTML =
+          '<div class="fb-stat-grid">' +
+          statTile(dict("visitorTotalAll", "Toplam ziyaret", "Total visits"), totalAll) +
+          statTile(dict("visitorTotalUniq", "Benzersiz IP", "Unique IPs"), uniqAll) +
+          statTile(
+            dict("visitorMonth", "Bu ay", "This month") + " (" + monthName + ")",
+            totalMonth
+          ) +
+          statTile(dict("visitorMonthUniq", "Bu ay benzersiz IP", "This month unique IP"), uniqMonth) +
+          statTile(dict("visitorToday", "Bugün ziyaret", "Today visits"), totalToday) +
+          statTile(dict("visitorTodayUniq", "Bugün benzersiz IP", "Today unique IP"), uniqToday) +
+          "</div>";
+
+        var ipRows = Object.keys(ipMap).map(function (k) {
+          return ipMap[k];
+        });
+        ipRows.sort(function (a, b) {
+          return b.last - a.last;
+        });
+
+        if (!ipRows.length) {
+          visitorListEl.innerHTML =
+            '<li class="fb-admin-list__item"><span class="fb-admin-list__name">' +
+            escapeHtml(dict("visitorEmpty", "Henüz ziyaretçi kaydı yok.", "No visitor logs yet.")) +
+            "</span></li>";
+          return;
+        }
+
+        var locale = getLang() === "en" ? "en-GB" : "tr-TR";
+        visitorListEl.innerHTML = ipRows
+          .map(function (rec) {
+            var lastTs = rec.last
+              ? new Date(rec.last).toLocaleString(locale, {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              : "-";
+            var firstTs = rec.first
+              ? new Date(rec.first).toLocaleDateString(locale, {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })
+              : "-";
+            return (
+              '<li class="fb-admin-list__item">' +
+              '<span class="fb-admin-list__name">' +
+              escapeHtml(rec.ip) +
+              "</span>" +
+              '<span class="fb-admin-list__rank">' +
+              escapeHtml(String(rec.count)) +
+              " " +
+              escapeHtml(dict("visitorHits", "ziyaret", "visits")) +
+              "</span>" +
+              '<code class="fb-admin-list__uid" title="' +
+              escapeAttr(
+                dict("visitorFirst", "İlk:", "First:") +
+                  " " +
+                  firstTs +
+                  " · " +
+                  dict("visitorLastPage", "Son sayfa:", "Last page:") +
+                  " " +
+                  String(rec.lastPage || "/")
+              ) +
+              '">' +
+              escapeHtml(lastTs) +
+              "</code>" +
+              "</li>"
+            );
+          })
+          .join("");
+      })
+      .catch(function () {
+        visitorStatsEl.textContent = dict(
+          "visitorLoadErr",
+          "Ziyaretçi verileri alınamadı.",
+          "Could not load visitor data."
+        );
+        visitorListEl.innerHTML = "";
+      });
+  }
+
+  function logVisitorHit() {
+    var day = new Date().toISOString().slice(0, 10);
+    var page = window.location.pathname || "/";
+    var key = "ata-visit-log-" + day + ":" + page;
+    try {
+      if (sessionStorage.getItem(key) === "1") return;
+      sessionStorage.setItem(key, "1");
+    } catch (e) {}
+    fetchT("https://api.ipify.org?format=json")
+      .then(function (r) {
+        if (!r.ok) throw new Error(String(r.status));
+        return r.json();
+      })
+      .then(function (ipd) {
+        var payload = {
+          ip: String((ipd && ipd.ip) || "unknown").substring(0, 80),
+          page: page.substring(0, 120),
+          host: String(window.location.hostname || "").substring(0, 120),
+          ua: String((navigator && navigator.userAgent) || "").substring(0, 220),
+          timestamp: Date.now(),
+        };
+        return fetchT(FIREBASE_DB_URL + "/visitorLogs.json", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      })
+      .catch(function () {});
+  }
+
   function syncAdminModalUi() {
     if (!adminModalForm || !adminModalSigned) return;
     var ok = isSiteAdmin();
@@ -312,6 +519,7 @@
       renderRankLegend();
       syncTeamProfileForm();
       renderAdminListHtml();
+      loadVisitorStats();
     });
   }
 
@@ -590,7 +798,7 @@
         var uid = firebase.auth().currentUser.uid;
         var prof = teamProfiles[uid] || {};
         var rk = prof.rank || getDefaultRankForUid(uid);
-        var bn = prof.badgeName ? String(prof.badgeName).trim() : "";
+        var bn = prof.badgeName ? String(prof.badgeName).trim() : getDefaultNameForUid(uid);
         var replyPayload = { text: text, timestamp: Date.now() };
         if (getRankMeta(rk)) replyPayload.rank = rk;
         if (bn && validateFullName(bn)) replyPayload.badgeName = bn.substring(0, 42);
@@ -942,11 +1150,13 @@
       loadTeamProfiles().finally(function () {
         syncAdminModalUi();
         renderList();
+        if (isSiteAdmin()) loadVisitorStats();
       });
     });
   }
   syncAdminModalUi();
 
   setMoreVisible(false);
+  logVisitorHit();
   loadFeedback();
 })();
