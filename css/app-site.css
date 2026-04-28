@@ -352,8 +352,8 @@ html:not([data-theme="dark"]) main.app-content.container:has(.landing-hero) {
 /* Mobil / dar masaüstü: menü çekmecesi + hamburger */
 .app-nav-toggle {
   display: none;
-  width: 2.45rem;
-  height: 2.45rem;
+  width: 2.95rem;
+  height: 2.95rem;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
@@ -381,11 +381,11 @@ html:not([data-theme="dark"]) main.app-content.container:has(.landing-hero) {
 
 .app-nav-toggle__bars {
   display: block;
-  width: 1.2rem;
-  height: 0.1rem;
+  width: 1.35rem;
+  height: 0.12rem;
   border-radius: 1px;
   background: currentColor;
-  box-shadow: 0 -0.35rem 0 currentColor, 0 0.35rem 0 currentColor;
+  box-shadow: 0 -0.4rem 0 currentColor, 0 0.4rem 0 currentColor;
 }
 
 [data-theme="dark"] .app-nav-toggle {
@@ -422,6 +422,9 @@ html:not([data-theme="dark"]) main.app-content.container:has(.landing-hero) {
 @media (max-width: 900px) {
   .app-nav-toggle {
     display: inline-flex;
+    width: 3.15rem;
+    height: 3.15rem;
+    border-radius: 0.85rem;
   }
 
   .app-nav-panel {
@@ -470,8 +473,8 @@ html:not([data-theme="dark"]) main.app-content.container:has(.landing-hero) {
   }
 
   .app-menu a {
-    font-size: 0.9375rem;
-    padding: 0.65rem 0.75rem;
+    font-size: 1rem;
+    padding: 0.8rem 0.9rem;
     border-radius: var(--radius-sm);
     white-space: normal;
     flex-shrink: 0;
@@ -3022,7 +3025,7 @@ button.fb-star:hover {
   margin: 0 0 0.85rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: linear-gradient(160deg, rgba(13, 110, 253, 0.08), var(--bg-elevated) 45%);
+  background: linear-gradient(160deg, rgba(13, 110, 253, 0.1), var(--bg-elevated) 45%);
   overflow: clip;
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
   transition: border-color 0.2s ease, transform 0.18s ease, box-shadow 0.2s ease;
@@ -3034,6 +3037,11 @@ button.fb-star:hover {
   box-shadow: 0 10px 22px rgba(13, 110, 253, 0.14);
 }
 
+.chapter-item[open] {
+  border-color: rgba(29, 185, 84, 0.45);
+  box-shadow: 0 10px 22px rgba(29, 185, 84, 0.16);
+}
+
 .chapter-item summary {
   list-style: none;
   cursor: pointer;
@@ -3043,6 +3051,7 @@ button.fb-star:hover {
   padding: 0.65rem 0.7rem;
   font-size: 0.85rem;
   font-weight: 600;
+  background: linear-gradient(90deg, rgba(13, 110, 253, 0.12), transparent 55%);
 }
 
 .chapter-item summary::-webkit-details-marker {
@@ -3053,7 +3062,7 @@ button.fb-star:hover {
   font-family: ui-monospace, monospace;
   padding: 0.1rem 0.35rem;
   border-radius: 999px;
-  background: rgba(13, 110, 253, 0.2);
+  background: linear-gradient(135deg, rgba(13, 110, 253, 0.35), rgba(45, 192, 255, 0.28));
   color: var(--accent-hover);
   font-size: 0.72rem;
 }
@@ -3092,7 +3101,8 @@ button.fb-star:hover {
   color: var(--text);
   padding: 0.22rem 0.35rem;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.04);
+  background: linear-gradient(90deg, rgba(13, 110, 253, 0.09), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(13, 110, 253, 0.16);
 }
 
 [data-theme="dark"] .chapter-item {
@@ -3101,8 +3111,17 @@ button.fb-star:hover {
 }
 
 [data-theme="dark"] .chapter-item__code {
-  background: rgba(10, 132, 255, 0.24);
+  background: linear-gradient(135deg, rgba(10, 132, 255, 0.4), rgba(94, 92, 230, 0.32));
   color: #9ecbff;
+}
+
+[data-theme="dark"] .chapter-item summary {
+  background: linear-gradient(90deg, rgba(10, 132, 255, 0.16), transparent 60%);
+}
+
+[data-theme="dark"] .chapter-item__list li {
+  background: linear-gradient(90deg, rgba(10, 132, 255, 0.18), rgba(255, 255, 255, 0.02));
+  border-color: rgba(10, 132, 255, 0.28);
 }
 
 @media (max-width: 920px) {
