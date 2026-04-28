@@ -5,7 +5,7 @@
 
   const phrases = reduced
     ? ["Ata Chapters"]
-    : ["Ata Chapters", "ata-quick-guide.bartwo.me", "\u26e4 \u26e4 \u26e4 \u26e4 \u26e4"];
+    : ["Ata Chapters", "atachapter.com", "\u26e4 \u26e4 \u26e4 \u26e4 \u26e4"];
 
   function toChars(s) {
     return Array.from(s);

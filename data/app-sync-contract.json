@@ -1,7 +1,7 @@
 {
   "version": 1,
   "description": "ATA Reference / Ata Chapters — site ile uygulama dil ve tema senkronu için sözleşme.",
-  "siteOrigin": "https://ata-quick-guide.bartwo.me",
+  "siteOrigin": "https://www.atachapter.com",
   "localStorage": {
     "langKey": "ata-lang",
     "themeKey": "ata-theme",
