@@ -14,11 +14,6 @@
     return cur == null ? fallback : cur;
   }
 
-  function splitColumns(items) {
-    var per = Math.ceil(items.length / 3);
-    return [items.slice(0, per), items.slice(per, per * 2), items.slice(per * 2)];
-  }
-
   function parseAtaData(raw) {
     var m = raw.match(/final\s+ataData\s*=\s*(\[[\s\S]*?\]);/);
     if (!m || !m[1]) return [];
@@ -50,38 +45,29 @@
   function renderFromItems(items) {
     var root = document.getElementById("chapter-browser");
     if (!root) return;
-    var cols = splitColumns(items);
     var subPrefix = t("chapters.subPrefix", "Subchapters");
-    root.innerHTML = cols
+    root.innerHTML = items
       .map(function (group) {
         return (
-          '<div class="chapter-col">' +
-          group
-            .map(function (ch) {
-              return (
-                '<details class="chapter-item">' +
-                '<summary><span class="chapter-item__code">' +
-                ch.code +
-                "</span><span>" +
-                ch.title +
-                "</span></summary>" +
-                '<div class="chapter-item__section">' +
-                ch.section +
-                "</div>" +
-                '<div class="chapter-item__sub"><p class="chapter-item__subhead">' +
-                subPrefix +
-                "</p>" +
-                '<ul class="chapter-item__list">' +
-                (ch.sub || [])
-                  .map(function (s) {
-                    return "<li>" + s + "</li>";
-                  })
-                  .join("") +
-                "</ul></div></details>"
-              );
+          '<details class="chapter-item">' +
+          '<summary><span class="chapter-item__code">' +
+          group.code +
+          "</span><span>" +
+          group.title +
+          "</span></summary>" +
+          '<div class="chapter-item__section">' +
+          group.section +
+          "</div>" +
+          '<div class="chapter-item__sub"><p class="chapter-item__subhead">' +
+          subPrefix +
+          "</p>" +
+          '<ul class="chapter-item__list">' +
+          (group.sub || [])
+            .map(function (s) {
+              return "<li>" + s + "</li>";
             })
             .join("") +
-          "</div>"
+          "</ul></div></details>"
         );
       })
       .join("");

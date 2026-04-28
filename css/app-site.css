@@ -3006,22 +3006,32 @@ button.fb-star:hover {
 }
 
 .chapter-browser {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.85rem;
+  column-count: 3;
+  column-gap: 0.85rem;
 }
 
 .chapter-col {
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
+  display: contents;
 }
 
 .chapter-item {
+  display: block;
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  page-break-inside: avoid;
+  margin: 0 0 0.85rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: var(--bg-elevated);
+  background: linear-gradient(160deg, rgba(13, 110, 253, 0.08), var(--bg-elevated) 45%);
   overflow: clip;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+  transition: border-color 0.2s ease, transform 0.18s ease, box-shadow 0.2s ease;
+}
+
+.chapter-item:hover {
+  border-color: rgba(13, 110, 253, 0.45);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(13, 110, 253, 0.14);
 }
 
 .chapter-item summary {
@@ -3043,8 +3053,8 @@ button.fb-star:hover {
   font-family: ui-monospace, monospace;
   padding: 0.1rem 0.35rem;
   border-radius: 999px;
-  background: rgba(13, 110, 253, 0.1);
-  color: var(--accent);
+  background: rgba(13, 110, 253, 0.2);
+  color: var(--accent-hover);
   font-size: 0.72rem;
 }
 
@@ -3080,17 +3090,30 @@ button.fb-star:hover {
 .chapter-item__list li {
   font-size: 0.78rem;
   color: var(--text);
+  padding: 0.22rem 0.35rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme="dark"] .chapter-item {
+  background: linear-gradient(160deg, rgba(10, 132, 255, 0.15), rgba(255, 255, 255, 0.03) 46%);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+[data-theme="dark"] .chapter-item__code {
+  background: rgba(10, 132, 255, 0.24);
+  color: #9ecbff;
 }
 
 @media (max-width: 920px) {
   .chapter-browser {
-    grid-template-columns: 1fr 1fr;
+    column-count: 2;
   }
 }
 
 @media (max-width: 620px) {
   .chapter-browser {
-    grid-template-columns: 1fr;
+    column-count: 1;
   }
 }
 
