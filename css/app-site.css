@@ -3005,6 +3005,95 @@ button.fb-star:hover {
   font-size: 0.65rem;
 }
 
+.chapter-browser {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.chapter-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.chapter-item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  overflow: clip;
+}
+
+.chapter-item summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 0.7rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.chapter-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.chapter-item__code {
+  font-family: ui-monospace, monospace;
+  padding: 0.1rem 0.35rem;
+  border-radius: 999px;
+  background: rgba(13, 110, 253, 0.1);
+  color: var(--accent);
+  font-size: 0.72rem;
+}
+
+.chapter-item__sub {
+  padding: 0 0.75rem 0.7rem;
+}
+
+.chapter-item__section {
+  margin: 0;
+  padding: 0 0.75rem 0.25rem;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.chapter-item__subhead {
+  margin: 0 0 0.3rem;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.chapter-item__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.22rem;
+}
+
+.chapter-item__list li {
+  font-size: 0.78rem;
+  color: var(--text);
+}
+
+@media (max-width: 920px) {
+  .chapter-browser {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .chapter-browser {
+    grid-template-columns: 1fr;
+  }
+}
+
 .fb-card__admin {
   display: flex;
   flex-wrap: wrap;

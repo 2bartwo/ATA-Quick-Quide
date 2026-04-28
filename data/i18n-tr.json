@@ -7,6 +7,7 @@
   "nav": {
     "what": "Uygulama",
     "features": "Özellikler",
+    "chapters": "Chapterlar",
     "download": "İndir",
     "how": "Kurulum",
     "team": "Ekip",
@@ -57,6 +58,11 @@
   "nedir": {
     "h": "Ne işe yarar?",
     "p": "ATA (Air Transport Association) chapter’ları, uçak sistemlerinin ve dokümantasyonun standart numaralandırmasıdır (ör. belirli sistemler için sabit chapter kodları). Bakım, planlama veya teknik bakarken doğru chapter’a hızlıca ulaşmak önemlidir; bu uygulama da tam bunun için: <strong>telefonu açıp ilgili chapter bilgisine pratik şekilde erişmeni</strong> kolaylaştırır."
+  },
+  "chapters": {
+    "h": "ATA Chapter Listesi (0-99)",
+    "lead": "Bir chapter seçin; alt başlıklar açılır.",
+    "subPrefix": "Alt chapterlar"
   },
   "features": {
     "h": "Öne çıkanlar",

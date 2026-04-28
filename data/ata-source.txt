@@ -1,0 +1,1596 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+void main() => runApp(const AtaApp());
+
+class AtaApp extends StatefulWidget {
+  const AtaApp({super.key});
+  @override
+  State<AtaApp> createState() => _AtaAppState();
+}
+
+class _AtaAppState extends State<AtaApp> {
+  late AppSettings settings;
+  bool _loaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    settings = await AppSettings.load();
+    setState(() => _loaded = true);
+  }
+
+  void _updateSettings(AppSettings newSettings) {
+    setState(() => settings = newSettings);
+    settings.save();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_loaded) {
+      return const MaterialApp(
+        home: Scaffold(
+          backgroundColor: Color(0xFF121212),
+          body: Center(child: CircularProgressIndicator()),
+        ),
+      );
+    }
+
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: "ATA Chapters",
+      theme: settings.getThemeData(),
+      home: AtaChapterPage(settings: settings, onSettingsChanged: _updateSettings),
+    );
+  }
+}
+
+class AppSettings {
+  bool isDark;
+  String lang;
+  String fontFamily;
+  double fontSize;
+  Color textColor;
+  Color backgroundColor;
+  Color primaryColor;
+  double lineHeight;
+
+  AppSettings({
+    this.isDark = true,
+    this.lang = 'tr',
+    this.fontFamily = 'Roboto',
+    this.fontSize = 13.0,
+    Color? textColor,
+    Color? backgroundColor,
+    Color? primaryColor,
+    this.lineHeight = 1.3,
+  })  : textColor = textColor ?? (isDark ? Colors.white : Colors.black87),
+        backgroundColor = backgroundColor ?? (isDark ? const Color(0xFF121212) : const Color(0xFFF5F5F5)),
+        primaryColor = primaryColor ?? Colors.blue;
+
+  static Future<AppSettings> load() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isDark = prefs.getBool('isDark') ?? true;
+    return AppSettings(
+      isDark: isDark,
+      lang: prefs.getString('lang') ?? 'tr',
+      fontFamily: prefs.getString('fontFamily') ?? 'Roboto',
+      fontSize: prefs.getDouble('fontSize') ?? 13.0,
+      textColor: Color(prefs.getInt('textColor') ?? (isDark ? 0xFFFFFFFF : 0xFF212121)),
+      backgroundColor: Color(prefs.getInt('backgroundColor') ?? (isDark ? 0xFF121212 : 0xFFF5F5F5)),
+      primaryColor: Color(prefs.getInt('primaryColor') ?? 0xFF2196F3),
+      lineHeight: prefs.getDouble('lineHeight') ?? 1.3,
+    );
+  }
+
+  Future<void> save() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isDark', isDark);
+    await prefs.setString('lang', lang);
+    await prefs.setString('fontFamily', fontFamily);
+    await prefs.setDouble('fontSize', fontSize);
+    await prefs.setInt('textColor', textColor.value);
+    await prefs.setInt('backgroundColor', backgroundColor.value);
+    await prefs.setInt('primaryColor', primaryColor.value);
+    await prefs.setDouble('lineHeight', lineHeight);
+  }
+
+  ThemeData getThemeData() {
+    return ThemeData(
+      brightness: isDark ? Brightness.dark : Brightness.light,
+      scaffoldBackgroundColor: backgroundColor,
+      primaryColor: primaryColor,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: primaryColor,
+        brightness: isDark ? Brightness.dark : Brightness.light,
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: isDark ? const Color(0xFF1E1E1E) : primaryColor,
+        foregroundColor: isDark ? Colors.white : Colors.white,
+      ),
+      cardColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+      textTheme: TextTheme(
+        bodyMedium: TextStyle(
+          color: textColor,
+          fontFamily: fontFamily,
+          fontSize: fontSize,
+          height: lineHeight,
+        ),
+      ),
+    );
+  }
+
+  AppSettings copyWith({
+    bool? isDark,
+    String? lang,
+    String? fontFamily,
+    double? fontSize,
+    Color? textColor,
+    Color? backgroundColor,
+    Color? primaryColor,
+    double? lineHeight,
+  }) {
+    final newIsDark = isDark ?? this.isDark;
+    return AppSettings(
+      isDark: newIsDark,
+      lang: lang ?? this.lang,
+      fontFamily: fontFamily ?? this.fontFamily,
+      fontSize: fontSize ?? this.fontSize,
+      textColor: textColor ?? (isDark != null ? (newIsDark ? Colors.white : Colors.black87) : this.textColor),
+      backgroundColor: backgroundColor ?? (isDark != null ? (newIsDark ? const Color(0xFF121212) : const Color(0xFFF5F5F5)) : this.backgroundColor),
+      primaryColor: primaryColor ?? this.primaryColor,
+      lineHeight: lineHeight ?? this.lineHeight,
+    );
+  }
+
+  void resetToDefault() {
+    isDark = true;
+    lang = 'tr';
+    fontFamily = 'Roboto';
+    fontSize = 13.0;
+    textColor = Colors.white;
+    backgroundColor = const Color(0xFF121212);
+    primaryColor = Colors.blue;
+    lineHeight = 1.3;
+  }
+}
+
+class AtaChapterPage extends StatefulWidget {
+  final AppSettings settings;
+  final ValueChanged<AppSettings> onSettingsChanged;
+
+  const AtaChapterPage({super.key, required this.settings, required this.onSettingsChanged});
+
+  @override
+  State<AtaChapterPage> createState() => _AtaChapterPageState();
+}
+
+class _AtaChapterPageState extends State<AtaChapterPage> with TickerProviderStateMixin {
+  final TextEditingController _searchCtrl = TextEditingController();
+  final Set<String> _favorites = {};
+  final Set<String> _expanded = {};
+  final ScrollController _scrollController = ScrollController();
+  late final AnimationController _listAnimCtrl;
+  late final Animation<double> _listFadeAnim;
+  bool _favoritesLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavorites();
+    _listAnimCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 600));
+    _listFadeAnim = CurvedAnimation(parent: _listAnimCtrl, curve: Curves.easeOut);
+    _listAnimCtrl.forward();
+  }
+
+  @override
+  void dispose() {
+    _searchCtrl.dispose();
+    _scrollController.dispose();
+    _listAnimCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadFavorites() async {
+    final prefs = await SharedPreferences.getInstance();
+    final favList = prefs.getStringList('favorites') ?? [];
+    setState(() {
+      _favorites.addAll(favList);
+      _favoritesLoaded = true;
+    });
+  }
+
+  Future<void> _saveFavorites() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('favorites', _favorites.toList());
+  }
+
+  void _toggleFavorite(String num) {
+    setState(() {
+      if (_favorites.contains(num)) {
+        _favorites.remove(num);
+      } else {
+        _favorites.add(num);
+      }
+    });
+    _saveFavorites();
+  }
+
+  String t(String en, String tr) => widget.settings.lang == 'tr' ? tr : en;
+
+  void _copy(String text) {
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle_outline, color: Colors.white, size: 18),
+            const SizedBox(width: 8),
+            Text(t('Copied!', 'Kopyalandı!')),
+          ],
+        ),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        duration: const Duration(milliseconds: 1200),
+        margin: const EdgeInsets.all(12),
+      ),
+    );
+  }
+
+  void _showInfo(Map<String, dynamic> ch) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'Info',
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 350),
+      transitionBuilder: (context, anim, secondaryAnim, child) {
+        final curved = CurvedAnimation(parent: anim, curve: Curves.easeOutBack);
+        return ScaleTransition(
+          scale: curved,
+          child: FadeTransition(opacity: anim, child: child),
+        );
+      },
+      pageBuilder: (ctx, anim, secondaryAnim) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text('ATA ${ch['num']}'),
+        content: SingleChildScrollView(
+          child: Text(
+            ch['info'][widget.settings.lang],
+            style: const TextStyle(height: 1.5),
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(t('Close', 'Kapat'))),
+        ],
+      ),
+    );
+  }
+
+  void _openSettings() {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => SettingsPage(
+          settings: widget.settings,
+          onSettingsChanged: widget.onSettingsChanged,
+        ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          final curved = CurvedAnimation(parent: animation, curve: Curves.easeInOutCubic);
+          return SlideTransition(
+            position: Tween<Offset>(begin: const Offset(1.0, 0.0), end: Offset.zero).animate(curved),
+            child: FadeTransition(opacity: curved, child: child),
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 400),
+        reverseTransitionDuration: const Duration(milliseconds: 350),
+      ),
+    );
+  }
+
+  final ataData = [
+    {
+      'section': {'en': 'GENERAL', 'tr': 'GENEL'},
+      'chapters': [
+        {
+          'num': '00',
+          'title': {'en': 'GENERAL', 'tr': 'GENEL'},
+          'info': {
+            'en': 'General information section containing introductory material, general aircraft data, and basic system descriptions. Includes aircraft type information, registration data, abbreviations, and general maintenance instructions applicable across all systems.',
+            'tr': 'Giriş materyali, genel uçak verileri ve temel sistem açıklamalarını içeren genel bilgi bölümü. Uçak tipi bilgilerini, kayıt verilerini, kısaltmaları ve tüm sistemler için geçerli genel bakım talimatlarını içerir.'
+          },
+          'subs': ['00 General', '10 Description & Operation', '20 Fault Isolation', '30 Maintenance Practices']
+        },
+        {
+          'num': '01',
+          'title': {'en': 'MAINTENANCE POLICY', 'tr': 'BAKIM POLİTİKASI'},
+          'info': {
+            'en': 'Maintenance Policy defines the overall maintenance philosophy, organizational structure, and maintenance program requirements. Covers maintenance planning documents (MPD), scheduled maintenance tasks, reliability programs, and continuing airworthiness management.',
+            'tr': 'Bakım Politikası genel bakım felsefesini, organizasyon yapısını ve bakım program gereksinimlerini tanımlar. Bakım planlama dokümanlarını (MPD), planlanmış bakım görevlerini, güvenilirlik programlarını ve sürekli uçuşa elverişlilik yönetimini kapsar.'
+          },
+          'subs': ['00 General', '10 Maintenance Policy', '20 Organization', '30 Programs']
+        },
+        {
+          'num': '02',
+          'title': {'en': 'WEIGHT & BALANCE', 'tr': 'AĞIRLIK VE DENGE'},
+          'info': {
+            'en': 'Weight and Balance provides aircraft weight and center of gravity data, loading procedures, and weight calculations. Includes empty weight, maximum weights, CG limits, loading charts, and ballast requirements. Critical for flight safety and performance.',
+            'tr': 'Ağırlık ve Denge uçak ağırlığı ve ağırlık merkezi verilerini, yükleme prosedürlerini ve ağırlık hesaplamalarını sağlar. Boş ağırlık, maksimum ağırlıklar, CG limitleri, yükleme çizelgeleri ve balast gereksinimlerini içerir. Uçuş güvenliği ve performans için kritiktir.'
+          },
+          'subs': ['00 General', '10 Weight Data', '20 Balance Data', '30 Loading Procedures']
+        },
+        {
+          'num': '03',
+          'title': {'en': 'MINIMUM EQUIPMENT LIST', 'tr': 'MİNİMUM EKİPMAN LİSTESİ'},
+          'info': {
+            'en': 'Minimum Equipment List (MEL) defines equipment that may be inoperative while still maintaining airworthiness for flight. Specifies conditions, limitations, and rectification intervals for deferred maintenance items. Essential for dispatch decisions and operational flexibility.',
+            'tr': 'Minimum Ekipman Listesi (MEL) uçuş için uçuşa elverişliliği korurken hangi ekipmanın çalışmaz durumda olabileceğini tanımlar. Ertelenmiş bakım kalemleri için koşulları, sınırlamaları ve düzeltme aralıklarını belirtir. Sefer kararları ve operasyonel esneklik için esastır.'
+          },
+          'subs': ['00 General', '10 MEL Items', '20 Rectification Intervals', '30 Operational Procedures']
+        },
+        {
+          'num': '04',
+          'title': {'en': 'AIRWORTHINESS LIMITATIONS', 'tr': 'UÇUŞA ELVERİŞLİLİK SINIRLARI'},
+          'info': {
+            'en': 'Airworthiness Limitations section contains mandatory inspection requirements and life limits that cannot be exceeded. Includes structural life limits, systems certification maintenance requirements (CMR), and mandatory modifications. Compliance is required for continued airworthiness.',
+            'tr': 'Uçuşa Elverişlilik Sınırları bölümü aşılamayacak zorunlu muayene gereksinimlerini ve ömür limitlerini içerir. Yapısal ömür limitlerini, sistem sertifikasyon bakım gereksinimlerini (CMR) ve zorunlu modifikasyonları içerir. Sürekli uçuşa elverişlilik için uyumluluk gereklidir.'
+          },
+          'subs': ['00 General', '10 Life Limits', '20 Certification Maintenance Requirements', '30 Critical Design Configuration Limits']
+        },
+        {
+          'num': '05',
+          'title': {'en': 'TIME LIMITS / MAINTENANCE CHECKS', 'tr': 'ZAMAN LİMİTLERİ / BAKIM KONTROLLERİ'},
+          'info': {
+            'en': 'Time Limits/Maintenance Checks covers all mandatory inspection intervals, scheduled maintenance programs, and compliance requirements. Includes calendar and flight hour limits for components, structural inspections, and system checks. Details inspection types (A, B, C, D checks), maintenance planning, and regulatory compliance tracking.',
+            'tr': 'Zaman Limitleri/Bakım Kontrolleri tüm zorunlu kontrol aralıklarını, planlı bakım programlarını ve uyumluluk gereksinimlerini kapsar. Bileşenler için takvim ve uçuş saati limitlerini, yapısal muayeneleri ve sistem kontrollerini içerir. Muayene türlerini (A, B, C, D kontrolleri), bakım planlaması ve yasal uyumluluk takibini detaylandırır.'
+          },
+          'subs': ['00 General', '10 Time Limits', '20 Scheduled Maintenance Checks', '30 Structural Inspection Program', '40 Operational Checks']
+        },
+        {
+          'num': '06',
+          'title': {'en': 'DIMENSIONS & AREAS', 'tr': 'BOYUTLAR VE ALANLAR'},
+          'info': {
+            'en': 'Dimensions and Areas provides complete aircraft dimensions including wingspan, length, height, wheel base, and areas. Contains clearance requirements for ground operations, hangar specifications, and dimensional tolerances. Critical for ground handling, storage planning, and facility requirements.',
+            'tr': 'Boyutlar ve Alanlar, kanat açıklığı, uzunluk, yükseklik, dingil mesafesi ve alanlar dahil olmak üzere eksiksiz uçak boyutlarını sağlar. Yer operasyonları, hangar özellikleri ve boyutsal toleranslar için boşluk gereksinimlerini içerir. Yer hizmetleri, depolama planlaması ve tesis gereksinimleri için kritiktir.'
+          },
+          'subs': ['00 General', '10 Aircraft Dimensions', '20 Compartment Areas', '30 Access Panels']
+        },
+        {
+          'num': '07',
+          'title': {'en': 'LIFTING & SHORING', 'tr': 'KALDIRMA VE DESTEK'},
+          'info': {
+            'en': 'Lifting and Shoring covers all jacking procedures, support equipment requirements, and aircraft leveling operations. Includes jack point locations, lifting capacities, safety procedures, and shoring requirements for maintenance operations. Essential for landing gear service, weighing operations, and major structural maintenance.',
+            'tr': 'Kaldırma ve Destek, tüm kriko prosedürlerini, destek ekipman gereksinimlerini ve uçak tesviye işlemlerini kapsar. Kriko nokta konumları, kaldırma kapasiteleri, güvenlik prosedürleri ve bakım operasyonları için destek gereksinimlerini içerir. İniş takımı servisi, tartım işlemleri ve büyük yapısal bakım için esastır.'
+          },
+          'subs': ['00 General', '10 Jacking', '20 Shoring', '30 Hoisting']
+        },
+        {
+          'num': '08',
+          'title': {'en': 'LEVELING & WEIGHING', 'tr': 'TESVIYE VE TARTIM'},
+          'info': {
+            'en': 'Leveling and Weighing procedures for determining aircraft weight and balance. Covers weighing equipment requirements, leveling procedures, center of gravity calculations, and weight distribution analysis. Includes procedures for different aircraft configurations and loading conditions. Critical for flight safety and performance calculations.',
+            'tr': 'Uçak ağırlığı ve dengesini belirlemek için Tesviye ve Tartım prosedürleri. Tartım ekipman gereksinimlerini, tesviye prosedürlerini, ağırlık merkezi hesaplamalarını ve ağırlık dağılım analizini kapsar. Farklı uçak konfigürasyonları ve yükleme koşulları için prosedürleri içerir. Uçuş güvenliği ve performans hesaplamaları için kritiktir.'
+          },
+          'subs': ['00 General', '10 Weighing Procedures', '20 Leveling', '30 Weight and Balance Calculation']
+        },
+        {
+          'num': '09',
+          'title': {'en': 'TOWING & TAXIING', 'tr': 'ÇEKME VE TAKSİ'},
+          'info': {
+            'en': 'Towing and Taxiing covers ground movement procedures including pushback operations, towing equipment requirements, tow bar connections, and taxi procedures. Includes turning radius limitations, ground speed restrictions, and communication protocols. Essential for safe ground operations and aircraft positioning.',
+            'tr': 'Çekme ve Taksi, pushback operasyonları, çekme ekipman gereksinimleri, çekme bağlantıları ve taksi prosedürleri dahil yer hareket prosedürlerini kapsar. Dönüş yarıçapı sınırlamaları, yer hızı kısıtlamaları ve iletişim protokollerini içerir. Güvenli yer operasyonları ve uçak konumlandırması için esastır.'
+          },
+          'subs': ['00 General', '10 Towing', '20 Taxiing', '30 Ground Movement Procedures']
+        },
+        {
+          'num': '10',
+          'title': {'en': 'PARKING, MOORING & STORAGE', 'tr': 'PARK, DEMİRLEME VE DEPOLAMA'},
+          'info': {
+            'en': 'Parking, Mooring, Tiedown and Return to Service covers aircraft securing procedures, parking brake requirements, chock placement, tiedown specifications for various weather conditions, and long-term storage preparation. Includes depreservation and return to service procedures after storage periods.',
+            'tr': 'Park, Demirleme ve Servise Geri Dönüş, uçak sabitleme prosedürlerini, park freni gereksinimlerini, takoz yerleşimini, çeşitli hava koşulları için demirleme özelliklerini ve uzun süreli depolama hazırlığını kapsar. Depolama dönemlerinden sonra koruma kaldırma ve servise dönüş prosedürlerini içerir.'
+          },
+          'subs': ['00 General', '10 Parking', '20 Mooring', '30 Storage', '40 Return to Service']
+        },
+        {
+          'num': '11',
+          'title': {'en': 'PLACARDS & MARKINGS', 'tr': 'LEVHALAR VE İŞARETLER'},
+          'info': {
+            'en': 'Placards and Markings details all required aircraft markings, warning placards, instructional signs, and identification labels. Includes exterior registration marks, safety warnings, servicing instructions, and emergency equipment markings. Covers material specifications, placement requirements, and legibility standards for all aircraft markings.',
+            'tr': 'Levhalar ve İşaretler, tüm gerekli uçak işaretlerini, uyarı levhalarını, talimat işaretlerini ve tanımlama etiketlerini detaylandırır. Dış kayıt işaretlerini, güvenlik uyarılarını, servis talimatlarını ve acil durum ekipman işaretlerini içerir. Tüm uçak işaretleri için malzeme özelliklerini, yerleşim gereksinimlerini ve okunabilirlik standartlarını kapsar.'
+          },
+          'subs': ['00 General', '10 Exterior Markings', '20 Interior Placards', '30 Emergency Markings', '40 Instructional Signs']
+        },
+        {
+          'num': '12',
+          'title': {'en': 'SERVICING - ROUTINE MAINTENANCE', 'tr': 'SERVİS - RUTİN BAKIM'},
+          'info': {
+            'en': 'Servicing covers all routine replenishment procedures including fuel, oil, hydraulic fluid, oxygen, potable water, and other consumables. Details servicing points, capacity limits, fluid specifications, and contamination prevention. Includes pre-flight and post-flight servicing requirements, ground support equipment specifications, and safety procedures for all servicing operations.',
+            'tr': 'Servis, yakıt, yağ, hidrolik sıvısı, oksijen, içme suyu ve diğer sarf malzemeler dahil tüm rutin ikmal prosedürlerini kapsar. Servis noktalarını, kapasite limitlerini, sıvı özelliklerini ve kontaminasyon önlemeyi detaylandırır. Uçuş öncesi ve sonrası servis gereksinimlerini, yer destek ekipman özelliklerini ve tüm servis operasyonları için güvenlik prosedürlerini içerir.'
+          },
+          'subs': ['00 General', '10 Replenishing', '20 Fuel Servicing', '30 Oil Servicing', '40 Hydraulic Servicing', '50 Water/Waste Servicing']
+        },
+        {
+          'num': '13',
+          'title': {'en': 'BALLAST', 'tr': 'BALAST'},
+          'info': {
+            'en': 'Ballast systems provide permanent or temporary weight to maintain proper aircraft center of gravity. Includes permanent ballast installations, removable ballast provisions, and ballast location specifications. Details ballast weight calculations and installation procedures to achieve proper weight distribution when aircraft configuration changes.',
+            'tr': 'Balast sistemleri uygun uçak ağırlık merkezini korumak için kalıcı veya geçici ağırlık sağlar. Kalıcı balast kurulumlarını, çıkarılabilir balast sağlamalarını ve balast konum özelliklerini içerir. Uçak konfigürasyonu değiştiğinde uygun ağırlık dağılımı elde etmek için balast ağırlık hesaplamaları ve kurulum prosedürlerini detaylandırır.'
+          },
+          'subs': ['00 General', '10 Permanent Ballast', '20 Removable Ballast']
+        },
+        {
+          'num': '14',
+          'title': {'en': 'HARDWARE', 'tr': 'DONANIM'},
+          'info': {
+            'en': 'Hardware chapter covers standard aircraft hardware including bolts, nuts, screws, rivets, pins, and washers. Details material specifications, strength classifications, and installation standards. Includes hardware identification, selection criteria, and torque requirements. Provides standard part numbers and interchangeability information for fasteners used throughout aircraft.',
+            'tr': 'Donanım bölümü cıvatalar, somunlar, vidalar, perçinler, pimler ve pullar dahil standart uçak donanımını kapsar. Malzeme özelliklerini, mukavemet sınıflandırmalarını ve kurulum standartlarını detaylandırır. Donanım tanımlama, seçim kriterleri ve tork gereksinimlerini içerir. Uçak genelinde kullanılan bağlantı elemanları için standart parça numaraları ve değiştirilebilirlik bilgisi sağlar.'
+          },
+          'subs': ['00 General', '10 Bolts & Screws', '20 Nuts', '30 Rivets', '40 Pins', '50 Washers']
+        },
+        {
+          'num': '15',
+          'title': {'en': 'EXTERNAL TRAINING AIDS', 'tr': 'DIŞ EĞİTİM YARDIMCILARI'},
+          'info': {
+            'en': 'External Training Aids covers external markings, training placards, and instructional aids applied to aircraft exterior for maintenance training purposes. Includes color-coded system identification, access point markings, and procedural reminders. Used primarily on training aircraft to facilitate student learning and system recognition.',
+            'tr': 'Dış Eğitim Yardımcıları bakım eğitim amaçları için uçak dışına uygulanan dış işaretleri, eğitim levhalarını ve öğretici yardımcıları kapsar. Renk kodlu sistem tanımlama, erişim noktası işaretleri ve prosedür hatırlatıcıları içerir. Öğrenci öğrenimini ve sistem tanımasını kolaylaştırmak için esas olarak eğitim uçaklarında kullanılır.'
+          },
+          'subs': ['00 General', '10 External Markings', '20 Training Placards']
+        },
+        {
+          'num': '16',
+          'title': {'en': 'GROUND SUPPORT EQUIPMENT', 'tr': 'YER DESTEK EKİPMANI'},
+          'info': {
+            'en': 'Ground Support Equipment chapter documents special tools, test equipment, and ground handling equipment required for aircraft maintenance and operation. Includes tow bars, jacks, maintenance stands, test sets, and servicing equipment. Details equipment specifications, calibration requirements, and usage procedures for ground support operations.',
+            'tr': 'Yer Destek Ekipmanı bölümü uçak bakımı ve operasyonu için gerekli özel aletleri, test ekipmanını ve yer taşıma ekipmanını dokümante eder. Çekme barlarını, krikoları, bakım sehpalarını, test setlerini ve servis ekipmanını içerir. Yer destek operasyonları için ekipman özelliklerini, kalibrasyon gereksinimlerini ve kullanım prosedürlerini detaylandırır.'
+          },
+          'subs': ['00 General', '10 Tools', '20 Maintenance Stands', '30 Towing Equipment', '40 Test Equipment']
+        },
+        {
+          'num': '17',
+          'title': {'en': 'AUXILIARY EQUIPMENT', 'tr': 'YARDIMCI EKİPMAN'},
+          'info': {
+            'en': 'Auxiliary Equipment covers miscellaneous equipment and provisions not classified under other chapters. May include external cargo pods, auxiliary fuel systems, ferry fuel tanks, special mission equipment, and temporary installations. Details installation requirements and operational procedures for supplementary equipment.',
+            'tr': 'Yardımcı Ekipman diğer bölümler altında sınıflandırılmamış çeşitli ekipman ve sağlamaları kapsar. Harici kargo podlarını, yardımcı yakıt sistemlerini, feribot yakıt tanklarını, özel görev ekipmanını ve geçici kurulumları içerebilir. Ek ekipman için kurulum gereksinimlerini ve operasyonel prosedürleri detaylandırır.'
+          },
+          'subs': ['00 General', '10 Cargo Pods', '20 Auxiliary Fuel', '30 Special Equipment']
+        },
+        {
+          'num': '18',
+          'title': {'en': 'VIBRATION & NOISE ANALYSIS', 'tr': 'TİTREŞİM VE GÜRÜLTÜ ANALİZİ'},
+          'info': {
+            'en': 'Vibration and Noise Analysis covers procedures for monitoring, analyzing, and troubleshooting aircraft vibration and noise issues. Includes vibration monitoring equipment, analysis techniques, and acceptance criteria. Details noise measurement procedures, source identification, and suppression methods. Used for engine health monitoring and structural integrity assessment.',
+            'tr': 'Titreşim ve Gürültü Analizi uçak titreşim ve gürültü sorunlarını izleme, analiz etme ve arıza bulma prosedürlerini kapsar. Titreşim izleme ekipmanını, analiz tekniklerini ve kabul kriterlerini içerir. Gürültü ölçüm prosedürlerini, kaynak tanımlama ve bastırma metodlarını detaylandırır. Motor sağlık izleme ve yapısal bütünlük değerlendirmesi için kullanılır.'
+          },
+          'subs': ['00 General', '10 Vibration Analysis', '20 Noise Analysis', '30 Monitoring Equipment']
+        },
+        {
+          'num': '19',
+          'title': {'en': 'FUEL & OIL SAMPLES', 'tr': 'YAKIT VE YAĞ NUMUNELERİ'},
+          'info': {
+            'en': 'Fuel and Oil Samples chapter provides procedures for collecting and analyzing fuel and oil samples. Includes sampling points, sample collection methods, contamination testing, and laboratory analysis procedures. Details acceptance criteria for fuel quality and oil condition. Critical for detecting contamination and monitoring engine health through oil analysis programs.',
+            'tr': 'Yakıt ve Yağ Numuneleri bölümü yakıt ve yağ numunelerini toplama ve analiz prosedürlerini sağlar. Numune alma noktalarını, numune toplama metodlarını, kontaminasyon testini ve laboratuvar analiz prosedürlerini içerir. Yakıt kalitesi ve yağ durumu için kabul kriterlerini detaylandırır. Kontaminasyon tespit ve yağ analiz programları ile motor sağlık izleme için kritiktir.'
+          },
+          'subs': ['00 General', '10 Fuel Sampling', '20 Oil Sampling', '30 Analysis Procedures']
+        },
+      ]
+    },
+    {
+      'section': {'en': 'AIRFRAME SYSTEMS', 'tr': 'UÇAK SİSTEMLERİ'},
+      'chapters': [
+        {
+          'num': '20',
+          'title': {'en': 'STANDARD PRACTICES - AIRFRAME', 'tr': 'STANDART UYGULAMALAR - GÖVDE'},
+          'info': {
+            'en': 'Standard Practices for Airframe provides general procedures and standards for airframe maintenance. Covers standard torque values, sealant applications, electrical bonding, safety wiring, and general assembly practices. Includes tool usage, measurement techniques, and quality standards for airframe work.',
+            'tr': 'Gövde için Standart Uygulamalar, gövde bakımı için genel prosedürler ve standartlar sağlar. Standart tork değerleri, sızdırmazlık uygulamaları, elektriksel bağlama, emniyet telleme ve genel montaj uygulamalarını kapsar. Gövde işleri için alet kullanımı, ölçüm teknikleri ve kalite standartlarını içerir.'
+          },
+          'subs': ['00 General', '10 Procedures', '20 Torque Values', '30 Electrical Bonding', '40 Sealants', '50 Hardware', '60 Safety Wiring']
+        },
+        {
+          'num': '21',
+          'title': {'en': 'AIR CONDITIONING', 'tr': 'KLİMALANDIRMA'},
+          'info': {
+            'en': 'Air Conditioning system provides pressurization, temperature control, and ventilation for aircraft cabin and cockpit. Includes air cycle machines, temperature control systems, distribution ducting, and pressure controllers. Covers heating, cooling, humidity control, and air quality management. Essential for crew and passenger comfort and safety at altitude.',
+            'tr': 'Klimatik sistemi, uçak kabini ve kokpit için basınçlandırma, sıcaklık kontrolü ve havalandırma sağlar. Hava çevrimi makinelerini, sıcaklık kontrol sistemlerini, dağıtım kanallarını ve basınç kontrolörlerini içerir. Isıtma, soğutma, nem kontrolü ve hava kalitesi yönetimini kapsar. İrtifada mürettebat ve yolcu konforu ile güvenliği için esastır.'
+          },
+          'subs': ['00 General', '10 Compression', '20 Distribution', '30 Pressurization Control', '40 Heating', '50 Cooling', '60 Temperature Control', '70 Humidity/Air Quality Control']
+        },
+        {
+          'num': '22',
+          'title': {'en': 'AUTO FLIGHT', 'tr': 'OTOMATİK UÇUŞ'},
+          'info': {
+            'en': 'Auto Flight system encompasses autopilot, flight director, autothrottle, and flight management computers. Provides automatic control of aircraft pitch, roll, yaw, and thrust. Includes altitude hold, heading select, approach modes, and automated landing capabilities. Critical for reducing pilot workload and precision flight path management.',
+            'tr': 'Otomatik Uçuş sistemi, otopilot, uçuş direktörü, otogaz ve uçuş yönetim bilgisayarlarını kapsar. Uçak yunuslama, yalpalama, sapma ve itki otomatik kontrolünü sağlar. İrtifa tutma, rota seçimi, yaklaşma modları ve otomatik iniş kabiliyetlerini içerir. Pilot iş yükünü azaltmak ve hassas uçuş yolu yönetimi için kritiktir.'
+          },
+          'subs': ['00 General', '10 Autopilot', '20 Speed-Attitude Correction', '30 Auto Throttle', '40 System Monitor', '50 Aerodynamic Load Alleviating']
+        },
+        {
+          'num': '23',
+          'title': {'en': 'COMMUNICATIONS', 'tr': 'HABERLEŞME'},
+          'info': {
+            'en': 'Communications system includes VHF/HF radios, intercoms, passenger address systems, SATCOM, ACARS, and CPDLC datalink. Enables air traffic control communication, crew coordination, passenger announcements, and data transmission. Covers audio management, antenna systems, and digital communication networks. Essential for safe flight operations and regulatory compliance.',
+            'tr': 'Haberleşme sistemi VHF/HF telsizleri, interkomları, yolcu anons sistemlerini, SATCOM, ACARS ve CPDLC veri bağlantısını içerir. Hava trafik kontrolü iletişimi, ekip koordinasyonu, yolcu anonsları ve veri iletimini sağlar. Ses yönetimi, anten sistemleri ve dijital iletişim ağlarını kapsar. Güvenli uçuş operasyonları ve yasal uyumluluk için esastır.'
+          },
+          'subs': ['00 General', '10 Speech Communications', '15 SATCOM', '20 Data Transmission', '30 Passenger Address', '40 Interphone', '50 Audio', '60 Static Discharge']
+        },
+        {
+          'num': '24',
+          'title': {'en': 'ELECTRICAL POWER', 'tr': 'ELEKTRİK GÜCÜ'},
+          'info': {
+            'en': 'Electrical Power system generates, regulates, and distributes electrical power throughout aircraft. Includes engine-driven generators, APU generator, batteries, inverters, transformers, and distribution buses. Provides AC and DC power for all aircraft systems. Covers power generation, conversion, protection systems, and emergency power sources. Critical for all aircraft operations.',
+            'tr': 'Elektrik Gücü sistemi uçak genelinde elektrik gücü üretir, regüle eder ve dağıtır. Motor tahrikli generatörleri, APU generatörünü, bataryaları, inverterleri, transformatörleri ve dağıtım baralarını içerir. Tüm uçak sistemleri için AC ve DC güç sağlar. Güç üretimi, dönüştürme, koruma sistemleri ve acil güç kaynaklarını kapsar. Tüm uçak operasyonları için kritiktir.'
+          },
+          'subs': ['00 General', '10 Generator Drive', '20 AC Generation', '30 DC Generation', '40 External Power', '50 AC Electrical Load Distribution', '60 DC Electrical Load Distribution']
+        },
+        {
+          'num': '25',
+          'title': {'en': 'EQUIPMENT/FURNISHINGS', 'tr': 'EKİPMAN/DÖŞEME'},
+          'info': {
+            'en': 'Equipment and Furnishings covers all cabin interior components including seats, galleys, lavatories, stowage compartments, emergency equipment, and passenger service units. Includes cockpit seats, control stands, and instrument panels. Details entertainment systems, cabin lighting, and interior trim. Encompasses safety equipment storage and accessibility requirements for emergency situations.',
+            'tr': 'Ekipman ve Döşeme, koltuklar, mutfaklar, tuvaletler, saklama bölmeleri, acil durum ekipmanı ve yolcu hizmet üniteleri dahil tüm kabin iç bileşenlerini kapsar. Kokpit koltukları, kontrol sehpaları ve enstrüman panellerini içerir. Eğlence sistemlerini, kabin aydınlatmasını ve iç kaplamaları detaylandırır. Acil durumlar için güvenlik ekipman depolaması ve erişilebilirlik gereksinimlerini kapsar.'
+          },
+          'subs': ['00 General', '10 Flight Compartment', '20 Passenger Compartment', '30 Buffet/Galley', '40 Lavatories', '50 Additional Compartments', '60 Emergency Equipment', '70 Accessory Compartments', '80 Insulation']
+        },
+        {
+          'num': '26',
+          'title': {'en': 'FIRE PROTECTION', 'tr': 'YANGIN KORUMA'},
+          'info': {
+            'en': 'Fire Protection system provides fire and overheat detection, warning, and suppression for engines, APU, cargo compartments, and lavatories. Includes smoke detectors, fire extinguishing systems, thermal switches, and control panels. Covers both automatic and manual fire fighting systems. Critical safety system with redundant detection and suppression capabilities for protecting aircraft and occupants.',
+            'tr': 'Yangın Koruma sistemi motorlar, APU, kargo bölmeleri ve tuvaletler için yangın ve aşırı ısınma tespiti, uyarı ve bastırma sağlar. Duman dedektörleri, yangın söndürme sistemleri, termal anahtarlar ve kontrol panellerini içerir. Hem otomatik hem manuel yangınla mücadele sistemlerini kapsar. Uçak ve yolcuları korumak için yedekli tespit ve bastırma kabiliyetlerine sahip kritik güvenlik sistemidir.'
+          },
+          'subs': ['00 General', '10 Detection', '20 Extinguishing', '30 Explosion Suppression']
+        },
+        {
+          'num': '27',
+          'title': {'en': 'FLIGHT CONTROLS', 'tr': 'UÇUŞ KONTROL'},
+          'info': {
+            'en': 'Flight Controls system enables pilot control of aircraft attitude and flight path. Primary controls include ailerons, elevators, rudder for pitch, roll, and yaw. Secondary controls include flaps, slats, spoilers, and trim systems. Can be mechanical, hydraulic, or fly-by-wire systems. Includes control surface actuators, feel systems, and limiting mechanisms. Fundamental to aircraft controllability and flight safety.',
+            'tr': 'Uçuş Kontrol sistemi pilotun uçak duruşu ve uçuş yolu kontrolünü sağlar. Birincil kontroller yunuslama, yalpalama ve sapma için kanatçık, elevator ve dümenyi içerir. İkincil kontroller flap, slat, spoiler ve trim sistemlerini içerir. Mekanik, hidrolik veya fly-by-wire sistemler olabilir. Kontrol yüzeyi aktüatörleri, his sistemleri ve sınırlama mekanizmalarını içerir. Uçak kontrol edilebilirliği ve uçuş güvenliği için temeldir.'
+          },
+          'subs': ['00 General', '10 Aileron', '20 Rudder', '30 Elevator', '40 Horizontal Stabilizer', '50 Flaps', '60 Spoiler, Drag Devices', '70 Gust Lock, Damper', '80 Lift Augmenting']
+        },
+        {
+          'num': '28',
+          'title': {'en': 'FUEL SYSTEM', 'tr': 'YAKIT SİSTEMİ'},
+          'info': {
+            'en': 'Fuel System stores, manages, and delivers fuel to engines. Includes fuel tanks, pumps, valves, filters, quantity indication, and distribution lines. Provides fuel transfer, jettison capabilities, and tank inerting. Covers fuel temperature management, contamination prevention, and center of gravity control through fuel management. Critical for engine operation and aircraft performance throughout all flight phases.',
+            'tr': 'Yakıt Sistemi yakıtı depolar, yönetir ve motorlara iletir. Yakıt tankları, pompalar, valfler, filtreler, miktar göstergesi ve dağıtım hatlarını içerir. Yakıt transferi, boşaltma kabiliyetleri ve tank inerting sağlar. Yakıt yönetimi ile yakıt sıcaklık yönetimi, kontaminasyon önleme ve ağırlık merkezi kontrolünü kapsar. Tüm uçuş fazlarında motor operasyonu ve uçak performansı için kritiktir.'
+          },
+          'subs': ['00 General', '10 Storage', '20 Distribution', '30 Dump', '40 Indicating']
+        },
+        {
+          'num': '29',
+          'title': {'en': 'HYDRAULIC POWER', 'tr': 'HİDROLİK GÜÇ'},
+          'info': {
+            'en': 'Hydraulic Power system generates and distributes high-pressure fluid power for flight controls, landing gear, brakes, and other systems. Includes engine-driven pumps, reservoirs, accumulators, filters, and distribution lines. Provides redundant systems for critical functions. Covers pressure regulation, fluid cooling, and contamination control. Essential for safe operation of primary aircraft systems requiring high force actuation.',
+            'tr': 'Hidrolik Güç sistemi uçuş kontrolleri, iniş takımı, frenler ve diğer sistemler için yüksek basınçlı akışkan gücü üretir ve dağıtır. Motor tahrikli pompaları, rezervuarları, akümülatörleri, filtreleri ve dağıtım hatlarını içerir. Kritik fonksiyonlar için yedekli sistemler sağlar. Basınç regülasyonu, sıvı soğutma ve kontaminasyon kontrolünü kapsar. Yüksek kuvvet gerektiren birincil uçak sistemlerinin güvenli operasyonu için esastır.'
+          },
+          'subs': ['00 General', '10 Main System', '20 Auxiliary', '30 Indicating']
+        },
+        {
+          'num': '30',
+          'title': {'en': 'ICE & RAIN PROTECTION', 'tr': 'BUZ VE YAĞMUR KORUMA'},
+          'info': {
+            'en': 'Ice and Rain Protection systems prevent ice accumulation and ensure visibility during adverse weather. Includes engine inlet anti-ice, wing and stabilizer de-ice/anti-ice boots or thermal systems, windshield heating, pitot-static probe heating, and rain repellent systems. Covers ice detection and monitoring. Critical for maintaining aerodynamic performance, engine operation, and flight instrument accuracy in icing conditions.',
+            'tr': 'Buz ve Yağmur Koruma sistemleri buz birikmesini önler ve olumsuz hava koşullarında görüşü sağlar. Motor girişi anti-buz, kanat ve stabilizatör buz çözme/anti-buz botları veya termal sistemleri, ön cam ısıtma, pitot-statik prob ısıtma ve yağmur itici sistemleri içerir. Buz tespit ve izleme kapsar. Buzlanma koşullarında aerodinamik performans, motor operasyonu ve uçuş enstrüman doğruluğunu korumak için kritiktir.'
+          },
+          'subs': ['00 General', '10 Airfoil', '20 Air Intakes', '30 Pitot and Static', '40 Windshield', '50 Antennas', '60 Propellers/Rotors', '70 Water Lines', '80 Detection']
+        },
+        {
+          'num': '31',
+          'title': {'en': 'INDICATING/RECORDING SYSTEMS', 'tr': 'GÖSTERGE/KAYIT SİSTEMLERİ'},
+          'info': {
+            'en': 'Indicating and Recording Systems provide flight crew with essential information displays and record flight data. Includes Electronic Flight Instrument System (EFIS), Engine Indicating and Crew Alerting System (EICAS), Flight Data Recorder (FDR), Cockpit Voice Recorder (CVR), and maintenance recording systems. Covers instrument panels, multifunction displays, warning systems, and data acquisition. Critical for flight operations, safety monitoring, and accident investigation.',
+            'tr': 'Gösterge ve Kayıt Sistemleri uçuş ekibine temel bilgi göstergeleri sağlar ve uçuş verilerini kaydeder. Elektronik Uçuş Enstrüman Sistemi (EFIS), Motor Gösterge ve Ekip Uyarı Sistemi (EICAS), Uçuş Veri Kaydedici (FDR), Kokpit Ses Kaydedici (CVR) ve bakım kayıt sistemlerini içerir. Enstrüman panelleri, çok fonksiyonlu göstergeler, uyarı sistemleri ve veri toplama kapsar. Uçuş operasyonları, güvenlik izleme ve kaza soruşturması için kritiktir.'
+          },
+          'subs': ['00 General', '10 Instrument Panels', '20 Independent Instruments', '30 Recorders', '40 Central Computers', '50 Central Warning Systems', '60 Central Display', '70 Automatic Data Reporting']
+        },
+        {
+          'num': '32',
+          'title': {'en': 'LANDING GEAR', 'tr': 'İNİŞ TAKIMI'},
+          'info': {
+            'en': 'Landing Gear system supports aircraft during ground operations and absorbs landing loads. Includes main and nose gear assemblies, retraction/extension mechanisms, wheels, brakes, steering, and shock absorption systems. Covers position indicating, safety systems, and ground sensing. Incorporates anti-skid braking and autobrake systems. Essential structural system for takeoff, landing, and all ground operations.',
+            'tr': 'İniş Takımı sistemi yer operasyonları sırasında uçağı destekler ve iniş yüklerini emer. Ana ve burun takım tertibatlarını, geri çekme/uzatma mekanizmalarını, tekerlekleri, frenleri, direksiyon ve şok emme sistemlerini içerir. Pozisyon gösterme, güvenlik sistemleri ve yer algılama kapsar. Kayma önleyici frenleme ve otofrenleme sistemlerini içerir. Kalkış, iniş ve tüm yer operasyonları için esas yapısal sistemdir.'
+          },
+          'subs': ['00 General', '10 Main Gear & Doors', '20 Nose Gear & Doors', '30 Extension & Retraction', '40 Wheels & Brakes', '50 Steering', '60 Position & Warning', '70 Supplementary Gear']
+        },
+        {
+          'num': '33',
+          'title': {'en': 'LIGHTS', 'tr': 'IŞIKLAR'},
+          'info': {
+            'en': 'Lights system provides illumination for flight operations, safety, and passenger comfort. Exterior lights include navigation, anti-collision, landing, taxi, and logo lights for visibility and collision avoidance. Interior lights include cockpit instrument lighting, cabin lighting, and emergency lighting. Covers light control systems and dimming. Essential for night operations, safety compliance, and emergency evacuation.',
+            'tr': 'Işıklar sistemi uçuş operasyonları, güvenlik ve yolcu konforu için aydınlatma sağlar. Dış ışıklar görünürlük ve çarpışma önleme için seyir, anti-çarpışma, iniş, taksi ve logo ışıklarını içerir. İç ışıklar kokpit enstrüman aydınlatması, kabin aydınlatması ve acil aydınlatmayı içerir. Işık kontrol sistemleri ve kısma kapsar. Gece operasyonları, güvenlik uyumluluğu ve acil tahliye için esastır.'
+          },
+          'subs': ['00 General', '10 Flight Compartment', '20 Passenger Compartment', '30 Cargo Compartment', '40 Exterior Lighting', '50 Emergency Lighting']
+        },
+        {
+          'num': '34',
+          'title': {'en': 'NAVIGATION', 'tr': 'NAVİGASYON'},
+          'info': {
+            'en': 'Navigation systems determine aircraft position and provide guidance for flight routing. Includes Inertial Reference Systems (IRS), GPS, VOR, DME, ADF, ILS, and Flight Management Systems (FMS). Provides automatic navigation, route planning, and precision approach capabilities. Covers position updating, waypoint navigation, and integration with autopilot. Critical for accurate navigation, fuel efficiency, and instrument approaches.',
+            'tr': 'Navigasyon sistemleri uçak pozisyonunu belirler ve uçuş rotası için rehberlik sağlar. Ataletsel Referans Sistemleri (IRS), GPS, VOR, DME, ADF, ILS ve Uçuş Yönetim Sistemlerini (FMS) içerir. Otomatik navigasyon, rota planlama ve hassas yaklaşma kabiliyetleri sağlar. Pozisyon güncelleme, waypoint navigasyon ve otopilot entegrasyonu kapsar. Doğru navigasyon, yakıt verimliliği ve enstrüman yaklaşmaları için kritiktir.'
+          },
+          'subs': ['00 General', '10 Flight Environment Data', '20 Attitude & Direction', '30 Landing & Taxiing Aids', '40 Independent Position Determining', '50 Dependent Position Determining', '60 Flight Management Computing']
+        },
+        {
+          'num': '35',
+          'title': {'en': 'OXYGEN', 'tr': 'OKSİJEN'},
+          'info': {
+            'en': 'Oxygen system provides supplemental oxygen for crew and passengers during cabin depressurization or high-altitude operations. Includes storage cylinders, regulators, distribution lines, masks, and flow indicators. Crew system provides continuous flow or demand oxygen. Passenger system provides emergency drop-down masks. Covers portable oxygen bottles for medical emergencies. Critical safety system for maintaining consciousness and preventing hypoxia at altitude.',
+            'tr': 'Oksijen sistemi kabin basınç kaybı veya yüksek irtifa operasyonları sırasında ekip ve yolcular için ek oksijen sağlar. Depolama tüplerini, regülatörleri, dağıtım hatlarını, maskeleri ve akış göstergelerini içerir. Ekip sistemi sürekli akış veya talep oksijeni sağlar. Yolcu sistemi acil düşen maskeler sağlar. Tıbbi aciller için taşınabilir oksijen tüplerini kapsar. İrtifada bilinç koruma ve hipoksiyi önleme için kritik güvenlik sistemidir.'
+          },
+          'subs': ['00 General', '10 Crew', '20 Passenger', '30 Portable']
+        },
+        {
+          'num': '36',
+          'title': {'en': 'PNEUMATIC', 'tr': 'PNÖMATİK'},
+          'info': {
+            'en': 'Pneumatic system provides compressed air for various aircraft systems. Engine bleed air or auxiliary compressors supply air for air conditioning, pressurization, engine starting, wing anti-ice, and hydraulic reservoir pressurization. Includes bleed air control, distribution ducting, pressure regulation, and temperature monitoring. Covers precoolers and flow control valves. Essential for multiple aircraft systems operation.',
+            'tr': 'Pnömatik sistem çeşitli uçak sistemleri için basınçlı hava sağlar. Motor kanama havası veya yardımcı kompresörler klima, basınçlandırma, motor çalıştırma, kanat anti-buz ve hidrolik rezervuar basınçlandırması için hava sağlar. Kanama havası kontrolü, dağıtım kanalları, basınç regülasyonu ve sıcaklık izlemeyi içerir. Ön soğutucular ve akış kontrol valflerini kapsar. Çoklu uçak sistemleri operasyonu için esastır.'
+          },
+          'subs': ['00 General', '10 Distribution', '20 Indicating']
+        },
+        {
+          'num': '37',
+          'title': {'en': 'VACUUM/PRESSURE', 'tr': 'VAKUM/BASINÇ'},
+          'info': {
+            'en': 'Vacuum and Pressure systems provide negative and positive pressure for operating various instruments and accessories. Vacuum systems drive gyroscopic instruments in older aircraft. Pressure systems operate pneumatic systems, waste systems, and water systems. Includes pumps, regulators, relief valves, and indicating systems. Covers system monitoring and failure detection.',
+            'tr': 'Vakum ve Basınç sistemleri çeşitli enstrümanlar ve aksesuarları çalıştırmak için negatif ve pozitif basınç sağlar. Vakum sistemleri eski uçaklarda jiroskopik enstrümanları çalıştırır. Basınç sistemleri pnömatik sistemleri, atık sistemleri ve su sistemlerini çalıştırır. Pompalar, regülatörler, emniyet valfleri ve gösterge sistemlerini içerir. Sistem izleme ve arıza tespiti kapsar.'
+          },
+          'subs': ['00 General', '10 Vacuum', '20 Pressure']
+        },
+        {
+          'num': '38',
+          'title': {'en': 'WATER/WASTE', 'tr': 'SU/ATIK'},
+          'info': {
+            'en': 'Water and Waste system manages potable water supply and waste collection/disposal. Potable water system includes tanks, pumps, heaters, distribution lines, and faucets for galleys and lavatories. Waste system includes toilets, holding tanks, service panels, and recirculation systems. Covers system draining, servicing, and sanitization. Important for passenger and crew comfort on extended flights.',
+            'tr': 'Su ve Atık sistemi içme suyu temini ve atık toplama/bertaraf yönetir. İçme suyu sistemi mutfaklar ve tuvaletler için tanklar, pompalar, ısıtıcılar, dağıtım hatları ve musluklarını içerir. Atık sistemi tuvaletleri, tutma tanklarını, servis panellerini ve resirkülasyon sistemlerini içerir. Sistem boşaltma, servis ve sanitasyon kapsar. Uzun uçuşlarda yolcu ve ekip konforu için önemlidir.'
+          },
+          'subs': ['00 General', '10 Potable Water', '20 Wash Water', '30 Waste Disposal', '40 Air Supply']
+        },
+        {
+          'num': '39',
+          'title': {'en': 'ELECTRICAL/ELECTRONIC PANELS', 'tr': 'ELEKTRİKSEL/ELEKTRONİK PANELLER'},
+          'info': {
+            'en': 'Electrical and Electronic Panels and Multipurpose Components covers equipment racks, avionics bays, circuit breaker panels, and electronic equipment installations. Includes cooling systems for electronics, mounting provisions, and cable routing. Details panel layouts, component accessibility, and electromagnetic interference (EMI) shielding.',
+            'tr': 'Elektriksel ve Elektronik Paneller ile Çok Amaçlı Bileşenler, ekipman raflarını, aviyonik bölmelerini, devre kesici panellerini ve elektronik ekipman kurulumlarını kapsar. Elektronik için soğutma sistemlerini, montaj sağlamalarını ve kablo yönlendirmesini içerir. Panel düzenlerini, bileşen erişilebilirliğini ve elektromanyetik parazit (EMI) korumasını detaylandırır.'
+          },
+          'subs': ['00 General', '10 Equipment Racks', '11 Control Panels', '20 Avionics Bays', '30 Circuit Breaker Panels', '40 Electronic Cooling']
+        },
+        {
+          'num': '40',
+          'title': {'en': 'MULTISYSTEM', 'tr': 'ÇOK SİSTEM'},
+          'info': {
+            'en': 'Multisystem chapter covers integrated systems that involve multiple traditional ATA chapters. Includes multi-function computers, integrated control systems, and shared resources between systems. Details system interactions, data sharing, and coordinated operations between flight controls, hydraulics, electrical, and other aircraft systems.',
+            'tr': 'Çok Sistem bölümü birden fazla geleneksel ATA bölümünü içeren entegre sistemleri kapsar. Çok fonksiyonlu bilgisayarları, entegre kontrol sistemlerini ve sistemler arası paylaşılan kaynakları içerir. Sistem etkileşimlerini, veri paylaşımını ve uçuş kontrolleri, hidrolik, elektrik ve diğer uçak sistemleri arasında koordineli operasyonları detaylandırır.'
+          },
+          'subs': ['00 General', '10 Integrated Systems', '20 Shared Resources', '30 System Coordination']
+        },
+        {
+          'num': '41',
+          'title': {'en': 'WATER BALLAST', 'tr': 'SU BALASTI'},
+          'info': {
+            'en': 'Water Ballast system allows adjustment of aircraft center of gravity through water tanks. Includes water tanks, pumps, valves, dump systems, and quantity indication. Used on gliders and some commercial aircraft to optimize weight distribution. Details filling, transfer, and jettison procedures for water ballast management.',
+            'tr': 'Su Balast sistemi su tankları ile uçak ağırlık merkezinin ayarlanmasını sağlar. Su tanklarını, pompaları, valfleri, boşaltma sistemlerini ve miktar göstergesini içerir. Ağırlık dağılımını optimize etmek için planörlerde ve bazı ticari uçaklarda kullanılır. Su balast yönetimi için doldurma, transfer ve atma prosedürlerini detaylandırır.'
+          },
+          'subs': ['00 General', '10 Storage', '20 Distribution', '30 Dump', '40 Indicating']
+        },
+        {
+          'num': '42',
+          'title': {'en': 'INTEGRATED MODULAR AVIONICS', 'tr': 'ENTEGRE MODÜLER AVİYONİK'},
+          'info': {
+            'en': 'Integrated Modular Avionics (IMA) consolidates multiple avionics functions onto shared computing platforms. Includes common computing resources, standardized interfaces, and partitioned software applications. Reduces weight, power consumption, and space requirements compared to federated systems. Details IMA architecture, resource allocation, and software loading procedures.',
+            'tr': 'Entegre Modüler Aviyonik (IMA) birden fazla aviyonik fonksiyonu paylaşılan bilgi işlem platformları üzerine konsolide eder. Ortak bilgi işlem kaynaklarını, standartlaştırılmış arayüzleri ve bölümlenmiş yazılım uygulamalarını içerir. Federe sistemlere kıyasla ağırlık, güç tüketimi ve alan gereksinimlerini azaltır. IMA mimarisini, kaynak tahsisini ve yazılım yükleme prosedürlerini detaylandırır.'
+          },
+          'subs': ['00 General', '10 Computing Platforms', '20 Resource Management', '30 Software Applications', '40 Data Networks']
+        },
+        {
+          'num': '43',
+          'title': {'en': 'CABIN SYSTEMS', 'tr': 'KABİN SİSTEMLERİ'},
+          'info': {
+            'en': 'Cabin Systems integrates various passenger comfort and service systems. Includes cabin management system, lighting control, entertainment systems, and passenger service units. Details cabin network infrastructure, control interfaces, and system integration. Covers coordination between cabin lighting, temperature, entertainment, and communication systems for passenger comfort.',
+            'tr': 'Kabin Sistemleri çeşitli yolcu konforu ve hizmet sistemlerini entegre eder. Kabin yönetim sistemini, aydınlatma kontrolünü, eğlence sistemlerini ve yolcu servis ünitelerini içerir. Kabin ağ altyapısını, kontrol arayüzlerini ve sistem entegrasyonunu detaylandırır. Yolcu konforu için kabin aydınlatma, sıcaklık, eğlence ve haberleşme sistemleri arasında koordinasyonu kapsar.'
+          },
+          'subs': ['00 General', '10 Cabin Management', '20 Lighting Control', '30 Entertainment Integration', '40 Service Systems']
+        },
+        {
+          'num': '44',
+          'title': {'en': 'CABIN SYSTEMS - LEGACY', 'tr': 'KABİN SİSTEMLERİ - ESKİ'},
+          'info': {
+            'en': 'Legacy Cabin Systems chapter covers older cabin system architectures and standalone cabin equipment. Includes traditional cabin call systems, reading lights, and individual passenger controls. Used for documentation of older aircraft designs before integrated cabin management systems became standard. Details legacy wiring, controls, and maintenance procedures.',
+            'tr': 'Eski Kabin Sistemleri bölümü eski kabin sistem mimarilerini ve bağımsız kabin ekipmanını kapsar. Geleneksel kabin çağrı sistemlerini, okuma ışıklarını ve bireysel yolcu kontrollerini içerir. Entegre kabin yönetim sistemleri standart olmadan önce eski uçak tasarımlarının dokümantasyonu için kullanılır. Eski kablolama, kontroller ve bakım prosedürlerini detaylandırır.'
+          },
+          'subs': ['00 General', '10 Call Systems', '20 Individual Controls', '30 Legacy Equipment']
+        },
+        {
+          'num': '45',
+          'title': {'en': 'CENTRAL MAINTENANCE SYSTEM', 'tr': 'MERKEZ BAKIM SİSTEMİ'},
+          'info': {
+            'en': 'Central Maintenance System (CMS) monitors aircraft systems, detects faults, and provides diagnostic information to maintenance crews. Includes Built-In Test Equipment (BITE), fault recording, trend monitoring, and maintenance message generation. Interfaces with multiple aircraft systems to collect operational data. Enables proactive maintenance, reduces troubleshooting time, and improves aircraft reliability and dispatch availability.',
+            'tr': 'Merkezi Bakım Sistemi (CMS) uçak sistemlerini izler, arızaları tespit eder ve bakım ekiplerine tanı bilgisi sağlar. Dahili Test Ekipmanı (BITE), arıza kaydı, trend izleme ve bakım mesajı üretimi içerir. Operasyonel veri toplamak için çoklu uçak sistemleri ile arayüzlenir. Proaktif bakım sağlar, arıza bulma süresini azaltır ve uçak güvenilirliği ile sefer hazırlığını geliştirir.'
+          },
+          'subs': ['00 General', '05 Central Maintenance Computer', '10 Monitoring/Warning', '20 Data Processing', '45 Central Maintenance System', '60 Central Maintenance Data Function']
+        },
+        {
+          'num': '46',
+          'title': {'en': 'INFORMATION SYSTEMS', 'tr': 'BİLGİ SİSTEMLERİ'},
+          'info': {
+            'en': 'Information Systems include passenger entertainment, cabin management, and electronic flight bag systems. Covers in-flight entertainment with audio/video on demand, moving map displays, and connectivity services. Cabin management controls lighting, temperature, and announcements. Electronic Flight Bag (EFB) provides digital charts, manuals, and performance calculations. Includes network infrastructure, servers, and wireless systems for data distribution.',
+            'tr': 'Bilgi Sistemleri yolcu eğlence, kabin yönetimi ve elektronik uçuş çantası sistemlerini içerir. Talep üzerine ses/video, hareketli harita göstergeleri ve bağlantı hizmetleri ile uçak içi eğlenceyi kapsar. Kabin yönetimi aydınlatma, sıcaklık ve anonsları kontrol eder. Elektronik Uçuş Çantası (EFB) dijital haritalar, el kitapları ve performans hesaplamaları sağlar. Veri dağıtımı için ağ altyapısı, sunucular ve kablosuz sistemleri içerir.'
+          },
+          'subs': ['00 General', '10 Airplane General Information', '20 Flight Deck Information', '30 Maintenance Information', '40 Passenger Cabin Information', '50 Miscellaneous Information']
+        },
+        {
+          'num': '47',
+          'title': {'en': 'INERT GAS SYSTEM', 'tr': 'ATİL GAZ SİSTEMİ'},
+          'info': {
+            'en': 'Inert Gas System provides nitrogen-enriched air to fuel tanks to prevent combustion and reduce explosion risk. Includes air separation modules, distribution system, and monitoring equipment. Generates inert gas by removing oxygen from ambient air. Critical safety system for fuel tank ullage protection on modern aircraft.',
+            'tr': 'Atil Gaz Sistemi yanmayı önlemek ve patlama riskini azaltmak için yakıt tanklarına nitrojen zenginleştirilmiş hava sağlar. Hava ayırma modüllerini, dağıtım sistemini ve izleme ekipmanını içerir. Ortam havasından oksijen çıkararak atil gaz üretir. Modern uçaklarda yakıt tankı boşluk koruması için kritik güvenlik sistemidir.'
+          },
+          'subs': ['00 General', '10 Air Separation Module', '20 Distribution', '30 Indicating', '40 Monitoring']
+        },
+        {
+          'num': '48',
+          'title': {'en': 'IN-FLIGHT FUEL DISPENSING', 'tr': 'UÇUŞ İÇİ YAKIT İKMALİ'},
+          'info': {
+            'en': 'In-Flight Fuel Dispensing covers aerial refueling systems for both tanker and receiver aircraft. Includes probe-and-drogue systems, flying boom systems, fuel transfer pumps, hoses, and couplings. Details refueling procedures, fuel flow rates, and safety systems. Used primarily on military aircraft for extended range and endurance missions.',
+            'tr': 'Uçuş İçi Yakıt İkmali hem tanker hem de alıcı uçaklar için havadan yakıt ikmal sistemlerini kapsar. Prob ve paraşüt sistemlerini, uçan bom sistemlerini, yakıt transfer pompalarını, hortumları ve kaplinleri içerir. İkmal prosedürlerini, yakıt akış hızlarını ve güvenlik sistemlerini detaylandırır. Uzatılmış menzil ve dayanıklılık görevleri için esas olarak askeri uçaklarda kullanılır.'
+          },
+          'subs': ['00 General', '10 Tanker Systems', '20 Receiver Systems', '30 Hoses & Couplings', '40 Control Systems']
+        },
+        {
+          'num': '49',
+          'title': {'en': 'AIRBORNE AUXILIARY POWER', 'tr': 'UÇAK İÇİ YARDIMCI GÜÇ'},
+          'info': {
+            'en': 'Auxiliary Power Unit (APU) is a small turbine engine providing electrical power, pneumatic air, and hydraulic power when main engines are not running. Used for ground operations, engine starting, and emergency backup power in flight. Includes APU controller, fuel system, fire protection, air inlet/exhaust, and monitoring systems. Enables aircraft independence from ground support equipment and provides redundancy for critical systems.',
+            'tr': 'Yardımcı Güç Ünitesi (APU) ana motorlar çalışmadığında elektrik gücü, pnömatik hava ve hidrolik güç sağlayan küçük türbin motorudur. Yer operasyonları, motor çalıştırma ve uçuşta acil yedek güç için kullanılır. APU kontrolörü, yakıt sistemi, yangın koruması, hava girişi/egzozu ve izleme sistemlerini içerir. Uçağın yer destek ekipmanından bağımsızlığını sağlar ve kritik sistemler için yedeklilik sağlar.'
+          },
+          'subs': ['00 General', '10 Cowling/Containment', '20 Turbine/Compressor', '30 Fuel & Control', '40 Ignition', '50 Air', '60 APU Controls', '70 Indicating', '80 Exhaust']
+        },
+      ]
+    },
+    {
+      'section': {'en': 'STRUCTURE', 'tr': 'YAPI'},
+      'chapters': [
+        {
+          'num': '50',
+          'title': {'en': 'CARGO & ACCESSORY COMPARTMENTS', 'tr': 'KARGO VE AKSESUAR BÖLMELERİ'},
+          'info': {
+            'en': 'Cargo and Accessory Compartments covers cargo holds, baggage compartments, and equipment bays. Includes cargo loading systems, restraint nets, barriers, and floor structures. Details smoke detection, fire suppression, and environmental control for cargo areas. Covers compartment liners, doors, and access provisions.',
+            'tr': 'Kargo ve Aksesuar Bölmeleri kargo ambarlarını, bagaj bölmelerini ve ekipman alanlarını kapsar. Kargo yükleme sistemlerini, tutma ağlarını, bariyerleri ve taban yapılarını içerir. Kargo alanları için duman tespiti, yangın bastırma ve çevre kontrolünü detaylandırır. Bölme kaplamalarını, kapıları ve erişim sağlamalarını kapsar.'
+          },
+          'subs': ['00 General', '10 Cargo Compartments', '20 Baggage Compartments', '30 Accessory Compartments', '40 Insulation', '50 Cargo Loading Systems']
+        },
+        {
+          'num': '51',
+          'title': {'en': 'STANDARD PRACTICES - STRUCTURES', 'tr': 'STANDART UYGULAMALAR - YAPILAR'},
+          'info': {
+            'en': 'Standard Practices and Structures provides general structural repair procedures, material specifications, and workmanship standards. Includes fastener selection, torque values, bonding procedures, composite repair techniques, metal forming, and surface treatment. Covers inspection methods, damage limits, and repair classifications. Contains standard dimensions, tolerances, and approved repair schemes used throughout airframe maintenance.',
+            'tr': 'Standart Uygulamalar ve Yapılar genel yapısal onarım prosedürlerini, malzeme özelliklerini ve işçilik standartlarını sağlar. Bağlantı elemanı seçimi, tork değerleri, yapıştırma prosedürleri, kompozit onarım teknikleri, metal şekillendirme ve yüzey işlemi içerir. Muayene metodları, hasar limitleri ve onarım sınıflandırmalarını kapsar. Gövde bakımı boyunca kullanılan standart boyutlar, toleranslar ve onaylı onarım şemalarını içerir.'
+          },
+          'subs': ['00 General', '10 Investigation Cleanup', '20 Parts Fabrication', '30 Materials', '40 Fasteners', '50 Support of Airplane for Repair', '60 Control Surface Balancing', '70 Repairs', '80 Electrical Bonding']
+        },
+        {
+          'num': '52',
+          'title': {'en': 'DOORS', 'tr': 'KAPILAR'},
+          'info': {
+            'en': 'Doors chapter covers all aircraft access doors including passenger entry doors, cargo doors, service doors, and emergency exits. Details door structures, hinges, latches, seals, and operating mechanisms. Includes power assist systems, door warning systems, and slides/slide rafts. Covers door safety systems, opening/closing procedures, and maintenance requirements. Critical for passenger safety, pressurization integrity, and emergency evacuation.',
+            'tr': 'Kapılar bölümü yolcu giriş kapıları, kargo kapıları, servis kapıları ve acil çıkışlar dahil tüm uçak erişim kapılarını kapsar. Kapı yapıları, menteşeler, mandallar, contalar ve çalıştırma mekanizmalarını detaylandırır. Güçlendirilmiş yardım sistemleri, kapı uyarı sistemleri ve kaydırak/sal kaydıraklarını içerir. Kapı güvenlik sistemleri, açma/kapama prosedürleri ve bakım gereksinimlerini kapsar. Yolcu güvenliği, basınçlandırma bütünlüğü ve acil tahliye için kritiktir.'
+          },
+          'subs': ['00 General', '10 Passenger/Crew Doors', '20 Emergency Exits', '30 Cargo Doors', '40 Service Doors', '50 Fixed Interior Doors', '60 Entrance Stairs', '70 Door Warning', '80 Landing Gear Doors']
+        },
+        {
+          'num': '53',
+          'title': {'en': 'FUSELAGE', 'tr': 'GÖVDE'},
+          'info': {
+            'en': 'Fuselage structure forms the main body of aircraft housing crew, passengers, cargo, and systems. Includes frames, stringers, longerons, skin panels, and pressure bulkheads. Covers floor beams, seat tracks, window frames, and structural joints. Details stress analysis, fatigue monitoring, and corrosion inspection. Fundamental load-bearing structure requiring regular inspection for cracks, corrosion, and damage to maintain structural integrity.',
+            'tr': 'Gövde yapısı ekip, yolcular, kargo ve sistemleri barındıran uçağın ana gövdesini oluşturur. Kaburga, boyuna, uzanti, dış kaplama panelleri ve basınç perdeleri içerir. Taban kirişlerini, koltuk raylarını, pencere çerçevelerini ve yapısal bağlantıları kapsar. Gerilme analizi, yorulma izleme ve korozyon muayenesini detaylandırır. Yapısal bütünlüğü korumak için çatlak, korozyon ve hasar için düzenli muayene gerektiren temel yük taşıyan yapıdır.'
+          },
+          'subs': ['00 General', '10 Main Frame', '20 Auxiliary Structure', '30 Plates - Skin', '40 Attach Fittings', '50 Aerodynamic Fairings', '60 Fuselage Doors, Hatches']
+        },
+        {
+          'num': '54',
+          'title': {'en': 'NACELLES/PYLONS', 'tr': 'KAPSÜL/PILON'},
+          'info': {
+            'en': 'Nacelles and Pylons provide aerodynamic housing for engines and structural attachment to wings/fuselage. Nacelle includes cowlings, firewall, fan reverser, and acoustic panels. Pylon is the structural member transferring engine thrust and weight loads to airframe. Covers anti-ice systems, drain systems, and access panels. Includes thrust reverser mechanisms and noise suppression. Critical for engine installation, aerodynamics, and structural load transfer.',
+            'tr': 'Kapsül ve Pilonlar motorlar için aerodinamik muhafaza ve kanat/gövdeye yapısal bağlantı sağlar. Kapsül kaportaları, yangın duvarı, fan reverseri ve akustik panelleri içerir. Pilon motor itkisi ve ağırlık yüklerini gövdeye transfer eden yapısal elemandır. Anti-buz sistemleri, drenaj sistemleri ve erişim panellerini kapsar. İtki reverser mekanizmaları ve gürültü bastırmayı içerir. Motor montajı, aerodinamik ve yapısal yük transferi için kritiktir.'
+          },
+          'subs': ['00 General', '10 Nacelle', '50 Pylon', '60 Fireseals']
+        },
+        {
+          'num': '55',
+          'title': {'en': 'STABILIZERS', 'tr': 'STABİLİZATÖRLER'},
+          'info': {
+            'en': 'Stabilizers provide pitch and yaw stability to aircraft. Horizontal stabilizer maintains pitch stability with elevators for pitch control. Vertical stabilizer (fin) provides directional stability with rudder for yaw control. Includes leading edges, spars, ribs, skin, and movable surfaces. Covers trim systems and stabilizer actuators. Critical flight control surfaces requiring precise rigging and regular inspection for structural integrity.',
+            'tr': 'Stabilizatörler uçağa yunuslama ve sapma kararlılığı sağlar. Yatay stabilizatör yunuslama kontrolü için elevatörler ile yunuslama kararlılığını korur. Dikey stabilizatör (fin) sapma kontrolü için dümen ile yönsel kararlılık sağlar. Hücum kenarları, direkler, kaburgalar, dış kaplama ve hareketli yüzeyleri içerir. Trim sistemleri ve stabilizatör aktüatörlerini kapsar. Hassas ayar ve yapısal bütünlük için düzenli muayene gerektiren kritik uçuş kontrol yüzeyleridir.'
+          },
+          'subs': ['00 General', '10 Horizontal Stabilizer', '20 Elevator', '30 Vertical Stabilizer', '40 Rudder']
+        },
+        {
+          'num': '56',
+          'title': {'en': 'WINDOWS', 'tr': 'PENCERELER'},
+          'info': {
+            'en': 'Windows provide visibility and natural light for cockpit and cabin. Cockpit windows are critical for pilot visibility during all flight phases. Includes windshields, side windows, and overhead windows. Cabin windows provide passenger viewing. Covers window structures, seals, heating elements, and scratch-resistant coatings. Details inspection for cracks, delamination, and seal integrity. Critical for pressurization containment and flight crew visibility.',
+            'tr': 'Pencereler kokpit ve kabin için görüş ve doğal ışık sağlar. Kokpit pencereleri tüm uçuş fazlarında pilot görüşü için kritiktir. Ön camları, yan pencereleri ve tavan pencerelerini içerir. Kabin pencereleri yolcu görüşü sağlar. Pencere yapıları, contalar, ısıtma elemanları ve çizilme önleyici kaplamaları kapsar. Çatlak, delaminasyon ve conta bütünlüğü için muayene detaylandırır. Basınçlandırma muhafaza ve uçuş ekibi görüşü için kritiktir.'
+          },
+          'subs': ['00 General', '10 Flight Compartment', '20 Passenger Compartment', '30 Door']
+        },
+        {
+          'num': '57',
+          'title': {'en': 'WINGS', 'tr': 'KANATLAR'},
+          'info': {
+            'en': 'Wings generate lift and house fuel tanks, landing gear, and systems. Primary structure includes spars, ribs, stringers, and skin panels. Contains integral fuel tanks with sealing and access panels. Provides attachment points for engines, control surfaces, and high-lift devices. Covers wing-to-fuselage joints and wing box structure. Critical load-bearing structure requiring fatigue monitoring, corrosion control, and detailed inspection programs.',
+            'tr': 'Kanatlar kaldırma üretir ve yakıt tankları, iniş takımı ve sistemleri barındırır. Birincil yapı direkleri, kaburgaları, boyunaları ve dış kaplama panellerini içerir. Sızdırmazlık ve erişim panelleri ile integral yakıt tanklarını içerir. Motorlar, kontrol yüzeyleri ve yüksek kaldırma cihazları için bağlantı noktaları sağlar. Kanat-gövde bağlantıları ve kanat kutu yapısını kapsar. Yorulma izleme, korozyon kontrolü ve detaylı muayene programları gerektiren kritik yük taşıyan yapıdır.'
+          },
+          'subs': ['00 General', '10 Center Wing', '20 Outer Wing', '30 Wing Tip', '40 Leading Edge & Leading Edge Devices', '50 Trailing Edge & Trailing Edge Devices', '60 Ailerons & Elevons', '70 Spoilers', '90 Wing Folding System']
+        },
+        {
+          'num': '58',
+          'title': {'en': 'WINGLETS/CANARDS', 'tr': 'KANATÇIKLAR/ÖRDEK KANAT'},
+          'info': {
+            'en': 'Winglets and Canards covers auxiliary aerodynamic surfaces. Winglets are vertical wing tip extensions that reduce induced drag and improve fuel efficiency. Canards are forward-mounted control surfaces ahead of main wings. Includes structural attachments, fairings, and inspection requirements. Details aerodynamic benefits and maintenance procedures for these efficiency-improving devices.',
+            'tr': 'Kanatçıklar ve Ördek Kanat yardımcı aerodinamik yüzeyleri kapsar. Kanatçıklar indüklenmiş sürüklemeyi azaltan ve yakıt verimliliğini artıran dikey kanat ucu uzantılarıdır. Ördek kanat ana kanatların önüne monte edilmiş kontrol yüzeyleridir. Yapısal bağlantıları, kaplamaları ve muayene gereksinimlerini içerir. Bu verimlilik artırıcı cihazlar için aerodinamik faydaları ve bakım prosedürlerini detaylandırır.'
+          },
+          'subs': ['00 General', '10 Winglets', '20 Canards', '30 Wing Extensions']
+        },
+        {
+          'num': '59',
+          'title': {'en': 'AUXILIARY STRUCTURE', 'tr': 'YARDIMCI YAPI'},
+          'info': {
+            'en': 'Auxiliary Structure covers miscellaneous structural components not classified under primary structure chapters. Includes fairings, fillets, stringers, doublers, and secondary structural elements. Details attachment methods, inspection requirements, and repair procedures for non-load-bearing or supplementary structural components throughout the aircraft.',
+            'tr': 'Yardımcı Yapı birincil yapı bölümleri altında sınıflandırılmamış çeşitli yapısal bileşenleri kapsar. Kaplamaları, köşebentleri, boyunaları, takviye plakaları ve ikincil yapısal elemanları içerir. Uçak genelinde yük taşımayan veya ek yapısal bileşenler için bağlantı metodları, muayene gereksinimleri ve onarım prosedürlerini detaylandırır.'
+          },
+          'subs': ['00 General', '10 Fairings', '20 Fillets', '30 Doublers', '40 Secondary Structure']
+        },
+      ]
+    },
+    {
+      'section': {'en': 'PROPULSION', 'tr': 'İTKİ'},
+      'chapters': [
+        {
+          'num': '60',
+          'title': {'en': 'STANDARD PRACTICES - PROPELLER/ROTOR', 'tr': 'STANDART UYGULAMALAR - PERVANELERİ/ROTOR'},
+          'info': {
+            'en': 'Standard Practices for Propellers and Rotors provides general maintenance procedures for propeller and helicopter rotor systems. Covers blade inspection techniques, balancing procedures, tracking methods, and standard repair practices. Includes torque values, material specifications, and safety requirements specific to rotating components.',
+            'tr': 'Pervaneler ve Rotorlar için Standart Uygulamalar, pervane ve helikopter rotor sistemleri için genel bakım prosedürleri sağlar. Kanat muayene tekniklerini, dengeleme prosedürlerini, takip metodlarını ve standart onarım uygulamalarını kapsar. Dönen bileşenlere özgü tork değerleri, malzeme özellikleri ve güvenlik gereksinimlerini içerir.'
+          },
+          'subs': ['00 General', '10 Procedures', '20 Balancing', '30 Tracking', '40 Inspection Methods']
+        },
+        {
+          'num': '61',
+          'title': {'en': 'PROPELLERS/PROPULSORS', 'tr': 'PERVANELERİ'},
+          'info': {
+            'en': 'Propellers and Propulsors covers propeller assemblies, blades, hubs, governors, and control systems. Includes constant speed, variable pitch, and reversing propellers. Details blade inspection, overhaul procedures, and ice protection. Covers propeller synchronization and synchrophasing systems. Essential for turboprop and piston engine aircraft propulsion.',
+            'tr': 'Pervaneler ve İtici Sistemler pervane tertibatlarını, kanatları, göbeklerini, valiyi ve kontrol sistemlerini kapsar. Sabit hız, değişken hatve ve geri dönüşlü pervaneleri içerir. Kanat muayene, revizyon prosedürleri ve buz korumasını detaylandırır. Pervane senkronizasyon ve senkrofazlama sistemlerini kapsar. Turboprop ve pistonlu motor uçakları itkisi için esastır.'
+          },
+          'subs': ['00 General', '10 Propeller Assembly', '20 Controlling', '30 Braking', '40 Indicating', '50 Ice Protection']
+        },
+        {
+          'num': '62',
+          'title': {'en': 'MAIN ROTOR', 'tr': 'ANA ROTOR'},
+          'info': {
+            'en': 'Main Rotor system provides lift and control for helicopters. Includes rotor blades, hub assembly, pitch control mechanisms, and blade dampers. Covers blade tracking, balancing, and inspection procedures. Details main rotor head types (articulated, semi-rigid, rigid) and blade attachment methods. Critical for helicopter flight control and safety.',
+            'tr': 'Ana Rotor sistemi helikopterler için kaldırma ve kontrol sağlar. Rotor kanatlarını, göbek tertibatını, hatve kontrol mekanizmalarını ve kanat sönümleyicilerini içerir. Kanat takip, dengeleme ve muayene prosedürlerini kapsar. Ana rotor başlığı türlerini (mafsallı, yarı-rijit, rijit) ve kanat bağlama metodlarını detaylandırır. Helikopter uçuş kontrolü ve güvenliği için kritiktir.'
+          },
+          'subs': ['00 General', '10 Rotor Blades', '20 Rotor Head', '30 Rotor Hub', '40 Indicating']
+        },
+        {
+          'num': '63',
+          'title': {'en': 'MAIN ROTOR DRIVE', 'tr': 'ANA ROTOR TAHRİKİ'},
+          'info': {
+            'en': 'Main Rotor Drive transmits engine power to main rotor. Includes main transmission, drive shafts, clutches, and freewheeling units. Covers lubrication systems, cooling, and chip detectors. Details transmission mounting, vibration isolation, and gearbox inspections. Essential for power transmission from engines to rotor system in helicopters.',
+            'tr': 'Ana Rotor Tahriki motor gücünü ana rotora iletir. Ana transmisyon, tahrik şaftları, kavramaları ve serbest dönüş ünitelerini içerir. Yağlama sistemlerini, soğutma ve talaş dedektörlerini kapsar. Transmisyon montajı, titreşim izolasyonu ve dişli kutusu muayenelerini detaylandırır. Helikopterlerde motorlardan rotor sistemine güç iletimi için esastır.'
+          },
+          'subs': ['00 General', '10 Engine/Gearbox Couplings', '20 Gearboxes', '30 Mounts', '40 Indicating']
+        },
+        {
+          'num': '64',
+          'title': {'en': 'TAIL ROTOR', 'tr': 'KUYRUK ROTORU'},
+          'info': {
+            'en': 'Tail Rotor provides directional control and anti-torque for helicopters. Includes tail rotor blades, gearbox, pitch control mechanisms, and mounting structure. Covers blade inspection, tracking, and balance procedures. Details different tail rotor configurations including conventional, fenestron, and NOTAR systems. Critical for helicopter yaw control and stability.',
+            'tr': 'Kuyruk Rotoru helikopterler için yön kontrolü ve anti-tork sağlar. Kuyruk rotor kanatlarını, dişli kutusunu, hatve kontrol mekanizmalarını ve montaj yapısını içerir. Kanat muayene, takip ve denge prosedürlerini kapsar. Geleneksel, fenestron ve NOTAR sistemleri dahil farklı kuyruk rotor konfigürasyonlarını detaylandırır. Helikopter sapma kontrolü ve kararlılığı için kritiktir.'
+          },
+          'subs': ['00 General', '10 Rotor Blades', '20 Rotor Head', '30 Gearbox']
+        },
+        {
+          'num': '65',
+          'title': {'en': 'TAIL ROTOR DRIVE', 'tr': 'KUYRUK ROTORU TAHRİKİ'},
+          'info': {
+            'en': 'Tail Rotor Drive transmits power from main transmission to tail rotor. Includes drive shafts, intermediate gearboxes, flexible couplings, and tail rotor gearbox. Covers shaft alignment, bearing inspections, and lubrication systems. Details vibration monitoring and shaft integrity checks. Essential for tail rotor operation and directional control.',
+            'tr': 'Kuyruk Rotoru Tahriki ana transmisyondan kuyruk rotoruna güç iletir. Tahrik şaftlarını, ara dişli kutularını, esnek kaplinleri ve kuyruk rotor dişli kutusunu içerir. Şaft hizalama, yatak muayeneleri ve yağlama sistemlerini kapsar. Titreşim izleme ve şaft bütünlük kontrollerini detaylandırır. Kuyruk rotoru operasyonu ve yön kontrolü için esastır.'
+          },
+          'subs': ['00 General', '10 Shafts', '20 Gearboxes', '30 Pulleys']
+        },
+        {
+          'num': '66',
+          'title': {'en': 'FOLDING BLADES/PYLONS', 'tr': 'KATLANIR KANATLAR/PİLONLAR'},
+          'info': {
+            'en': 'Folding Blades and Pylons covers blade folding mechanisms for shipboard or storage operations. Includes manual and powered folding systems, blade fold actuators, locking mechanisms, and safety interlocks. Details folding procedures, blade securing methods, and pylon pivot systems for helicopters designed for naval or space-constrained operations.',
+            'tr': 'Katlanır Kanatlar ve Pilonlar gemi güvertesi veya depolama operasyonları için kanat katlama mekanizmalarını kapsar. Manuel ve motorlu katlama sistemlerini, kanat katlama aktüatörlerini, kilitleme mekanizmalarını ve güvenlik kilitlerini içerir. Deniz veya alan kısıtlı operasyonlar için tasarlanmış helikopterler için katlama prosedürlerini, kanat sabitleme metodlarını ve pilon pivot sistemlerini detaylandırır.'
+          },
+          'subs': ['00 General', '10 Blade Folding', '20 Pylon Folding']
+        },
+        {
+          'num': '67',
+          'title': {'en': 'ROTORCRAFT FLIGHT CONTROLS', 'tr': 'DÖNER KANATLI UÇUŞ KONTROLLERİ'},
+          'info': {
+            'en': 'Rotorcraft Flight Controls provide pilot control of helicopter attitude and flight path. Includes cyclic control for pitch/roll, collective control for vertical thrust, and anti-torque pedals for yaw. Covers flight control servos, mixing units, and stability augmentation systems. Details control rigging, friction adjustments, and control feel systems specific to helicopters.',
+            'tr': 'Döner Kanatlı Uçuş Kontrolleri pilotun helikopter duruşu ve uçuş yolu kontrolünü sağlar. Yunuslama/yalpalama için siklik kontrolü, dikey itki için kolektif kontrolü ve sapma için anti-tork pedallarını içerir. Uçuş kontrol servolarını, karıştırma ünitelerini ve kararlılık artırma sistemlerini kapsar. Helikopterlere özgü kontrol rijing, sürtünme ayarları ve kontrol his sistemlerini detaylandırır.'
+          },
+          'subs': ['00 General', '10 Cyclic', '20 Collective', '30 Pedals']
+        },
+        {
+          'num': '68',
+          'title': {'en': 'POWER TRAIN', 'tr': 'GÜÇ AKTARİMİ'},
+          'info': {
+            'en': 'Power Train encompasses the complete power transmission system from engines to rotors in helicopters. Includes combining gearbox, main transmission, intermediate gearboxes, and drive shafts. Covers power distribution, torque splitting between engines, and emergency lubrication systems. Details oil coolers, filters, and health monitoring systems for helicopter drivetrain.',
+            'tr': 'Güç Aktarımı helikopterlerde motorlardan rotorlara komple güç iletim sistemini kapsar. Birleştirme dişli kutusunu, ana transmisyonu, ara dişli kutularını ve tahrik şaftlarını içerir. Güç dağıtımı, motorlar arası tork paylaşımı ve acil yağlama sistemlerini kapsar. Helikopter aktarım organı için yağ soğutucularını, filtreleri ve sağlık izleme sistemlerini detaylandırır.'
+          },
+          'subs': ['00 General', '10 Main Gearbox', '20 Engine Drives', '30 Accessory Drives', '40 Indicating']
+        },
+        {
+          'num': '69',
+          'title': {'en': 'POWERPLANT INSTALLATION', 'tr': 'GÜÇ ÜNİTESİ KURULUMU'},
+          'info': {
+            'en': 'Powerplant Installation covers engine mounting, cowlings, and systems integration for helicopter engines. Includes engine deck structure, anti-vibration mounts, engine cowl panels, and firewall sealing. Details engine access, maintenance provisions, and integration with airframe systems. Specific to helicopter engine installations and configurations.',
+            'tr': 'Güç Ünitesi Kurulumu helikopter motorları için motor montajını, kaportaları ve sistem entegrasyonunu kapsar. Motor güverte yapısını, anti-titreşim montajlarını, motor kaput panellerini ve yangın duvarı sızdırmazlığını içerir. Motor erişimi, bakım sağlamaları ve gövde sistemleri ile entegrasyonu detaylandırır. Helikopter motor kurulumları ve konfigürasyonlarına özgüdür.'
+          },
+          'subs': ['00 General', '10 Mounts', '20 Cowling', '30 Firewall']
+        },
+        {
+          'num': '70',
+          'title': {'en': 'STANDARD PRACTICES - ENGINE', 'tr': 'STANDART UYGULAMALAR - MOTOR'},
+          'info': {
+            'en': 'Standard Practices for Engines provides general procedures for powerplant maintenance. Covers engine handling, storage, preservation, and standard maintenance techniques. Includes torque specifications, safety wiring standards, and quality control procedures specific to engine work. Details cleaning methods, inspection criteria, and documentation requirements.',
+            'tr': 'Motorlar için Standart Uygulamalar güç ünitesi bakımı için genel prosedürler sağlar. Motor taşıma, depolama, koruma ve standart bakım tekniklerini kapsar. Motor işine özgü tork özellikleri, emniyet telleme standartları ve kalite kontrol prosedürlerini içerir. Temizleme metodları, muayene kriterleri ve dokümantasyon gereksinimlerini detaylandırır.'
+          },
+          'subs': ['00 General', '10 Procedures', '20 Storage', '30 Preservation', '40 Handling']
+        },
+        {
+          'num': '71',
+          'title': {'en': 'POWERPLANT', 'tr': 'GÜÇ ÜNİTESİ'},
+          'info': {
+            'en': 'Powerplant encompasses the complete engine installation including the engine, mounting structure, cowlings, and related systems. Covers engine build-up, installation procedures, cowl panels, and access doors. Includes vibration monitoring, thrust reverser systems, and noise suppression. Details engine-to-pylon attachment, anti-ice systems, and drain systems. Critical chapter for engine integration with airframe and powerplant maintenance procedures.',
+            'tr': 'Güç Ünitesi motor, montaj yapısı, kaportalar ve ilgili sistemler dahil komple motor kurulumunu kapsar. Motor toplama, kurulum prosedürleri, kaput panelleri ve erişim kapılarını içerir. Titreşim izleme, itki reverser sistemleri ve gürültü bastırmayı içerir. Motor-pilon bağlantısı, anti-buz sistemleri ve drenaj sistemlerini detaylandırır. Motorun gövde ile entegrasyonu ve güç ünitesi bakım prosedürleri için kritik bölümdür.'
+          },
+          'subs': ['00 General', '10 Cowling', '20 Mounts', '30 Fire Seals', '40 Attach Fittings', '50 Electrical Harness']
+        },
+        {
+          'num': '72',
+          'title': {'en': 'TURBINE/TURBO PROP ENGINE', 'tr': 'TÜRBİN/TURBO PROP MOTOR'},
+          'info': {
+            'en': 'Engine chapter covers turbine engine components and systems including compressor, combustion section, turbine section, and accessory gearbox. Details engine controls, fuel systems, oil systems, and indicating systems. Includes hot section inspection requirements, blade tracking, and engine performance monitoring. Covers engine preservation, storage, and overhaul procedures. Heart of the propulsion system requiring precise maintenance and monitoring.',
+            'tr': 'Motor bölümü kompresör, yanma bölümü, türbin bölümü ve aksesuar dişli kutusu dahil türbin motor bileşenleri ve sistemlerini kapsar. Motor kontrolleri, yakıt sistemleri, yağ sistemleri ve gösterge sistemlerini detaylandırır. Sıcak bölüm muayene gereksinimleri, kanat takibi ve motor performans izlemeyi içerir. Motor koruma, depolama ve revizyon prosedürlerini kapsar. Hassas bakım ve izleme gerektiren itki sisteminin kalbidir.'
+          },
+          'subs': ['00 General', '10 Air Inlet', '20 Compressor', '30 Combustion', '40 Fuel & Control', '50 Turbine', '60 Accessory Drives', '70 Bypass', '80 Oil', '90 Power Recovery']
+        },
+        {
+          'num': '73',
+          'title': {'en': 'ENGINE FUEL & CONTROL', 'tr': 'MOTOR YAKIT VE KONTROL'},
+          'info': {
+            'en': 'Engine Fuel and Control system meters and delivers fuel to combustion chambers and controls engine operation. Includes fuel control unit, fuel pump, fuel manifolds, fuel nozzles, and control linkages. Covers engine starting, acceleration/deceleration schedules, and surge protection. Details electronic engine control (FADEC) systems for modern engines. Critical for engine performance, fuel efficiency, and operational reliability.',
+            'tr': 'Motor Yakıt ve Kontrol sistemi yanma odalarına yakıt ölçer ve iletir ve motor operasyonunu kontrol eder. Yakıt kontrol ünitesi, yakıt pompası, yakıt manifoldu, yakıt memelerini ve kontrol bağlantılarını içerir. Motor çalıştırma, hızlanma/yavaşlama programları ve aşırı basınç koruması kapsar. Modern motorlar için elektronik motor kontrolü (FADEC) sistemlerini detaylandırır. Motor performansı, yakıt verimliliği ve operasyonel güvenilirlik için kritiktir.'
+          },
+          'subs': ['00 General', '10 Engine Fuel', '20 Controlling']
+        },
+        {
+          'num': '74',
+          'title': {'en': 'IGNITION', 'tr': 'ATEŞLEME'},
+          'info': {
+            'en': 'Ignition system provides high-energy spark for engine starting and continuous ignition during certain flight conditions. Includes ignition exciters, igniter plugs, ignition leads, and control systems. Provides automatic relight capability during flame-out conditions. Covers dual ignition systems for redundancy. Critical for engine starting and sustained combustion, especially during adverse weather and high-altitude operations.',
+            'tr': 'Ateşleme sistemi motor çalıştırma için yüksek enerjili kıvılcım ve belirli uçuş koşullarında sürekli ateşleme sağlar. Ateşleme uyarıcılarını, ateşleyici bujiyi, ateşleme kablolarını ve kontrol sistemlerini içerir. Alev sönme koşullarında otomatik tekrar ateşleme kabiliyeti sağlar. Yedeklilik için çift ateşleme sistemlerini kapsar. Motor çalıştırma ve sürekli yanma için, özellikle olumsuz hava ve yüksek irtifa operasyonlarında kritiktir.'
+          },
+          'subs': ['00 General', '10 Electrical Power Supply', '20 Distribution', '30 Switching']
+        },
+        {
+          'num': '75',
+          'title': {'en': 'BLEED AIR', 'tr': 'KANAMA HAVASI'},
+          'info': {
+            'en': 'Bleed Air system extracts compressed air from engine compressor stages for various aircraft systems. Supplies air for air conditioning, pressurization, wing/engine anti-ice, hydraulic reservoir pressurization, and engine starting. Includes bleed valves, pressure regulators, precoolers, and distribution ducting. Covers bleed air leak detection and overheat protection. Essential pneumatic source for multiple critical aircraft systems.',
+            'tr': 'Kanama Havası sistemi çeşitli uçak sistemleri için motor kompresör aşamalarından basınçlı hava çeker. Klimalandırma, basınçlandırma, kanat/motor anti-buz, hidrolik rezervuar basınçlandırması ve motor çalıştırma için hava sağlar. Kanama valflerini, basınç regülatörlerini, ön soğutucuları ve dağıtım kanallarını içerir. Kanama havası kaçak tespiti ve aşırı ısınma koruması kapsar. Çoklu kritik uçak sistemleri için esas pnömatik kaynaktır.'
+          },
+          'subs': ['00 General', '10 Engine Bleed', '20 APU Bleed']
+        },
+        {
+          'num': '76',
+          'title': {'en': 'ENGINE CONTROLS', 'tr': 'MOTOR KONTROLLERİ'},
+          'info': {
+            'en': 'Engine Controls enable pilot control of thrust and engine operation. Includes throttle levers, control cables/rods, autothrottle interface, and control quadrants. Covers thrust reverser controls, engine start controls, and fuel shutoff controls. Details Full Authority Digital Engine Control (FADEC) interface for modern engines. Critical for safe engine operation and thrust management throughout all flight phases.',
+            'tr': 'Motor Kontrolleri pilotun itki ve motor operasyonu kontrolünü sağlar. Gaz kollarını, kontrol kablolarını/çubuklarını, otogaz arayüzünü ve kontrol kadranlarını içerir. İtki reverser kontrollerini, motor çalıştırma kontrollerini ve yakıt kesme kontrollerini kapsar. Modern motorlar için Tam Otorite Dijital Motor Kontrolü (FADEC) arayüzünü detaylandırır. Tüm uçuş fazlarında güvenli motor operasyonu ve itki yönetimi için kritiktir.'
+          },
+          'subs': ['00 General', '10 Power Control', '20 Emergency Shutdown']
+        },
+        {
+          'num': '77',
+          'title': {'en': 'ENGINE INDICATING', 'tr': 'MOTOR GÖSTERGE'},
+          'info': {
+            'en': 'Engine Indicating provides flight crew with real-time engine performance and health monitoring. Displays parameters including N1/N2 speeds, exhaust gas temperature (EGT), fuel flow, oil pressure/temperature, and vibration levels. Modern systems use Engine Indicating and Crew Alerting System (EICAS) or Electronic Centralized Aircraft Monitor (ECAM). Includes trend monitoring and exceedance recording. Critical for engine operation monitoring and anomaly detection.',
+            'tr': 'Motor Gösterge uçuş ekibine gerçek zamanlı motor performansı ve sağlık izleme sağlar. N1/N2 hızları, egzoz gazı sıcaklığı (EGT), yakıt akışı, yağ basıncı/sıcaklığı ve titreşim seviyeleri dahil parametreleri gösterir. Modern sistemler Motor Gösterge ve Ekip Uyarı Sistemi (EICAS) veya Elektronik Merkezileştirilmiş Uçak İzleyicisi (ECAM) kullanır. Trend izleme ve aşım kaydı içerir. Motor operasyonu izleme ve anomali tespiti için kritiktir.'
+          },
+          'subs': ['00 General', '10 Power', '20 Temperature', '30 Analyzers', '40 Integrated Engine Instrument Systems', '50 Digital/Multiplex']
+        },
+        {
+          'num': '78',
+          'title': {'en': 'EXHAUST', 'tr': 'EGZOZ'},
+          'info': {
+            'en': 'Exhaust system directs hot engine gases safely away from aircraft structure and reduces noise. Includes exhaust nozzles, mixer units, and thrust reverser components. Covers exhaust gas temperature monitoring, noise suppression chevrons, and exhaust cooling. Details inspection for cracks, warping, and heat damage. Critical for engine performance, noise compliance, and preventing thermal damage to surrounding structure.',
+            'tr': 'Egzoz sistemi sıcak motor gazlarını uçak yapısından güvenle uzaklaştırır ve gürültüyü azaltır. Egzoz memeleri, karıştırıcı üniteleri ve itki reverser bileşenlerini içerir. Egzoz gazı sıcaklık izleme, gürültü bastırma şevronları ve egzoz soğutma kapsar. Çatlak, eğilme ve ısı hasarı için muayene detaylandırır. Motor performansı, gürültü uyumluluğu ve çevre yapıya termal hasar önleme için kritiktir.'
+          },
+          'subs': ['00 General', '10 Collector/Nozzle', '20 Noise Suppressor', '30 Thrust Reverser']
+        },
+        {
+          'num': '79',
+          'title': {'en': 'OIL', 'tr': 'YAĞ'},
+          'info': {
+            'en': 'Oil system provides lubrication, cooling, and debris collection for engine rotating components. Includes oil tank, pumps, filters, coolers, and distribution lines. Covers chip detection, oil pressure/temperature monitoring, and scavenge systems. Details oil servicing, analysis programs, and contamination limits. Critical for engine bearing lubrication, heat removal, and early detection of component wear through oil analysis.',
+            'tr': 'Yağ sistemi motor dönen bileşenler için yağlama, soğutma ve döküntü toplama sağlar. Yağ tankı, pompalar, filtreler, soğutucular ve dağıtım hatlarını içerir. Talaş tespiti, yağ basıncı/sıcaklık izleme ve geri toplama sistemlerini kapsar. Yağ servisi, analiz programları ve kontaminasyon limitlerini detaylandırır. Motor yatak yağlaması, ısı uzaklaştırma ve yağ analizi ile bileşen aşınmasının erken tespiti için kritiktir.'
+          },
+          'subs': ['00 General', '10 Storage', '20 Distribution', '30 Indicating']
+        },
+        {
+          'num': '80',
+          'title': {'en': 'STARTING', 'tr': 'ÇALIŞTIRMA'},
+          'info': {
+            'en': 'Starting system rotates engine to self-sustaining speed for ignition and startup. Includes pneumatic, electric, or hydraulic starters, starter control systems, and engine starting valves. Covers ground and in-flight start procedures, start limits, and abort procedures. Details starter engagement/disengagement and start sequence timing. Critical for reliable engine starts in all conditions and automatic restart capability during flight.',
+            'tr': 'Çalıştırma sistemi ateşleme ve başlatma için motoru kendi kendine idame hızına döndürür. Pnömatik, elektrik veya hidrolik marşları, marş kontrol sistemlerini ve motor çalıştırma valflerini içerir. Yer ve uçuş içi çalıştırma prosedürleri, çalıştırma limitleri ve iptal prosedürlerini kapsar. Marş devreye girme/çıkma ve çalıştırma sekans zamanlamasını detaylandırır. Tüm koşullarda güvenilir motor çalıştırma ve uçuş sırasında otomatik yeniden başlatma kabiliyeti için kritiktir.'
+          },
+          'subs': ['00 General', '10 Cranking']
+        },
+        {
+          'num': '81',
+          'title': {'en': 'TURBINES', 'tr': 'TÜRBİNLER'},
+          'info': {
+            'en': 'Turbines chapter covers turbine section components including high-pressure and low-pressure turbine stages. Details turbine blades, nozzle guide vanes, turbine discs, and blade cooling systems. Covers hot section inspections, blade tracking, and clearance checks. Includes turbine temperature monitoring and creep life tracking. Critical for turbine engine performance and safety.',
+            'tr': 'Türbinler bölümü yüksek basınç ve alçak basınç türbin aşamaları dahil türbin bölümü bileşenlerini kapsar. Türbin kanatlarını, nozul kılavuz kanatlarını, türbin disklerini ve kanat soğutma sistemlerini detaylandırır. Sıcak bölüm muayenelerini, kanat takibini ve boşluk kontrollerini kapsar. Türbin sıcaklık izleme ve sürünme ömrü takibini içerir. Türbin motor performansı ve güvenliği için kritiktir.'
+          },
+          'subs': ['00 General', '10 Power Turbines', '20 Gas Generator Turbines', '30 Turbine Blades', '40 Turbine Discs']
+        },
+        {
+          'num': '82',
+          'title': {'en': 'WATER INJECTION', 'tr': 'SU ENJEKSİYONU'},
+          'info': {
+            'en': 'Water Injection system increases engine thrust by injecting water-methanol mixture into compressor or combustion section. Cools compressed air, increases mass flow, and reduces compressor inlet temperature. Includes storage tanks, pumps, injection nozzles, and control systems. Used primarily on older turbojets and some turbofan engines for takeoff thrust augmentation.',
+            'tr': 'Su Enjeksiyonu sistemi kompresöre veya yanma bölümüne su-metanol karışımı enjekte ederek motor itkisini artırır. Basınçlı havayı soğutur, kütle akışını artırır ve kompresör giriş sıcaklığını azaltır. Depolama tankları, pompalar, enjeksiyon memeleri ve kontrol sistemlerini içerir. Esas olarak kalkış itkisi artırma için eski turbojetlerde ve bazı turbofan motorlarda kullanılır.'
+          },
+          'subs': ['00 General', '10 Storage', '20 Distribution', '30 Dumping', '40 Indicating']
+        },
+        {
+          'num': '83',
+          'title': {'en': 'ACCESSORY GEARBOXES', 'tr': 'AKSESUAR DİŞLİ KUTULARI'},
+          'info': {
+            'en': 'Accessory Gearboxes provide mounting and drive for engine-driven accessories including fuel pumps, hydraulic pumps, generators, and oil pumps. Includes gearbox housing, drive gears, and mounting pads. Covers lubrication, sealing, and accessory drive shaft systems. Details gear inspections, bearing replacements, and pad alignments. Essential for driving aircraft systems from engine power.',
+            'tr': 'Aksesuar Dişli Kutuları yakıt pompaları, hidrolik pompalar, generatörler ve yağ pompaları dahil motor tahrikli aksesuarlar için montaj ve tahrik sağlar. Dişli kutusu gövdesini, tahrik dişlilerini ve montaj yastıklarını içerir. Yağlama, sızdırmazlık ve aksesuar tahrik şaftı sistemlerini kapsar. Dişli muayenelerini, yatak değişimlerini ve yastık hizalamalarını detaylandırır. Motor gücünden uçak sistemlerini tahrik için esastır.'
+          },
+          'subs': ['00 General', '10 Drive Gearbox', '20 Accessory Drives', '30 Mounting Pads']
+        },
+        {
+          'num': '84',
+          'title': {'en': 'PROPULSION AUGMENTATION', 'tr': 'İTKİ ARTIRMA'},
+          'info': {
+            'en': 'Propulsion Augmentation covers afterburner and thrust augmentation systems for military aircraft and some supersonic jets. Includes afterburner nozzles, fuel spray rings, flame holders, and variable exhaust nozzles. Details reheat system operation, temperature monitoring, and nozzle actuation. Provides significant thrust increase for high-performance operations including takeoff, climb, and supersonic flight.',
+            'tr': 'İtki Artırma askeri uçaklar ve bazı süpersonik jetler için art yakıcı ve itki artırma sistemlerini kapsar. Art yakıcı memeleri, yakıt püskürtme halkalarını, alev tutucuları ve değişken egzoz memelerini içerir. Tekrar ısıtma sistem operasyonu, sıcaklık izleme ve meme aktüasyonunu detaylandırır. Kalkış, tırmanış ve süpersonik uçuş dahil yüksek performans operasyonları için önemli itki artışı sağlar.'
+          },
+          'subs': ['00 General', '10 Jet Assist Takeoff', '20 Afterburner/Thrust Augmentor']
+        },
+        {
+          'num': '85',
+          'title': {'en': 'RECIPROCATING ENGINE', 'tr': 'PİSTONLU MOTOR'},
+          'info': {
+            'en': 'Reciprocating Engine chapter covers piston engines used in general aviation and older aircraft. Includes cylinders, pistons, crankshaft, valves, and timing mechanisms. Details magneto ignition systems, carburetor or fuel injection, and engine cooling (air or liquid). Covers engine overhaul procedures, compression checks, and valve adjustments. Traditional piston engine technology for light aircraft propulsion.',
+            'tr': 'Pistonlu Motor bölümü genel havacılık ve eski uçaklarda kullanılan piston motorlarını kapsar. Silindirleri, pistonları, krank milini, valfleri ve zamanlama mekanizmalarını içerir. Manyeto ateşleme sistemlerini, karbüratör veya yakıt enjeksiyonunu ve motor soğutmayı (hava veya sıvı) detaylandırır. Motor revizyon prosedürlerini, kompresyon kontrollerini ve valf ayarlarını kapsar. Hafif uçak itkisi için geleneksel piston motor teknolojisidir.'
+          },
+          'subs': ['00 General', '10 Front Section', '20 Power Section', '30 Cylinder Section', '40 Supercharger', '50 Lubrication']
+        },
+        {
+          'num': '86',
+          'title': {'en': 'PROPULSION SYSTEM INTEGRATION', 'tr': 'İTKİ SİSTEMİ ENTEGRASYONU'},
+          'info': {
+            'en': 'Propulsion System Integration covers coordination between engines, fuel system, and aircraft systems. Includes thrust management computers, automatic power reserve systems, and engine-aircraft interface. Details integrated engine control, power optimization, and system coordination for modern aircraft propulsion management.',
+            'tr': 'İtki Sistemi Entegrasyonu motorlar, yakıt sistemi ve uçak sistemleri arasında koordinasyonu kapsar. İtki yönetim bilgisayarlarını, otomatik güç rezerv sistemlerini ve motor-uçak arayüzünü içerir. Modern uçak itki yönetimi için entegre motor kontrolü, güç optimizasyonu ve sistem koordinasyonunu detaylandırır.'
+          },
+          'subs': ['00 General', '10 Thrust Management', '20 Power Optimization', '30 System Coordination']
+        },
+        {
+          'num': '87',
+          'title': {'en': 'FUEL QUALITY ASSURANCE', 'tr': 'YAKIT KALİTE GÜVENCESİ'},
+          'info': {
+            'en': 'Fuel Quality Assurance covers fuel testing, contamination prevention, and quality control procedures. Includes microbiological testing, water detection, filter monitoring, and fuel system cleanliness. Details sampling procedures, laboratory analysis, and corrective actions for maintaining fuel system integrity and preventing fuel-related engine problems.',
+            'tr': 'Yakıt Kalite Güvencesi yakıt testini, kontaminasyon önlemeyi ve kalite kontrol prosedürlerini kapsar. Mikrobiyolojik testi, su tespiti, filtre izleme ve yakıt sistem temizliğini içerir. Yakıt sistem bütünlüğünü korumak ve yakıt kaynaklı motor problemlerini önlemek için numune alma prosedürlerini, laboratuvar analizini ve düzeltici aksiyonları detaylandırır.'
+          },
+          'subs': ['00 General', '10 Fuel Testing', '20 Contamination Control', '30 Quality Monitoring']
+        },
+        {
+          'num': '88',
+          'title': {'en': 'PROPULSION MONITORING', 'tr': 'İTKİ İZLEME'},
+          'info': {
+            'en': 'Propulsion Monitoring systems track engine performance, health, and operational parameters. Includes engine condition monitoring, trend analysis, and predictive maintenance systems. Details data collection, analysis software, and diagnostic procedures for early detection of engine degradation and optimization of maintenance schedules.',
+            'tr': 'İtki İzleme sistemleri motor performansını, sağlığını ve operasyonel parametreleri takip eder. Motor durum izlemeyi, trend analizini ve öngörücü bakım sistemlerini içerir. Motor bozulmasının erken tespiti ve bakım programlarının optimizasyonu için veri toplama, analiz yazılımı ve tanı prosedürlerini detaylandırır.'
+          },
+          'subs': ['00 General', '10 Condition Monitoring', '20 Trend Analysis', '30 Predictive Maintenance', '40 Diagnostic Systems']
+        },
+        {
+          'num': '89',
+          'title': {'en': 'OIL SYSTEM MONITORING', 'tr': 'YAĞ SİSTEMİ İZLEME'},
+          'info': {
+            'en': 'Oil System Monitoring provides continuous monitoring of oil quantity, pressure, temperature, and contamination. Includes magnetic chip detectors, oil debris monitoring systems, and oil quality sensors. Details alert systems, trend monitoring, and diagnostic procedures for detecting bearing wear, component failures, and oil system degradation.',
+            'tr': 'Yağ Sistemi İzleme yağ miktarı, basınç, sıcaklık ve kontaminasyonunun sürekli izlemesini sağlar. Manyetik talaş dedektörlerini, yağ döküntü izleme sistemlerini ve yağ kalite sensörlerini içerir. Yatak aşınması, bileşen arızaları ve yağ sistem bozulmasını tespit için uyarı sistemlerini, trend izlemeyi ve tanı prosedürlerini detaylandırır.'
+          },
+          'subs': ['00 General', '10 Chip Detection', '20 Oil Quality Monitoring', '30 Debris Monitoring', '40 Trend Analysis']
+        },
+        {
+          'num': '90',
+          'title': {'en': 'ENGINE RUN-UP AREA', 'tr': 'MOTOR ÇALIŞTIRMA ALANI'},
+          'info': {
+            'en': 'Engine Run-Up Area chapter covers facilities and procedures for ground engine testing. Includes run-up pad requirements, noise suppression systems, safety zones, and test procedures. Details ground power connections, instrumentation setup, and safety protocols for engine ground testing operations.',
+            'tr': 'Motor Çalıştırma Alanı bölümü yer motor testi için tesisleri ve prosedürleri kapsar. Çalıştırma alanı gereksinimlerini, gürültü bastırma sistemlerini, güvenlik bölgelerini ve test prosedürlerini içerir. Motor yer testi operasyonları için yer güç bağlantıları, enstrümantasyon kurulumu ve güvenlik protokollerini detaylandırır.'
+          },
+          'subs': ['00 General', '10 Facility Requirements', '20 Safety Procedures', '30 Test Procedures']
+        },
+      ]
+    },
+    {
+      'section': {'en': 'DOCUMENTATION & SPECIAL', 'tr': 'DOKÜMANTASYON VE ÖZEL'},
+      'chapters': [
+        {
+          'num': '91',
+          'title': {'en': 'CHARTS', 'tr': 'ÇİZELGELER'},
+          'info': {
+            'en': 'Charts section contains wiring diagrams, hydraulic schematics, pneumatic diagrams, and system flow charts. Includes component location diagrams, circuit diagrams, and interconnection charts. Provides visual representation of aircraft systems for maintenance and troubleshooting. Essential reference material for system understanding and fault isolation.',
+            'tr': 'Çizelgeler bölümü kablolama şemalarını, hidrolik şematiklerini, pnömatik diyagramları ve sistem akış çizelgelerini içerir. Bileşen konum diyagramları, devre şemaları ve bağlantı çizelgelerini içerir. Bakım ve arıza bulma için uçak sistemlerinin görsel temsilini sağlar. Sistem anlayışı ve arıza izolasyonu için esas referans materyalidir.'
+          },
+          'subs': ['00 General', '10 Wiring Diagrams', '20 Hydraulic Schematics', '30 System Schematics']
+        },
+        {
+          'num': '92',
+          'title': {'en': 'ELECTRICAL SYSTEM INSTALLATION', 'tr': 'ELEKTRİK SİSTEMİ KURULUMU'},
+          'info': {
+            'en': 'Electrical System Installation covers aircraft wiring installation standards, cable routing, connector installations, and grounding practices. Includes wire bundle assembly, wire identification, circuit protection, and electromagnetic interference (EMI) control. Details installation practices for electrical equipment, bonding requirements, and lightning protection. Standard for all electrical installations on aircraft.',
+            'tr': 'Elektrik Sistemi Kurulumu uçak kablolama kurulum standartlarını, kablo yönlendirmesini, konnektör kurulumlarını ve topraklama uygulamalarını kapsar. Tel demeti montajını, tel tanımlamayı, devre korumasını ve elektromanyetik parazit (EMI) kontrolünü içerir. Elektriksel ekipman kurulum uygulamalarını, bağlama gereksinimlerini ve yıldırım korumasını detaylandırır. Uçaktaki tüm elektrik kurulumları için standarttır.'
+          },
+          'subs': ['00 General', '10 Installation Standards', '20 Cable Routing', '30 Grounding', '40 Shielding']
+        },
+        {
+          'num': '93',
+          'title': {'en': 'AVIONICS INSTALLATION', 'tr': 'AVİYONİK KURULUMU'},
+          'info': {
+            'en': 'Avionics Installation provides standards for installing communication, navigation, and electronic equipment. Covers antenna installation, equipment rack mounting, cable shielding, and system integration. Details avionics cooling requirements, power supply connections, and interference mitigation. Includes installation of radios, transponders, GPS, and flight management systems.',
+            'tr': 'Aviyonik Kurulumu haberleşme, navigasyon ve elektronik ekipman kurulumu için standartlar sağlar. Anten kurulumu, ekipman raf montajı, kablo koruması ve sistem entegrasyonunu kapsar. Aviyonik soğutma gereksinimlerini, güç kaynağı bağlantılarını ve parazit azaltmayı detaylandırır. Telsizler, transponderlar, GPS ve uçuş yönetim sistemleri kurulumunu içerir.'
+          },
+          'subs': ['00 General', '10 Installation Standards', '20 Antenna Installation', '30 Equipment Mounting', '40 System Integration']
+        },
+        {
+          'num': '94',
+          'title': {'en': 'ELECTRONIC SYSTEM INSTALLATION', 'tr': 'ELEKTRONİK SİSTEM KURULUMU'},
+          'info': {
+            'en': 'Electronic System Installation covers installation of computers, processors, and digital systems. Includes data bus installations, fiber optic cabling, network infrastructure, and digital communication systems. Details grounding for sensitive electronics, static protection, and system integration procedures. Covers modern digital avionics and fly-by-wire system installations.',
+            'tr': 'Elektronik Sistem Kurulumu bilgisayar, işlemci ve dijital sistem kurulumunu kapsar. Veri yolu kurulumları, fiber optik kablolama, ağ altyapısı ve dijital haberleşme sistemlerini içerir. Hassas elektronik için topraklama, statik koruma ve sistem entegrasyon prosedürlerini detaylandırır. Modern dijital aviyonik ve fly-by-wire sistem kurulumlarını kapsar.'
+          },
+          'subs': ['00 General', '10 Installation Standards', '20 Data Bus Installation', '30 Network Infrastructure', '40 Digital Systems']
+        },
+        {
+          'num': '95',
+          'title': {'en': 'SPECIAL EQUIPMENT', 'tr': 'ÖZEL EKİPMAN'},
+          'info': {
+            'en': 'Special Equipment covers non-standard or mission-specific installations not covered in other chapters. Includes auxiliary fuel tanks, cargo hooks, rescue hoists, agricultural spray systems, aerial survey equipment, and special mission modifications. Details installation requirements, operational procedures, and maintenance practices for specialized equipment.',
+            'tr': 'Özel Ekipman diğer bölümlerde yer almayan standart olmayan veya görev-özgü kurulumları kapsar. Yardımcı yakıt tankları, kargo kancaları, kurtarma vinçleri, tarımsal püskürtme sistemleri, havadan araştırma ekipmanı ve özel görev modifikasyonlarını içerir. Özelleştirilmiş ekipman için kurulum gereksinimlerini, operasyonel prosedürleri ve bakım uygulamalarını detaylandırır.'
+          },
+          'subs': ['00 General', '10 Auxiliary Equipment', '20 Mission Equipment', '30 Cargo Equipment', '40 Special Modifications']
+        },
+        {
+          'num': '96',
+          'title': {'en': 'AIRCRAFT GENERAL EQUIPMENT', 'tr': 'UÇAK GENEL EKİPMAN'},
+          'info': {
+            'en': 'Aircraft General Equipment covers miscellaneous equipment and provisions installed on aircraft. Includes survival equipment, first aid kits, fire extinguishers, crew rest facilities, and general utility items. Details equipment specifications, inspection requirements, and replacement schedules for general aircraft equipment not covered in other chapters.',
+            'tr': 'Uçak Genel Ekipman uçağa kurulan çeşitli ekipman ve sağlamaları kapsar. Hayatta kalma ekipmanını, ilk yardım çantalarını, yangın söndürücüleri, mürettebat dinlenme tesislerini ve genel fayda eşyalarını içerir. Diğer bölümlerde yer almayan genel uçak ekipmanı için ekipman özelliklerini, muayene gereksinimlerini ve değiştirme programlarını detaylandırır.'
+          },
+          'subs': ['00 General', '10 Survival Equipment', '20 Safety Equipment', '30 Utility Items', '40 Crew Facilities']
+        },
+        {
+          'num': '97',
+          'title': {'en': 'WIRING REPORTING', 'tr': 'KABLOLAMA RAPORLAMA'},
+          'info': {
+            'en': 'Wiring Reporting covers documentation and reporting of aircraft wiring configurations, modifications, and as-built conditions. Includes wire listing documentation, circuit tracing, modification tracking, and configuration control. Details reporting requirements for wiring changes, aging wire inspections, and Enhanced Zonal Analysis Procedure (EZAP) compliance.',
+            'tr': 'Kablolama Raporlama uçak kablolama konfigürasyonları, modifikasyonlar ve yapıldığı gibi koşulların dokümantasyonu ve raporlamasını kapsar. Tel listeleme dokümantasyonu, devre izleme, modifikasyon takibi ve konfigürasyon kontrolünü içerir. Kablolama değişiklikleri, yaşlanma tel muayeneleri ve Geliştirilmiş Bölgesel Analiz Prosedürü (EZAP) uyumluluğu için raporlama gereksinimlerini detaylandırır.'
+          },
+          'subs': ['00 General', '10 Wire Lists', '20 Circuit Tracing', '30 Modification Tracking', '40 Configuration Control']
+        },
+        {
+          'num': '98',
+          'title': {'en': 'FLIGHT TEST', 'tr': 'UÇUŞ TESTİ'},
+          'info': {
+            'en': 'Flight Test chapter covers procedures and requirements for aircraft flight testing. Includes test planning, instrumentation requirements, data collection, and analysis procedures. Details acceptance testing, modification validation, and regulatory compliance testing. Covers both manufacturer flight testing and operational test programs.',
+            'tr': 'Uçuş Testi bölümü uçak uçuş testi için prosedürleri ve gereksinimleri kapsar. Test planlaması, enstrümantasyon gereksinimleri, veri toplama ve analiz prosedürlerini içerir. Kabul testi, modifikasyon doğrulama ve yasal uyumluluk testini detaylandırır. Hem üretici uçuş testini hem de operasyonel test programlarını kapsar.'
+          },
+          'subs': ['00 General', '10 Test Planning', '20 Instrumentation', '30 Data Collection', '40 Analysis Procedures']
+        },
+        {
+          'num': '99',
+          'title': {'en': 'SPECIAL/MISCELLANEOUS', 'tr': 'ÖZEL/ÇEŞİTLİ'},
+          'info': {
+            'en': 'Special and Miscellaneous chapter contains information that does not fit into other ATA chapters. Includes aircraft-specific systems, unique modifications, special operational procedures, and supplementary information. Serves as catch-all section for equipment or systems unique to particular aircraft types or operators. May include ballistic parachute systems, specialized antenna installations, or unique mission equipment.',
+            'tr': 'Özel ve Çeşitli bölümü diğer ATA bölümlerine uymayan bilgileri içerir. Uçağa özgü sistemleri, benzersiz modifikasyonları, özel operasyonel prosedürleri ve ek bilgileri içerir. Belirli uçak tiplerine veya operatörlere özgü ekipman veya sistemler için genel toplama bölümü görevi görür. Balistik paraşüt sistemleri, özelleştirilmiş anten kurulumları veya benzersiz görev ekipmanı içerebilir.'
+          },
+          'subs': ['00 General', '10 Special Systems', '20 Unique Modifications', '30 Supplementary Information', '40 Miscellaneous Equipment']
+        },
+      ]
+    },
+  ];
+
+  List<Map<String, dynamic>> get filteredData {
+    final q = _searchCtrl.text.toLowerCase().trim();
+    if (q.isEmpty) return ataData;
+
+    return ataData.map((section) {
+      final chapters = (section['chapters'] as List).where((ch) {
+        final num = ch['num'] as String;
+        final title = ch['title'][widget.settings.lang] as String;
+        final subs = ch['subs'] as List<String>;
+        return num.contains(q) || title.toLowerCase().contains(q) || subs.any((s) => s.toLowerCase().contains(q));
+      }).toList();
+      return {...section, 'chapters': chapters};
+    }).where((s) => (s['chapters'] as List).isNotEmpty).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final data = filteredData;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('ATA Chapters', style: TextStyle(fontSize: 16)),
+        actions: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: () => widget.onSettingsChanged(widget.settings.copyWith(lang: 'tr')),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.easeInOut,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: widget.settings.lang == 'tr' ? widget.settings.primaryColor : Colors.transparent,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text('TR', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => widget.onSettingsChanged(widget.settings.copyWith(lang: 'en')),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.easeInOut,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: widget.settings.lang == 'en' ? widget.settings.primaryColor : Colors.transparent,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text('EN', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(icon: const Icon(Icons.settings), onPressed: _openSettings),
+        ],
+      ),
+      body: FadeTransition(
+        opacity: _listFadeAnim,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: TextField(
+                controller: _searchCtrl,
+                onChanged: (_) => setState(() {}),
+                style: TextStyle(fontSize: widget.settings.fontSize, color: widget.settings.textColor),
+                decoration: InputDecoration(
+                  hintText: t('Search...', 'Ara...'),
+                  hintStyle: TextStyle(color: widget.settings.textColor.withOpacity(0.5)),
+                  prefixIcon: Icon(Icons.search, size: 18, color: widget.settings.textColor),
+                  suffixIcon: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 200),
+                    child: _searchCtrl.text.isNotEmpty
+                        ? IconButton(
+                            key: const ValueKey('clear'),
+                            icon: Icon(Icons.close, size: 18, color: widget.settings.textColor),
+                            onPressed: () => setState(() => _searchCtrl.clear()),
+                          )
+                        : const SizedBox.shrink(key: ValueKey('empty')),
+                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  isDense: true,
+                ),
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: data.length + 1,
+                itemBuilder: (context, idx) {
+                  if (idx == data.length) {
+                    return Container(
+                      padding: const EdgeInsets.all(16),
+                      child: Text(
+                        widget.settings.lang == 'tr'
+                            ? 'Geliştirici\nYusuf Mirza Sökmen\n\nMentor\nMahmut Abdurrahman Cığşar\n\nTest Ekibi\nMustafa Değirmencioğlu · Murat Yılmaz · Sena Yılmaz'
+                            : 'Developer\nYusuf Mirza Sökmen\n\nMentor\nMahmut Abdurrahman Cığşar\n\nTest Team\nMustafa Değirmencioğlu · Murat Yılmaz · Sena Yılmaz',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: widget.settings.textColor.withOpacity(0.3),
+                          height: 1.5,
+                        ),
+                      ),
+                    );
+                  }
+
+                  final section = data[idx];
+                  final sectionTitle = section['section'][widget.settings.lang];
+                  final chapters = section['chapters'] as List;
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        color: widget.settings.primaryColor.withOpacity(0.2),
+                        child: Text(
+                          sectionTitle,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: widget.settings.textColor,
+                          ),
+                        ),
+                      ),
+                      ...chapters.asMap().entries.map((entry) {
+                        final chIdx = entry.key;
+                        final ch = entry.value;
+                        final num = ch['num'];
+                        final title = ch['title'][widget.settings.lang];
+                        final subs = ch['subs'] as List<String>;
+                        final isExpanded = _expanded.contains(num);
+                        final isFav = _favorites.contains(num);
+
+                        return TweenAnimationBuilder<double>(
+                          key: ValueKey('$num-card'),
+                          tween: Tween(begin: 0.0, end: 1.0),
+                          duration: Duration(milliseconds: 300 + (chIdx * 50).clamp(0, 300)),
+                          curve: Curves.easeOutCubic,
+                          builder: (context, value, child) {
+                            return Transform.translate(
+                              offset: Offset(0, 12 * (1 - value)),
+                              child: Opacity(opacity: value, child: child),
+                            );
+                          },
+                          child: Card(
+                            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            clipBehavior: Clip.antiAlias,
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                              decoration: BoxDecoration(
+                                color: isExpanded
+                                    ? widget.settings.primaryColor.withOpacity(0.15)
+                                    : (widget.settings.isDark ? const Color(0xFF1E1E1E) : Colors.white),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Column(
+                                children: [
+                                  ListTile(
+                                    dense: true,
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                                    title: Text(
+                                      '$num - $title',
+                                      style: TextStyle(
+                                        fontSize: widget.settings.fontSize,
+                                        fontWeight: FontWeight.w600,
+                                        color: widget.settings.textColor,
+                                        fontFamily: widget.settings.fontFamily,
+                                      ),
+                                    ),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () => _toggleFavorite(num),
+                                          child: AnimatedSwitcher(
+                                            duration: const Duration(milliseconds: 300),
+                                            transitionBuilder: (child, anim) {
+                                              return ScaleTransition(scale: anim, child: child);
+                                            },
+                                            child: Icon(
+                                              isFav ? Icons.star_rounded : Icons.star_border_rounded,
+                                              key: ValueKey(isFav),
+                                              size: 22,
+                                              color: isFav ? Colors.orange : widget.settings.textColor,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        IconButton(
+                                          icon: Icon(Icons.copy_rounded, size: 18, color: widget.settings.textColor),
+                                          onPressed: () => _copy('$num - $title\n${subs.join('\n')}'),
+                                          padding: EdgeInsets.zero,
+                                          constraints: const BoxConstraints(),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        IconButton(
+                                          icon: Icon(Icons.info_outline_rounded, size: 18, color: widget.settings.textColor),
+                                          onPressed: () => _showInfo(ch),
+                                          padding: EdgeInsets.zero,
+                                          constraints: const BoxConstraints(),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        AnimatedRotation(
+                                          turns: isExpanded ? 0.5 : 0.0,
+                                          duration: const Duration(milliseconds: 300),
+                                          curve: Curves.easeInOut,
+                                          child: Icon(
+                                            Icons.expand_more_rounded,
+                                            size: 20,
+                                            color: widget.settings.textColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    onTap: () => setState(() {
+                                      if (isExpanded) _expanded.remove(num); else _expanded.add(num);
+                                    }),
+                                  ),
+                                  AnimatedSize(
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                    child: isExpanded
+                                        ? Column(
+                                            children: subs.asMap().entries.map((subEntry) {
+                                              final subIdx = subEntry.key;
+                                              final sub = subEntry.value;
+                                              return TweenAnimationBuilder<double>(
+                                                key: ValueKey('$num-sub-$subIdx'),
+                                                tween: Tween(begin: 0.0, end: 1.0),
+                                                duration: Duration(milliseconds: 200 + (subIdx * 40)),
+                                                curve: Curves.easeOutCubic,
+                                                builder: (context, value, child) {
+                                                  return Opacity(
+                                                    opacity: value,
+                                                    child: Transform.translate(
+                                                      offset: Offset(20 * (1 - value), 0),
+                                                      child: child,
+                                                    ),
+                                                  );
+                                                },
+                                                child: ListTile(
+                                                  dense: true,
+                                                  contentPadding: const EdgeInsets.only(left: 24, right: 10),
+                                                  title: Text(
+                                                    sub,
+                                                    style: TextStyle(
+                                                      fontSize: widget.settings.fontSize - 1,
+                                                      color: widget.settings.textColor.withOpacity(0.9),
+                                                      fontFamily: widget.settings.fontFamily,
+                                                    ),
+                                                  ),
+                                                  onTap: () => _copy(sub),
+                                                ),
+                                              );
+                                            }).toList(),
+                                          )
+                                        : const SizedBox.shrink(),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SettingsPage extends StatefulWidget {
+  final AppSettings settings;
+  final ValueChanged<AppSettings> onSettingsChanged;
+
+  const SettingsPage({super.key, required this.settings, required this.onSettingsChanged});
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  late AppSettings _settings;
+
+  @override
+  void initState() {
+    super.initState();
+    _settings = widget.settings;
+  }
+
+  void _updateSetting(AppSettings newSettings) {
+    setState(() => _settings = newSettings);
+    widget.onSettingsChanged(newSettings);
+  }
+
+  String t(String en, String tr) => _settings.lang == 'tr' ? tr : en;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(t('Settings', 'Ayarlar')),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          SwitchListTile(
+            title: Text(t('Dark Mode', 'Karanlık Mod')),
+            value: _settings.isDark,
+            onChanged: (v) => _updateSetting(_settings.copyWith(isDark: v)),
+          ),
+          const Divider(),
+          ListTile(
+            title: Text(t('Font Family', 'Yazı Tipi')),
+            subtitle: Text(_settings.fontFamily),
+            trailing: DropdownButton<String>(
+              value: _settings.fontFamily,
+              items: ['Roboto', 'Arial', 'Courier'].map((f) => DropdownMenuItem(value: f, child: Text(f))).toList(),
+              onChanged: (v) => v == null ? null : _updateSetting(_settings.copyWith(fontFamily: v)),
+            ),
+          ),
+          ListTile(
+            title: Text(t('Font Size', 'Yazı Boyutu')),
+            subtitle: Slider(
+              value: _settings.fontSize,
+              min: 10,
+              max: 20,
+              divisions: 10,
+              label: _settings.fontSize.toStringAsFixed(0),
+              onChanged: (v) => _updateSetting(_settings.copyWith(fontSize: v)),
+            ),
+          ),
+          ListTile(
+            title: Text(t('Line Height', 'Satır Aralığı')),
+            subtitle: Slider(
+              value: _settings.lineHeight,
+              min: 1.0,
+              max: 2.0,
+              divisions: 10,
+              label: _settings.lineHeight.toStringAsFixed(1),
+              onChanged: (v) => _updateSetting(_settings.copyWith(lineHeight: v)),
+            ),
+          ),
+          const Divider(),
+          ElevatedButton(
+            onPressed: () {
+              _settings.resetToDefault();
+              _updateSetting(_settings);
+            },
+            child: Text(t('Reset to Default', 'Varsayılana Dön')),
+          ),
+        ],
+      ),
+    );
+  }
+}

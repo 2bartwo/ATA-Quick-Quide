@@ -7,6 +7,7 @@
   "nav": {
     "what": "The app",
     "features": "Features",
+    "chapters": "Chapters",
     "download": "Download",
     "how": "Install",
     "team": "Team",
@@ -57,6 +58,11 @@
   "nedir": {
     "h": "What does it do?",
     "p": "ATA (Air Transport Association) chapters are the standard numbering for aircraft systems and documentation. This app makes it easier to <strong>open your phone and reach the right chapter information</strong> for maintenance, planning, or technical work."
+  },
+  "chapters": {
+    "h": "ATA Chapter List (0-99)",
+    "lead": "Pick a chapter to expand subchapters.",
+    "subPrefix": "Subchapters"
   },
   "features": {
     "h": "Highlights",
