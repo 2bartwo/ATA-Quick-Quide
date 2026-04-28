@@ -11,9 +11,14 @@
   <meta http-equiv="refresh" content="0;url=anasayfa/">
   <script>
     (function () {
+      var host = window.location.hostname;
       var q = window.location.search || "";
-      var h = window.location.hash || "";
-      window.location.replace("anasayfa/" + q + h);
+      var hash = window.location.hash || "";
+      if (host && host !== "www.atachapter.com" && host !== "atachapter.com" && host !== "localhost" && host.indexOf("127.") !== 0) {
+        window.location.replace("https://www.atachapter.com/anasayfa/" + q + hash);
+        return;
+      }
+      window.location.replace("anasayfa/" + q + hash);
     })();
   </script>
 </head>

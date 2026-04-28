@@ -9,6 +9,13 @@
   <script>
     (function () {
       try {
+        var h = location.hostname;
+        if (h && h !== "www.atachapter.com" && h !== "atachapter.com" && h !== "localhost" && h.indexOf("127.") !== 0) {
+          location.replace("https://www.atachapter.com" + location.pathname + location.search + location.hash);
+          return;
+        }
+      } catch (e) {}
+      try {
         var tRaw = localStorage.getItem("ata-theme");
         var t = tRaw === "light" || tRaw === "dark" ? tRaw : "dark";
         document.documentElement.setAttribute("data-theme", t);
