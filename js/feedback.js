@@ -509,9 +509,15 @@
     var ok = isSiteAdmin();
     adminModalForm.hidden = ok;
     adminModalSigned.hidden = !ok;
+    var visitorGate = document.getElementById("fb-visitor-gate");
+    var visitorPane = document.getElementById("fb-visitor-pane");
+    if (visitorGate) visitorGate.hidden = ok;
+    if (visitorPane) visitorPane.hidden = !ok;
     if (!ok) {
       if (adminListEl) adminListEl.innerHTML = "";
       if (profileStatusEl) profileStatusEl.hidden = true;
+      if (visitorStatsEl) visitorStatsEl.innerHTML = "";
+      if (visitorListEl) visitorListEl.innerHTML = "";
       return;
     }
     ensureRankSelectOptions();
@@ -523,11 +529,33 @@
     });
   }
 
+  function setAdminTab(tab) {
+    if (!adminModal) return;
+    var btns = adminModal.querySelectorAll("[data-fb-tab]");
+    var loginPane = document.getElementById("fb-admin-tab-login");
+    var visitorsPane = document.getElementById("fb-admin-tab-visitors");
+    btns.forEach(function (b) {
+      var on = b.getAttribute("data-fb-tab") === tab;
+      b.classList.toggle("is-active", on);
+      b.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    if (loginPane) {
+      loginPane.classList.toggle("is-active", tab === "login");
+      loginPane.hidden = tab !== "login";
+    }
+    if (visitorsPane) {
+      visitorsPane.classList.toggle("is-active", tab === "visitors");
+      visitorsPane.hidden = tab !== "visitors";
+    }
+    if (tab === "visitors" && isSiteAdmin()) loadVisitorStats();
+  }
+
   function setAdminModal(open) {
     if (!adminModal) return;
     adminModal.hidden = !open;
     adminModal.setAttribute("aria-hidden", open ? "false" : "true");
     if (open) {
+      setAdminTab("login");
       syncAdminModalUi();
       if (!isSiteAdmin() && adminEmailInput) adminEmailInput.focus();
     }
@@ -1068,7 +1096,15 @@
   if (adminModal) {
     adminModal.addEventListener("click", function (e) {
       var t = e.target && e.target.closest ? e.target.closest("[data-fb-admin-close]") : null;
-      if (t) setAdminModal(false);
+      if (t) {
+        setAdminModal(false);
+        return;
+      }
+      var tab = e.target && e.target.closest ? e.target.closest("[data-fb-tab]") : null;
+      if (tab) {
+        var name = tab.getAttribute("data-fb-tab");
+        if (name) setAdminTab(name);
+      }
     });
   }
 

@@ -2667,6 +2667,65 @@ button.fb-star:hover {
   box-shadow: var(--shadow-soft);
 }
 
+.fb-admin-modal__panel--wide {
+  max-width: min(46rem, calc(100vw - 2rem));
+  max-height: min(92vh, 50rem);
+  padding: 1.4rem 1.5rem;
+}
+
+.fb-admin-tabs {
+  display: flex;
+  gap: 0.35rem;
+  margin: 0.4rem 0 1rem;
+  padding: 0.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.fb-admin-tabs__btn {
+  flex: 1;
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 0.55rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.fb-admin-tabs__btn:hover {
+  color: var(--text);
+}
+
+.fb-admin-tabs__btn.is-active {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(11, 107, 203, 0.25);
+}
+
+[data-theme="dark"] .fb-admin-tabs {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .fb-admin-tabs__btn.is-active {
+  background: #0a84ff;
+}
+
+.fb-admin-tab {
+  display: none;
+}
+
+.fb-admin-tab.is-active {
+  display: block;
+}
+
 .fb-admin-modal__x {
   position: absolute;
   top: 0.4rem;
