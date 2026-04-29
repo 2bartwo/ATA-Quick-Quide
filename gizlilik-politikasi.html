@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Ata Chapter listesi ve subchapterlar">
+  <meta name="description" content="Ata Chapter gizlilik politikası">
   <meta name="theme-color" content="#0a0a0a">
-  <title>Chapterlar — Ata Chapter</title>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9236434613875809" crossorigin="anonymous"></script>
+  <title>Gizlilik Politikası — Ata Chapter</title>
   <script>
     (function () {
       try {
@@ -24,23 +23,17 @@
         var lang = lRaw === "en" || lRaw === "tr" ? lRaw : "en";
         document.documentElement.setAttribute("data-lang", lang);
         document.documentElement.setAttribute("lang", lang === "en" ? "en" : "tr");
-        var metaTc = document.querySelector('meta[name="theme-color"]');
-        if (metaTc) metaTc.setAttribute("content", t === "dark" ? "#0a0a0a" : "#e4eef8");
-      } catch (e) {
-        document.documentElement.setAttribute("data-theme", "dark");
-        document.documentElement.setAttribute("data-lang", "en");
-        document.documentElement.setAttribute("lang", "en");
-      }
+      } catch (e) {}
     })();
   </script>
   <link rel="icon" type="image/png" href="images/app-icon.png">
-  <link rel="canonical" href="https://www.atachapter.com/chapterlar.html">
+  <link rel="canonical" href="https://www.atachapter.com/gizlilik-politikasi.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/app-site.css?v=119">
 </head>
-<body data-page="chapters">
+<body data-page="privacy">
   <div class="app-shell">
     <header class="app-top">
       <div class="container app-top__inner">
@@ -52,13 +45,12 @@
           <nav id="site-primary-nav" class="app-menu" aria-label="Site">
             <a href="anasayfa/" data-i18n="nav.home">Ana sayfa</a>
             <a href="anasayfa/#ozellikler" data-i18n="nav.features">Özellikler</a>
-            <a href="chapterlar.html" aria-current="page" data-i18n="nav.chapters">Chapterlar</a>
+            <a href="chapterlar.html" data-i18n="nav.chapters">Chapterlar</a>
             <a href="indir.html" data-i18n="nav.download">İndir</a>
-            <a href="nasil-yuklenir.html" data-i18n="nav.how">Nasıl yüklenir</a>
-            <a href="gizlilik-politikasi.html" data-i18n="nav.privacy">Gizlilik</a>
+            <a href="nasil-yuklenir.html" data-i18n="nav.how">Kurulum</a>
+            <a href="gizlilik-politikasi.html" aria-current="page" data-i18n="nav.privacy">Gizlilik</a>
             <a href="iletisim.html" data-i18n="nav.contact">İletişim</a>
             <a href="anasayfa/#credits" data-i18n="nav.team">Ekip</a>
-            <a href="anasayfa/#geri-bildirim" data-i18n="nav.feedback">Geri bildirim</a>
           </nav>
         </div>
         <div class="app-top__end">
@@ -85,16 +77,31 @@
     </header>
 
     <main class="app-content container">
-      <div class="page-intro page-intro--hero">
-        <h1 data-i18n="chapters.h">ATA Chapter Listesi (0-99)</h1>
-        <p class="lead" data-i18n="chapters.lead">Bir chapter seçin; alt başlıklar açılır.</p>
-      </div>
-      <div id="chapter-browser" class="chapter-browser"></div>
+      <section class="section-block reveal">
+        <h1>Gizlilik Politikası</h1>
+        <p class="muted">Son güncelleme: 29 Nisan 2026</p>
+        <p>Ata Chapter, kullanıcı deneyimini iyileştirmek için dil/tema tercihlerini tarayıcıda saklayabilir.</p>
+        <h2>Toplanan veriler</h2>
+        <ul class="changelog-list">
+          <li>Site tercihi verileri (dil/tema)</li>
+          <li>Geri bildirim gönderimleri (ad, mesaj, yıldız puanı)</li>
+          <li>Yönetici paneli istatistikleri için ziyaret logları (IP, zaman, sayfa)</li>
+        </ul>
+        <h2>Kullanım amacı</h2>
+        <ul class="changelog-list">
+          <li>Siteyi işlevsel tutmak ve kullanıcı deneyimini geliştirmek</li>
+          <li>Hata/öneri geri bildirimlerini değerlendirmek</li>
+          <li>Sistem güvenliği ve trafik analizi yapmak</li>
+        </ul>
+        <h2>Üçüncü taraf servisler</h2>
+        <p>Site Firebase, Google servisleri ve gerektiğinde reklam servislerini kullanabilir. Bu servislerin kendi gizlilik politikaları geçerlidir.</p>
+        <h2>İletişim</h2>
+        <p>Gizlilik ile ilgili talepler için <a href="iletisim.html">iletişim sayfasını</a> kullanabilirsiniz.</p>
+      </section>
     </main>
   </div>
 
   <script src="js/site-ui.js?v=36" defer></script>
   <script src="js/app-motion.js?v=28" defer></script>
-  <script src="js/chapter-browser.js?v=2" defer></script>
 </body>
 </html>

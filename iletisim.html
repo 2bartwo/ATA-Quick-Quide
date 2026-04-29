@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Ata Chapter listesi ve subchapterlar">
+  <meta name="description" content="Ata Chapter iletişim formu">
   <meta name="theme-color" content="#0a0a0a">
-  <title>Chapterlar — Ata Chapter</title>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9236434613875809" crossorigin="anonymous"></script>
+  <title>İletişim — Ata Chapter</title>
   <script>
     (function () {
       try {
@@ -24,23 +23,17 @@
         var lang = lRaw === "en" || lRaw === "tr" ? lRaw : "en";
         document.documentElement.setAttribute("data-lang", lang);
         document.documentElement.setAttribute("lang", lang === "en" ? "en" : "tr");
-        var metaTc = document.querySelector('meta[name="theme-color"]');
-        if (metaTc) metaTc.setAttribute("content", t === "dark" ? "#0a0a0a" : "#e4eef8");
-      } catch (e) {
-        document.documentElement.setAttribute("data-theme", "dark");
-        document.documentElement.setAttribute("data-lang", "en");
-        document.documentElement.setAttribute("lang", "en");
-      }
+      } catch (e) {}
     })();
   </script>
   <link rel="icon" type="image/png" href="images/app-icon.png">
-  <link rel="canonical" href="https://www.atachapter.com/chapterlar.html">
+  <link rel="canonical" href="https://www.atachapter.com/iletisim.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/app-site.css?v=119">
 </head>
-<body data-page="chapters">
+<body data-page="contact">
   <div class="app-shell">
     <header class="app-top">
       <div class="container app-top__inner">
@@ -52,13 +45,12 @@
           <nav id="site-primary-nav" class="app-menu" aria-label="Site">
             <a href="anasayfa/" data-i18n="nav.home">Ana sayfa</a>
             <a href="anasayfa/#ozellikler" data-i18n="nav.features">Özellikler</a>
-            <a href="chapterlar.html" aria-current="page" data-i18n="nav.chapters">Chapterlar</a>
+            <a href="chapterlar.html" data-i18n="nav.chapters">Chapterlar</a>
             <a href="indir.html" data-i18n="nav.download">İndir</a>
-            <a href="nasil-yuklenir.html" data-i18n="nav.how">Nasıl yüklenir</a>
+            <a href="nasil-yuklenir.html" data-i18n="nav.how">Kurulum</a>
             <a href="gizlilik-politikasi.html" data-i18n="nav.privacy">Gizlilik</a>
-            <a href="iletisim.html" data-i18n="nav.contact">İletişim</a>
+            <a href="iletisim.html" aria-current="page" data-i18n="nav.contact">İletişim</a>
             <a href="anasayfa/#credits" data-i18n="nav.team">Ekip</a>
-            <a href="anasayfa/#geri-bildirim" data-i18n="nav.feedback">Geri bildirim</a>
           </nav>
         </div>
         <div class="app-top__end">
@@ -85,16 +77,36 @@
     </header>
 
     <main class="app-content container">
-      <div class="page-intro page-intro--hero">
-        <h1 data-i18n="chapters.h">ATA Chapter Listesi (0-99)</h1>
-        <p class="lead" data-i18n="chapters.lead">Bir chapter seçin; alt başlıklar açılır.</p>
-      </div>
-      <div id="chapter-browser" class="chapter-browser"></div>
+      <section class="section-block reveal">
+        <h1>İletişim</h1>
+        <p class="muted">Mailin ve durum bilgisini yaz, mesajın direkt yöneticinin mailine ulaşsın.</p>
+        <form class="fb-form" action="https://formsubmit.co/yusufmirzasokmen@gmail.com" method="POST">
+          <input type="hidden" name="_subject" value="Ata Chapter - Yeni İletişim Formu">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_template" value="table">
+          <div class="fb-form__grid">
+            <label class="fb-form__field fb-form__field--full">
+              <span class="fb-form__label">E-posta adresin</span>
+              <input class="fb-form__input" type="email" name="email" required placeholder="ornek@mail.com">
+            </label>
+            <label class="fb-form__field fb-form__field--full">
+              <span class="fb-form__label">Durum / Konu</span>
+              <input class="fb-form__input" type="text" name="durum" required placeholder="Örn: Hata bildirimi, iş birliği, öneri">
+            </label>
+            <label class="fb-form__field fb-form__field--full">
+              <span class="fb-form__label">Mesaj</span>
+              <textarea class="fb-form__textarea" name="mesaj" rows="6" required placeholder="Mesajını yaz..."></textarea>
+            </label>
+            <div class="fb-form__actions">
+              <button class="btn btn--primary fb-form__btn" type="submit">Gönder</button>
+            </div>
+          </div>
+        </form>
+      </section>
     </main>
   </div>
 
   <script src="js/site-ui.js?v=36" defer></script>
   <script src="js/app-motion.js?v=28" defer></script>
-  <script src="js/chapter-browser.js?v=2" defer></script>
 </body>
 </html>
